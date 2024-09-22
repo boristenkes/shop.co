@@ -1,5 +1,5 @@
 {
-  "id": "b80e5cc9-2c46-43a9-8971-3c3b4ef59f6f",
+  "id": "826ad4a9-ecb1-4fbf-a333-aee48cdbcd1a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -101,94 +101,6 @@
         }
       },
       "uniqueConstraints": {}
-    },
-    "public.authenticator": {
-      "name": "authenticator",
-      "schema": "",
-      "columns": {
-        "credentialID": {
-          "name": "credentialID",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "userId": {
-          "name": "userId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "providerAccountId": {
-          "name": "providerAccountId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "credentialPublicKey": {
-          "name": "credentialPublicKey",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "counter": {
-          "name": "counter",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "credentialDeviceType": {
-          "name": "credentialDeviceType",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "credentialBackedUp": {
-          "name": "credentialBackedUp",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "transports": {
-          "name": "transports",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "authenticator_userId_user_id_fk": {
-          "name": "authenticator_userId_user_id_fk",
-          "tableFrom": "authenticator",
-          "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "authenticator_userId_credentialID_pk": {
-          "name": "authenticator_userId_credentialID_pk",
-          "columns": [
-            "userId",
-            "credentialID"
-          ]
-        }
-      },
-      "uniqueConstraints": {
-        "authenticator_credentialID_unique": {
-          "name": "authenticator_credentialID_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "credentialID"
-          ]
-        }
-      }
     },
     "public.category": {
       "name": "category",
@@ -416,23 +328,11 @@
           "primaryKey": false,
           "notNull": true
         },
-        "categories": {
-          "name": "categories",
-          "type": "uuid[]",
-          "primaryKey": false,
-          "notNull": false
-        },
         "sizes": {
           "name": "sizes",
           "type": "size[]",
           "primaryKey": false,
           "notNull": false
-        },
-        "colors": {
-          "name": "colors",
-          "type": "uuid[]",
-          "primaryKey": false,
-          "notNull": true
         },
         "stock": {
           "name": "stock",
@@ -482,34 +382,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "product_categories_category_id_fk": {
-          "name": "product_categories_category_id_fk",
-          "tableFrom": "product",
-          "tableTo": "category",
-          "columnsFrom": [
-            "categories"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "product_colors_colors_id_fk": {
-          "name": "product_colors_colors_id_fk",
-          "tableFrom": "product",
-          "tableTo": "colors",
-          "columnsFrom": [
-            "colors"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

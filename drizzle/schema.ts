@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import {
 	boolean,
 	integer,
@@ -75,27 +76,6 @@ export const verificationTokens = pgTable(
 	})
 )
 
-export const authenticators = pgTable(
-	'authenticator',
-	{
-		credentialID: text('credentialID').notNull().unique(),
-		userId: uuid('userId')
-			.notNull()
-			.references(() => users.id, { onDelete: 'cascade' }),
-		providerAccountId: text('providerAccountId').notNull(),
-		credentialPublicKey: text('credentialPublicKey').notNull(),
-		counter: integer('counter').notNull(),
-		credentialDeviceType: text('credentialDeviceType').notNull(),
-		credentialBackedUp: boolean('credentialBackedUp').notNull(),
-		transports: text('transports')
-	},
-	authenticator => ({
-		compositePK: primaryKey({
-			columns: [authenticator.userId, authenticator.credentialID]
-		})
-	})
-)
-
 export const sizeEnum = pgEnum('size', [
 	'XS',
 	'S',
@@ -106,7 +86,7 @@ export const sizeEnum = pgEnum('size', [
 	'3XL'
 ])
 
-export const category = pgTable('category', {
+export const categories = pgTable('category', {
 	id,
 	name: text('name').notNull()
 })
@@ -122,14 +102,7 @@ export const products = pgTable('product', {
 	name: text('name').notNull(),
 	price: integer('price').notNull(),
 	description: text('description').notNull(),
-	categories: uuid('categories')
-		.array()
-		.references(() => category.id, { onDelete: 'set null' }),
 	sizes: sizeEnum('sizes').array(),
-	colors: uuid('colors')
-		.array()
-		.notNull()
-		.references(() => colors.id),
 	stock: integer('stock').default(0),
 	featured: boolean('featured').default(false),
 	archived: boolean('archived').default(false),
@@ -141,6 +114,11 @@ export const products = pgTable('product', {
 		.notNull()
 		.$onUpdate(() => new Date())
 })
+
+export const productRelations = relations(products, ({ many }) => ({
+	categories: many(categories),
+	colors: many(colors)
+}))
 
 export const orders = pgTable('order', {
 	id,
