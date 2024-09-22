@@ -4,28 +4,35 @@ import {
 	pgEnum,
 	pgTable,
 	primaryKey,
+	smallint,
 	text,
-	timestamp
+	timestamp,
+	uuid
 } from 'drizzle-orm/pg-core'
 import type { AdapterAccountType } from 'next-auth/adapters'
 
-export const roleEnum = pgEnum('role', ['user', 'admin'])
+export const roleEnum = pgEnum('role', ['customer', 'admin'])
+
+const id = uuid('id').primaryKey().defaultRandom().notNull()
+
+// const id = text('id')
+// 	.primaryKey()
+// 	.$defaultFn(() => crypto.randomUUID())
 
 export const users = pgTable('user', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
+	id,
 	name: text('name'),
 	email: text('email').unique(),
 	emailVerified: timestamp('emailVerified', { mode: 'date' }),
+	password: text('password'),
 	image: text('image'),
-	role: roleEnum('role')
+	role: roleEnum('role').default('customer')
 })
 
 export const accounts = pgTable(
 	'account',
 	{
-		userId: text('userId')
+		userId: uuid('userId')
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		type: text('type').$type<AdapterAccountType>().notNull(),
@@ -48,7 +55,7 @@ export const accounts = pgTable(
 
 export const sessions = pgTable('session', {
 	sessionToken: text('sessionToken').primaryKey(),
-	userId: text('userId')
+	userId: uuid('userId')
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
 	expires: timestamp('expires', { mode: 'date' }).notNull()
@@ -72,7 +79,7 @@ export const authenticators = pgTable(
 	'authenticator',
 	{
 		credentialID: text('credentialID').notNull().unique(),
-		userId: text('userId')
+		userId: uuid('userId')
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		providerAccountId: text('providerAccountId').notNull(),
@@ -88,3 +95,93 @@ export const authenticators = pgTable(
 		})
 	})
 )
+
+export const sizeEnum = pgEnum('size', [
+	'XS',
+	'S',
+	'M',
+	'L',
+	'XL',
+	'2XL',
+	'3XL'
+])
+
+export const category = pgTable('category', {
+	id,
+	name: text('name').notNull()
+})
+
+export const colors = pgTable('colors', {
+	id,
+	name: text('name').notNull(),
+	hex: text('hex').notNull()
+})
+
+export const products = pgTable('product', {
+	id,
+	name: text('name').notNull(),
+	price: integer('price').notNull(),
+	description: text('description').notNull(),
+	categories: uuid('categories')
+		.array()
+		.references(() => category.id, { onDelete: 'set null' }),
+	sizes: sizeEnum('sizes').array(),
+	colors: uuid('colors')
+		.array()
+		.notNull()
+		.references(() => colors.id),
+	stock: integer('stock').default(0),
+	featured: boolean('featured').default(false),
+	archived: boolean('archived').default(false),
+	images: text('images').array().notNull(),
+	discount: smallint('discount'),
+
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at')
+		.notNull()
+		.$onUpdate(() => new Date())
+})
+
+export const orders = pgTable('order', {
+	id,
+	userId: uuid('user_id')
+		.notNull()
+		.references(() => users.id),
+	paid: boolean('paid').default(false),
+
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at')
+		.notNull()
+		.$onUpdate(() => new Date())
+})
+
+export const orderItems = pgTable('order_item', {
+	id,
+	orderId: uuid('order_id')
+		.notNull()
+		.references(() => orders.id),
+	productId: uuid('products')
+		.notNull()
+		.references(() => products.id),
+	quantity: integer('quantity').notNull(),
+	size: sizeEnum('size').notNull(),
+	color: uuid('color')
+		.notNull()
+		.references(() => colors.id)
+})
+
+export const reviews = pgTable('review', {
+	id,
+	userId: uuid('user_id')
+		.notNull()
+		.references(() => users.id, { onDelete: 'cascade' }),
+	productId: uuid('product_id')
+		.notNull()
+		.references(() => products.id, { onDelete: 'cascade' }),
+	rating: integer('rating').notNull(),
+	comment: text('comment'),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at')
+		.notNull()
+		.$onUpdate(() => new Date())
+})
