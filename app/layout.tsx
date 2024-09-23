@@ -1,3 +1,4 @@
+import Providers from '@/components/providers'
 import './globals.css'
 
 import { type Metadata } from 'next'
@@ -22,7 +23,9 @@ export default function RootLayout({
 			lang='en'
 			className={inter.className}
 		>
-			<body>{children}</body>
+			<body>
+				<Providers>{children}</Providers>
+			</body>
 		</html>
 	)
 }
