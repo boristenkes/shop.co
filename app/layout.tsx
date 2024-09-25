@@ -1,4 +1,4 @@
-import Providers from '@/components/providers'
+import Providers from '@/components/utils/providers'
 import './globals.css'
 
 import { type Metadata } from 'next'
@@ -22,6 +22,7 @@ export default function RootLayout({
 		<html
 			lang='en'
 			className={inter.className}
+			suppressHydrationWarning
 		>
 			<body>
 				<Providers>{children}</Providers>

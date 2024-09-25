@@ -7,6 +7,7 @@ declare module 'next-auth' {
 	interface Session {
 		user: {
 			id: string
+			role: string
 		} & DefaultSession['user']
 	}
 }
@@ -26,7 +27,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			...session,
 			user: {
 				...session.user,
-				id: user.id
+				id: user.id,
+				role: user.role
 			}
 		})
 		// async signIn({ user, account, profile }) {

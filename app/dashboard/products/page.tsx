@@ -9,11 +9,16 @@ import {
 	CardTitle
 } from '@/components/ui/card'
 import { PlusCircleIcon } from 'lucide-react'
+import { Metadata } from 'next'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+	title: 'Products'
+}
 
 export default function DashboardProductsPage() {
 	return (
-		<main className='grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0'>
+		<main className='grid flex-1 items-start gap-4 p-4 sm:px-6'>
 			<Card>
 				<CardHeader>
 					<div className='flex items-center gap-4 justify-between'>

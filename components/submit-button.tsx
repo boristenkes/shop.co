@@ -20,7 +20,6 @@ export default function SubmitButton({
 		<Button
 			type='submit'
 			disabled={pending || props.disabled}
-			size='sm'
 			{...props}
 		>
 			{pending ? pendingContent : children}

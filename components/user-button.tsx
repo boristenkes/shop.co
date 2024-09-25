@@ -20,7 +20,7 @@ export default async function UserButton() {
 			<form
 				action={async () => {
 					'use server'
-					await signIn()
+					await signIn('google')
 				}}
 			>
 				<SubmitButton variant='secondary'>Sign In</SubmitButton>
