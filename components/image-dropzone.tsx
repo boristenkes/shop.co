@@ -114,7 +114,7 @@ const ImageDropzone = forwardRef<HTMLInputElement, InputProps>(
 		})
 
 		// styling
-		const dropZoneClassName = useMemo(
+		const dropzoneClassName = useMemo(
 			() =>
 				twMerge(
 					variants.base,
@@ -198,7 +198,7 @@ const ImageDropzone = forwardRef<HTMLInputElement, InputProps>(
 					{(!value || value.length < (dropzoneOptions?.maxFiles ?? 0)) && (
 						<div
 							{...getRootProps({
-								className: dropZoneClassName
+								className: dropzoneClassName
 							})}
 						>
 							{/* Main File Input */}

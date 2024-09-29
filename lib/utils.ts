@@ -1,9 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs))
-}
+export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
 export const delay = (ms: number) =>
 	new Promise(resolve => setTimeout(resolve, ms))
@@ -46,9 +44,8 @@ export function formatPrice(
 	}).format(Number(price))
 }
 
-export function absoluteUrl(path: string) {
-	return new URL(path, process.env.NEXT_PUBLIC_APP_URL).href
-}
+export const absoluteUrl = (path: string) =>
+	new URL(path, process.env.NEXT_PUBLIC_APP_URL).href
 
 export function formatFileSize(size: number) {
 	if (size === 0) return '0 Bytes'

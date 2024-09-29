@@ -9,11 +9,7 @@ type NavLinkProps = LinkProps & {
 	children: React.ReactNode
 }
 
-export default function NavLink({
-	className,
-	children,
-	...props
-}: NavLinkProps) {
+export default function NavLink({ className, ...props }: NavLinkProps) {
 	const pathname = usePathname()
 
 	return (
@@ -26,8 +22,6 @@ export default function NavLink({
 				className
 			)}
 			{...props}
-		>
-			{children}
-		</Link>
+		/>
 	)
 }

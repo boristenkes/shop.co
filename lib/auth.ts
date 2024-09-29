@@ -1,24 +1,27 @@
-import { db } from '@/drizzle/db'
-import { DrizzleAdapter } from '@auth/drizzle-adapter'
+import { PrismaAdapter } from '@auth/prisma-adapter'
+import { UserRole } from '@prisma/client'
 import NextAuth, { type DefaultSession } from 'next-auth'
 import Google from 'next-auth/providers/google'
+import { prisma } from './prisma'
 
 declare module 'next-auth' {
 	interface Session {
 		user: {
 			id: string
-			role: string
 		} & DefaultSession['user']
 	}
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-	adapter: DrizzleAdapter(db),
+	adapter: PrismaAdapter(prisma),
 	providers: [
 		Google({
 			clientId: process.env.AUTH_GOOGLE_ID!,
 			clientSecret: process.env.AUTH_GOOGLE_SECRET,
-			profile: profile => ({ role: profile.role ?? 'customer', ...profile }),
+			profile: profile => ({
+				role: profile.role ?? UserRole.customer,
+				...profile
+			}),
 			allowDangerousEmailAccountLinking: true
 		})
 	],
@@ -27,8 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			...session,
 			user: {
 				...session.user,
-				id: user.id,
-				role: user.role
+				id: user.id
 			}
 		})
 		// async signIn({ user, account, profile }) {

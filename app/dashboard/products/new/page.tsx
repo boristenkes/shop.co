@@ -6,15 +6,21 @@ import {
 	CardTitle
 } from '@/components/ui/card'
 import { BackButton } from '@/components/utils/back-button'
+import { auth } from '@/lib/auth'
 import { ChevronLeftIcon } from 'lucide-react'
 import { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import NewProductForm from './_components/new-product-form'
 
 export const metadata: Metadata = {
 	title: 'Create Product'
 }
 
-export default function NewProductPage() {
+export default async function NewProductPage() {
+	const session = await auth()
+
+	if (!session) redirect('/')
+
 	return (
 		<main className='container py-16'>
 			<div className='grid gap-1 mb-8'>

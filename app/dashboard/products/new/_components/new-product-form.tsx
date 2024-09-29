@@ -1,9 +1,9 @@
 'use client'
 
+import ErrorMessage from '@/components/error-message'
 import { FileState, ImageDropzone } from '@/components/image-dropzone'
-import SubmitButton from '@/components/submit-button'
+import { Button } from '@/components/ui/button'
 import {
-	Form,
 	FormControl,
 	FormDescription,
 	FormField,
@@ -13,138 +13,115 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useEdgeStore } from '@/lib/edgestore'
+import { Categories } from '@/features/category/components/categories'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2Icon } from 'lucide-react'
+import { useRouter } from 'nextjs-toploader/app'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { toast } from 'sonner'
+import { createProduct } from '../_lib/actions'
 import { newProductSchema } from '../_lib/validations'
 
 export default function NewProductForm() {
-	const { edgestore } = useEdgeStore()
-
 	const [fileStates, setFileStates] = useState<FileState[]>([])
 	const form = useForm({
 		resolver: zodResolver(newProductSchema),
-		defaultValues: {
-			name: '',
-			description: '',
-			images: []
-		}
+		defaultValues: { name: '', description: '', categories: [] }
 	})
+	const isUploading = form.formState.isSubmitting
+	const router = useRouter()
 
-	const updateFileProgress = (key: string, progress: FileState['progress']) => {
-		setFileStates(fileStates => {
-			const newFileStates = structuredClone(fileStates)
-			const fileState = newFileStates.find(fileState => fileState.key === key)
+	const onSubmit = async (data: NewProductSchema) => {
+		try {
+			if (!fileStates?.length) throw new Error('At least one image is required')
 
-			if (fileState) fileState.progress = progress
+			const uploadedFiles = fileStates.map(fileState => fileState.file)
 
-			return newFileStates
-		})
-	}
+			if (!uploadedFiles) throw new Error('Something went wrong')
 
-	const onSubmit = async (data: z.infer<typeof newProductSchema>) => {
-		console.log(data)
+			const response = await createProduct({ ...data, price: 460405 }, images)
+
+			if (!response.success) {
+				form.setError('root', { message: response.message })
+				return
+			}
+
+			toast.success(response.message)
+			router.push('/dashboard/products')
+		} catch (error: any) {
+			console.error('Upload error:', error)
+			form.setError('root', { message: error.message })
+		}
 	}
 
 	return (
-		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className='grid gap-6'
+		<form
+			onSubmit={form.handleSubmit(onSubmit)}
+			className='grid gap-6'
+		>
+			{form.formState.errors.root?.message && (
+				<ErrorMessage message={form.formState.errors.root?.message} />
+			)}
+
+			<FormField
+				control={form.control}
+				name='name'
+				disabled={isUploading}
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel>Name</FormLabel>
+						<FormControl>
+							<Input {...field} />
+						</FormControl>
+						<FormDescription>
+							This is first thing customers see, so make it count!
+						</FormDescription>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+
+			<FormField
+				control={form.control}
+				name='description'
+				disabled={isUploading}
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel>Description</FormLabel>
+						<FormControl>
+							<Textarea {...field} />
+						</FormControl>
+						<FormDescription>
+							This is first thing customers see, so make it count!
+						</FormDescription>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+
+			<Categories form={form} />
+
+			<ImageDropzone
+				value={fileStates}
+				dropzoneOptions={{
+					maxFiles: 10,
+					maxSize: 1024 * 1024 * 4 // 4MB
+				}}
+				onChange={files => setFileStates(files)}
+				onFilesAdded={async addedFiles =>
+					setFileStates([...fileStates, ...addedFiles])
+				}
+				disabled={isUploading}
+			/>
+
+			<Button
+				className='ml-auto'
+				disabled={isUploading}
 			>
-				<FormField
-					control={form.control}
-					name='name'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Name</FormLabel>
-							<FormControl>
-								<Input {...field} />
-							</FormControl>
-							<FormDescription>
-								This is first thing customers see, so make it count!
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					control={form.control}
-					name='description'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Description</FormLabel>
-							<FormControl>
-								<Textarea {...field} />
-							</FormControl>
-							<FormDescription>
-								This is first thing customers see, so make it count!
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					control={form.control}
-					name='images'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Images</FormLabel>
-							<FormControl>
-								<ImageDropzone
-									{...field}
-									value={fileStates}
-									dropzoneOptions={{
-										maxFiles: 10
-									}}
-									onChange={files => {
-										setFileStates(files)
-									}}
-									onFilesAdded={async addedFiles =>
-										setFileStates([...fileStates, ...addedFiles])
-									}
-								/>
-							</FormControl>
-							<FormDescription>
-								Upload up to 10 images, max 4MB each
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<SubmitButton className='ml-auto'>Create</SubmitButton>
-			</form>
-		</Form>
+				{isUploading && <Loader2Icon className='mr-2 size-4 animate-spin' />}
+				{isUploading ? 'Creating post...' : 'Create'}
+			</Button>
+		</form>
 	)
 }
-
-//  await Promise.all(
-// addedFiles.map(async addedFileState => {
-// try {
-// const res = await edgestore.publicFiles.upload({
-// file: addedFileState.file,
-// onProgressChange: async progress => {
-// updateFileProgress(addedFileState.key, progress)
-// if (progress === 100) {
-// 						// wait 1 second to set it to complete
-// 						// so that the user can see the progress bar at 100%
-// await new Promise(resolve =>
-// setTimeout(resolve, 1000)
-// )
-// updateFileProgress(
-// addedFileState.key,
-// 'COMPLETE'
-// )
-// }
-// }
-// })
-
-// console.log(res)
-// } catch (err) {
-// updateFileProgress(addedFileState.key, 'ERROR')
-// }

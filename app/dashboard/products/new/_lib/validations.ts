@@ -12,7 +12,7 @@ export const productImageSchema = z
 	)
 
 export const newProductSchema = z.object({
-	name: z.string(),
+	name: z.string().min(1, 'Name is required'),
 	description: z.string(),
-	images: z.array(productImageSchema)
+	categories: z.string().uuid().array()
 })
