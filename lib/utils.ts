@@ -1,10 +1,19 @@
 import { clsx, type ClassValue } from 'clsx'
+import slugifyOriginal from 'slugify'
 import { twMerge } from 'tailwind-merge'
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
 export const delay = (ms: number) =>
 	new Promise(resolve => setTimeout(resolve, ms))
+
+export const prettyJson = (json: unknown) => JSON.stringify(json, null, 2)
+
+export const slugify = (str: string) =>
+	slugifyOriginal(str, {
+		lower: true,
+		strict: true
+	})
 
 export function getInitials(name: string) {
 	if (!name.length) return name

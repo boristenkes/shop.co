@@ -34,78 +34,84 @@ type Image {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  role          UserRole  @default(customer)
+  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  name  String?
+  email String?  @unique
+  // emailVerified DateTime?
+  image String?
+  // accounts      Account[]
+  // sessions      Session[]
+  role  UserRole @default(customer)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reviews   Review[]
 
   @@map("users")
 }
 
-model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @map("refreshToken") @db.String
-  access_token      String? @map("accessToken") @db.String
-  expires_at        Int?    @map("expiresAt")
-  token_type        String? @map("tokenType")
-  scope             String?
-  id_token          String? @map("idToken") @db.String
-  session_state     String? @map("sessionState")
+// model Account {
+//   id                String  @id @default(auto()) @map("_id") @db.ObjectId
+//   userId            String  @db.ObjectId
+//   type              String
+//   provider          String
+//   providerAccountId String
+//   refresh_token     String? @map("refreshToken") @db.String
+//   access_token      String? @map("accessToken") @db.String
+//   expires_at        Int?    @map("expiresAt")
+//   token_type        String? @map("tokenType")
+//   scope             String?
+//   id_token          String? @map("idToken") @db.String
+//   session_state     String? @map("sessionState")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
-}
+//   @@unique([provider, providerAccountId])
+//   @@map("accounts")
+// }
 
-model Session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  sessionToken String   @unique
-  userId       String   @db.ObjectId
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+// model Session {
+//   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+//   sessionToken String   @unique
+//   userId       String   @db.ObjectId
+//   expires      DateTime
+//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  @@map("sessions")
-}
+//   @@map("sessions")
+// }
 
-model VerificationToken {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  identifier String
-  token      String
-  expires    DateTime
+// model VerificationToken {
+//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+//   identifier String
+//   token      String
+//   expires    DateTime
 
-  @@unique([identifier, token])
-  @@map("verificationTokens")
-}
+//   @@unique([identifier, token])
+//   @@map("verificationTokens")
+// }
 
 model Category {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?  @db.ObjectId
 
   @@map("categories")
 }
 
 model Color {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  hex  String
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  hex        String
+  orderItems OrderItem[]
+  product    Product?    @relation(fields: [productId], references: [id])
+  productId  String?     @db.ObjectId
 
   @@map("colors")
 }
@@ -113,19 +119,22 @@ model Color {
 model Product {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   name         String
+  slug         String        @unique
   priceInCents Int
   description  String?
-  stock        Int
+  stock        Int           @default(1)
   featured     Boolean       @default(false)
   archived     Boolean       @default(false)
-  discount     Int
+  discount     Int           @default(0)
   sizes        ProductSize[]
-  categories   String[]      @db.ObjectId
-  colors       String[]      @db.ObjectId
+  categories   Category[]
+  orderItems   OrderItem[]
+  colors       Color[]
   images       Image[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reviews   Review[]
 
   @@map("products")
 }
@@ -134,7 +143,7 @@ model Order {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   user String @db.ObjectId
 
-  orderItems String[] @db.ObjectId
+  orderItems OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -146,10 +155,13 @@ model OrderItem {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   quantity Int    @default(1)
 
-  orderId String      @db.ObjectId
-  product String      @db.ObjectId
-  color   String      @db.ObjectId
-  size    ProductSize
+  product   Product     @relation(fields: [productId], references: [id])
+  productId String      @db.ObjectId
+  color     Color       @relation(fields: [colorId], references: [id])
+  colorId   String      @db.ObjectId
+  order     Order?      @relation(fields: [orderId], references: [id])
+  orderId   String?     @db.ObjectId
+  size      ProductSize
 
   @@map("orderItems")
 }
@@ -159,8 +171,10 @@ model Review {
   rating  Float
   comment String
 
-  productId String @db.ObjectId
-  user      String @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @db.ObjectId
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String  @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

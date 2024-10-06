@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/form'
 import { useQuery } from '@tanstack/react-query'
 import { Loader2Icon } from 'lucide-react'
-import { useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { fetchCategories } from '../lib/actions'
 
@@ -21,8 +20,6 @@ type Props = {
 }
 
 export function Categories({ form }: Props) {
-	const [open, setOpen] = useState(false)
-	const [categoryId, setCategoryId] = useState('')
 	const {
 		data: categories,
 		isLoading,
@@ -32,8 +29,6 @@ export function Categories({ form }: Props) {
 		queryKey: ['categories'],
 		queryFn: () => fetchCategories()
 	})
-
-	if (isLoading) return <Loader2Icon className='size-4 animate-spin' />
 
 	if (isError) return <ErrorMessage message={error.message} />
 
@@ -51,36 +46,42 @@ export function Categories({ form }: Props) {
 							Select categories for this product.
 						</FormDescription>
 					</div>
-					{categories?.map(item => (
-						<FormField
-							key={item.id}
-							control={form.control}
-							name='categories'
-							render={({ field }) => (
-								<FormItem
-									key={item.id}
-									className='flex flex-row items-center gap-2'
-								>
-									<FormControl>
-										<Checkbox
-											{...field}
-											checked={field.value?.includes(item.id)}
-											onCheckedChange={checked => {
-												return checked
-													? field.onChange([...field.value, item.id])
-													: field.onChange(
-															field.value?.filter(
-																(value: string) => value !== item.id
-															)
-													  )
-											}}
-										/>
-									</FormControl>
-									<FormLabel className='font-normal m-0'>{item.name}</FormLabel>
-								</FormItem>
-							)}
-						/>
-					))}
+					{isLoading ? (
+						<Loader2Icon className='size-4 animate-spin' />
+					) : (
+						categories?.map(item => (
+							<FormField
+								key={item.id}
+								control={form.control}
+								name='categories'
+								render={({ field }) => (
+									<FormItem
+										key={item.id}
+										className='flex flex-row items-center gap-2'
+									>
+										<FormControl>
+											<Checkbox
+												{...field}
+												checked={field.value?.includes(item.id)}
+												onCheckedChange={checked => {
+													return checked
+														? field.onChange([...field.value, item.id])
+														: field.onChange(
+																field.value?.filter(
+																	(value: string) => value !== item.id
+																)
+														  )
+												}}
+											/>
+										</FormControl>
+										<FormLabel className='font-normal m-0'>
+											{item.name}
+										</FormLabel>
+									</FormItem>
+								)}
+							/>
+						))
+					)}
 					<FormMessage />
 				</FormItem>
 			)}

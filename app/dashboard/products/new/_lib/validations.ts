@@ -14,5 +14,7 @@ export const productImageSchema = z
 export const newProductSchema = z.object({
 	name: z.string().min(1, 'Name is required'),
 	description: z.string(),
-	categories: z.string().uuid().array()
+	categories: z.string().array()
 })
+
+export type NewProductSchema = z.infer<typeof newProductSchema>
