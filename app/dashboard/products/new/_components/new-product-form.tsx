@@ -3,6 +3,7 @@
 import ErrorMessage from '@/components/error-message'
 import { FileState, ImageDropzone } from '@/components/image-dropzone'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Form,
 	FormControl,
@@ -27,7 +28,16 @@ export default function NewProductForm() {
 	const [fileStates, setFileStates] = useState<FileState[]>([])
 	const form = useForm({
 		resolver: zodResolver(newProductSchema),
-		defaultValues: { name: '', description: '', categories: [] }
+		defaultValues: {
+			name: '',
+			description: '',
+			price: 0,
+			stock: 1,
+			discount: 0,
+			categories: [],
+			featured: false,
+			archived: false
+		}
 	})
 	const { isSubmitting } = form.formState
 
@@ -45,8 +55,7 @@ export default function NewProductForm() {
 				formData.append('images', f.file, f.file.name)
 			})
 
-			// @ts-expect-error
-			const response = await createProduct({ ...data, price: 460405 }, formData)
+			const response = await createProduct(data, formData)
 
 			if (!response.success) {
 				form.setError('root', { message: response.message })
@@ -80,7 +89,10 @@ export default function NewProductForm() {
 						<FormItem>
 							<FormLabel>Name</FormLabel>
 							<FormControl>
-								<Input {...field} />
+								<Input
+									disabled={isSubmitting}
+									{...field}
+								/>
 							</FormControl>
 							<FormDescription>
 								This is first thing customers see, so make it count!
@@ -98,17 +110,153 @@ export default function NewProductForm() {
 						<FormItem>
 							<FormLabel>Description</FormLabel>
 							<FormControl>
-								<Textarea {...field} />
+								<Textarea
+									disabled={isSubmitting}
+									{...field}
+								/>
 							</FormControl>
 							<FormDescription>
-								This is first thing customers see, so make it count!
+								Tell customers a bit more about this product. Make it sound
+								engaging and informative.
 							</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
 
+				<div className='flex items-center gap-x-16 gap-y-6 flex-wrap'>
+					<FormField
+						control={form.control}
+						name='price'
+						disabled={isSubmitting}
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Price</FormLabel>
+								<FormControl>
+									<div className='flex items-center gap-2'>
+										<span>$</span>
+										<Input
+											type='number'
+											className='max-w-20'
+											step={0.01}
+											min={0}
+											max={99999}
+											disabled={isSubmitting}
+											{...field}
+											onChange={e => field.onChange(e.target.valueAsNumber)}
+										/>
+									</div>
+								</FormControl>
+								<FormDescription>
+									Price of the product in US dollars.
+								</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='stock'
+						disabled={isSubmitting}
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Stock</FormLabel>
+								<FormControl>
+									<Input
+										type='number'
+										step={1}
+										className='max-w-20'
+										min={1}
+										disabled={isSubmitting}
+										{...field}
+										onChange={e => field.onChange(e.target.valueAsNumber)}
+									/>
+								</FormControl>
+								<FormDescription>
+									How many products do you currently have in stock?
+								</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='discount'
+						disabled={isSubmitting}
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Discount (optional)</FormLabel>
+								<FormControl>
+									<div className='flex items-center gap-2'>
+										<span>%</span>
+										<Input
+											type='number'
+											step={5}
+											className='max-w-20'
+											min={0}
+											max={100}
+											disabled={isSubmitting}
+											{...field}
+											onChange={e => field.onChange(e.target.valueAsNumber)}
+										/>
+									</div>
+								</FormControl>
+								<FormDescription>Discount for this product.</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
+
 				<Categories form={form} />
+
+				<div className='flex items-center gap-4 flex-wrap'>
+					<FormField
+						control={form.control}
+						name='featured'
+						render={({ field }) => (
+							<FormItem className='flex grow items-start space-x-3 space-y-0 rounded-md border p-4'>
+								<FormControl>
+									<Checkbox
+										checked={field.value}
+										onCheckedChange={field.onChange}
+										disabled={isSubmitting}
+									/>
+								</FormControl>
+								<div className='space-y-1 leading-none'>
+									<FormLabel>Featured</FormLabel>
+									<FormDescription>
+										This product will appear on home page.
+									</FormDescription>
+								</div>
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='archived'
+						render={({ field }) => (
+							<FormItem className='flex grow items-start space-x-3 space-y-0 rounded-md border p-4'>
+								<FormControl>
+									<Checkbox
+										checked={field.value}
+										onCheckedChange={field.onChange}
+										disabled={isSubmitting}
+									/>
+								</FormControl>
+								<div className='space-y-1 leading-none'>
+									<FormLabel>Archived</FormLabel>
+									<FormDescription>
+										This product will not be visible to customers.
+									</FormDescription>
+								</div>
+							</FormItem>
+						)}
+					/>
+				</div>
 
 				<ImageDropzone
 					value={fileStates}

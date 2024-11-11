@@ -1,6 +1,6 @@
 'use client'
 
-import { formatFileSize } from '@/lib/utils'
+import { cn, formatFileSize } from '@/lib/utils'
 import { UploadCloudIcon, XIcon } from 'lucide-react'
 import Image from 'next/image'
 import { forwardRef, useMemo, useState } from 'react'
@@ -159,7 +159,9 @@ const ImageDropzone = forwardRef<HTMLInputElement, InputProps>(
 					{value?.map(({ file, progress }, index) => (
 						<div
 							key={index}
-							className={variants.image + ' aspect-square'}
+							className={cn(variants.image + ' aspect-square', {
+								'opacity-50': disabled
+							})}
 						>
 							<Image
 								className='h-full w-full rounded-md object-cover'

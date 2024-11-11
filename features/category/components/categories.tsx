@@ -39,15 +39,18 @@ export function Categories({ form }: Props) {
 			render={() => (
 				<FormItem>
 					<div className='mb-4'>
-						<p className='text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-							Categories
-						</p>
+						{/* <p className='text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-1'> */}
+						<FormLabel>Categories</FormLabel>
+						{/* </p> */}
 						<FormDescription>
 							Select categories for this product.
 						</FormDescription>
 					</div>
 					{isLoading ? (
-						<Loader2Icon className='size-4 animate-spin' />
+						<p className='text-sm flex items-center gap-2'>
+							<Loader2Icon className='size-4 animate-spin' />
+							Loading categories
+						</p>
 					) : (
 						categories?.map(item => (
 							<FormField
@@ -72,6 +75,7 @@ export function Categories({ form }: Props) {
 																)
 														  )
 												}}
+												disabled={form.formState.isSubmitting}
 											/>
 										</FormControl>
 										<FormLabel className='font-normal m-0'>

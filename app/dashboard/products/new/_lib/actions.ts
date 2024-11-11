@@ -63,30 +63,27 @@ export async function createProduct(
 			url: image.data?.url!
 		}))
 
-		const { categories: categoryIds, ...textData } = result.data
+		const {
+			categories: categoryIds,
+			price: priceInDollars,
+			...rest
+		} = result.data
 
-		const newProduct = await prisma.product.create({
+		await prisma.product.create({
 			data: {
-				...textData,
+				...rest,
 				images,
 				slug,
-				priceInCents: 460405,
+				priceInCents: priceInDollars * 100,
 				categories: {
 					connect: categoryIds.map(id => ({ id }))
 				}
 			}
 		})
 
-		console.log(newProduct)
-
 		return { success: true, message: 'Product has been created' }
 	} catch (error: any) {
 		console.error('[CREATE_PRODUCT]:', error)
 		return { success: false, message: error.message as string }
 	}
-}
-
-export async function test(formData: FormData) {
-	await new Promise(resolve => setTimeout(resolve, 2000))
-	console.log(formData.get('name'))
 }

@@ -12,9 +12,26 @@ export const productImageSchema = z
 	)
 
 export const newProductSchema = z.object({
-	name: z.string().min(1, 'Name is required'),
-	description: z.string(),
-	categories: z.string().array()
+	name: z.string().trim().min(1, 'Name is required'),
+	description: z
+		.string()
+		.trim()
+		.min(50, 'Too short, make it at least 50 characters')
+		.max(1000, 'Too long. Must be less than 1000 characters'),
+	price: z
+		.number()
+		.min(0.1, 'Price is required')
+		.max(99999, 'Too expensive. Must be cheaper than $99999'),
+	stock: z.number().min(1, 'Must be at least 1 in stock'),
+	discount: z
+		.number()
+		.min(0, 'Discount cannot be negative')
+		.max(100, 'Discount cannot be greater than 100%')
+		.optional()
+		.default(0),
+	categories: z.string().trim().array(),
+	featured: z.boolean().optional().default(false),
+	archived: z.boolean().optional().default(false)
 })
 
 export type NewProductSchema = z.infer<typeof newProductSchema>
