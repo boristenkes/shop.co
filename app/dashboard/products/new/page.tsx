@@ -6,10 +6,10 @@ import {
 	CardTitle
 } from '@/components/ui/card'
 import { BackButton } from '@/components/utils/back-button'
-import { auth } from '@/lib/auth'
+import { getCategories } from '@/features/category/lib/actions'
+import { isAdmin } from '@/lib/auth'
 import { ChevronLeftIcon } from 'lucide-react'
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import NewProductForm from './_components/new-product-form'
 
 export const metadata: Metadata = {
@@ -17,9 +17,11 @@ export const metadata: Metadata = {
 }
 
 export default async function NewProductPage() {
-	const session = await auth()
+	const isAuthorized = await isAdmin()
 
-	if (!session) redirect('/')
+	// if (!isAuthorized) redirect('/')
+
+	const categories = await getCategories()
 
 	return (
 		<main className='container py-16'>
@@ -47,7 +49,7 @@ export default async function NewProductPage() {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<NewProductForm />
+					<NewProductForm categories={categories} />
 				</CardContent>
 			</Card>
 		</main>

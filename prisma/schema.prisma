@@ -34,12 +34,11 @@ type Image {
 }
 
 model User {
-  id    String   @id @default(auto()) @map("_id") @db.ObjectId
-  name  String?
-  email String?  @unique
-  image String?
-  role  UserRole @default(customer)
-
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  email     String?  @unique
+  image     String?
+  role      UserRole @default(customer)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reviews   Review[]
@@ -48,10 +47,10 @@ model User {
 }
 
 model Category {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  product   Product? @relation(fields: [productId], references: [id])
-  productId String?  @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  products   Product[] @relation(fields: [productIds], references: [id])
+  productIds String[]  @db.ObjectId
 
   @@map("categories")
 }
@@ -78,7 +77,8 @@ model Product {
   archived     Boolean       @default(false)
   discount     Int           @default(0)
   sizes        ProductSize[]
-  categories   Category[]
+  categories   Category[]    @relation(fields: [categoryIds], references: [id])
+  categoryIds  String[]      @db.ObjectId
   orderItems   OrderItem[]
   colors       Color[]
   images       Image[]
@@ -106,7 +106,7 @@ model OrderItem {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   quantity Int    @default(1)
 
-  product   Product     @relation(fields: [productId], references: [id])
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String      @db.ObjectId
   color     Color       @relation(fields: [colorId], references: [id])
   colorId   String      @db.ObjectId

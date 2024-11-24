@@ -9,10 +9,7 @@ import UserButton from '@/components/user-button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { dashboardNavLinks } from '@/constants'
 import { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import NavLink from './_components/nav-link'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
 	title: 'Dashboard'

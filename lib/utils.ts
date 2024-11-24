@@ -23,8 +23,8 @@ export function getInitials(name: string) {
 	if (words.length === 1) return name[0].toUpperCase()
 
 	return words
-		.map(word => word[0].toUpperCase())
 		.slice(0, 2)
+		.map(word => word[0].toUpperCase())
 		.join('')
 }
 
@@ -48,10 +48,12 @@ export function formatPrice(
 	return new Intl.NumberFormat('en-US', {
 		style: 'currency',
 		currency: options.currency ?? 'USD',
-		notation: options.notation ?? 'compact',
+		notation: options.notation ?? 'standard',
 		...options
 	}).format(Number(price))
 }
+
+export const toCents = (usd: number) => Math.round(usd * 100)
 
 export const absoluteUrl = (path: string) =>
 	new URL(path, process.env.NEXT_PUBLIC_APP_URL).href

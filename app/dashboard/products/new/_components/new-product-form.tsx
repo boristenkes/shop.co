@@ -15,16 +15,23 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Categories } from '@/features/category/components/categories'
+import { createProduct } from '@/features/product/actions'
+import {
+	type NewProductSchema,
+	newProductSchema
+} from '@/features/product/validations'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Category } from '@prisma/client'
 import { Loader2Icon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { createProduct } from '../_lib/actions'
-import { type NewProductSchema, newProductSchema } from '../_lib/validations'
 
-export default function NewProductForm() {
+export default function NewProductForm({
+	categories
+}: {
+	categories: Category[]
+}) {
 	const [fileStates, setFileStates] = useState<FileState[]>([])
 	const form = useForm({
 		resolver: zodResolver(newProductSchema),
@@ -210,7 +217,61 @@ export default function NewProductForm() {
 					/>
 				</div>
 
-				<Categories form={form} />
+				{categories ? (
+					<FormField
+						control={form.control}
+						name='categories'
+						render={() => (
+							<FormItem>
+								<div className='mb-4'>
+									<FormLabel>Categories</FormLabel>
+									<FormDescription>
+										Select categories for this product.
+									</FormDescription>
+								</div>
+								{categories.map(item => (
+									<FormField
+										key={item.id}
+										control={form.control}
+										name='categories'
+										render={({ field }) => (
+											<FormItem
+												key={item.id}
+												className='flex flex-row items-center gap-2'
+											>
+												<FormControl>
+													<Checkbox
+														{...field}
+														// TODO: Check why is field.value `never`
+														checked={(field.value as string[])?.includes(
+															item.id
+														)}
+														onCheckedChange={checked => {
+															return checked
+																? field.onChange([...field.value, item.id])
+																: field.onChange(
+																		field.value?.filter(
+																			(value: string) => value !== item.id
+																		)
+																  )
+														}}
+														disabled={form.formState.isSubmitting}
+													/>
+												</FormControl>
+												<FormLabel className='font-normal m-0'>
+													{item.name}
+												</FormLabel>
+											</FormItem>
+										)}
+									/>
+								))}
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				) : (
+					<ErrorMessage message='Categories unavailable right now. Please try again later.' />
+				)}
 
 				<div className='flex items-center gap-4 flex-wrap'>
 					<FormField
