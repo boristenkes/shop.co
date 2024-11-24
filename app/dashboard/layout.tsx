@@ -8,16 +8,22 @@ import UserButton from '@/components/user-button'
 
 import { ThemeToggle } from '@/components/theme-toggle'
 import { dashboardNavLinks } from '@/constants'
+import { isAdmin } from '@/lib/auth'
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import NavLink from './_components/nav-link'
 
 export const metadata: Metadata = {
 	title: 'Dashboard'
 }
 
-export default function AdminLayout({
+export default async function AdminLayout({
 	children
 }: Readonly<{ children: React.ReactNode }>) {
+	const isAuthorized = await isAdmin()
+
+	if (!isAuthorized) notFound()
+
 	return (
 		<div className='bg-muted/10 flex min-h-screen w-full flex-col'>
 			<header className='sticky top-0 flex h-16 items-center justify-between w-full bg-red-500 gap-4 border-b px-4 md:px-6 bg-white/80 dark:bg-black/80 backdrop-blur-sm shadow-sm'>

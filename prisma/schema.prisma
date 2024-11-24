@@ -13,12 +13,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
+enum Role {
   customer
   admin
 }
 
-enum ProductSize {
+enum Size {
   XS
   S
   M
@@ -34,14 +34,19 @@ type Image {
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String?
-  email     String?  @unique
-  image     String?
-  role      UserRole @default(customer)
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role            @default(customer)
+  accounts      Account[]
+  sessions      Session[]
+  Authenticator Authenticator[]
+  reviews       Review[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  reviews   Review[]
 
   @@map("users")
 }
@@ -67,25 +72,25 @@ model Color {
 }
 
 model Product {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
   name         String
-  slug         String        @unique
+  slug         String      @unique
   priceInCents Int
   description  String?
-  stock        Int           @default(1)
-  featured     Boolean       @default(false)
-  archived     Boolean       @default(false)
-  discount     Int           @default(0)
-  sizes        ProductSize[]
-  categories   Category[]    @relation(fields: [categoryIds], references: [id])
-  categoryIds  String[]      @db.ObjectId
+  stock        Int         @default(1)
+  featured     Boolean     @default(false)
+  archived     Boolean     @default(false)
+  discount     Int         @default(0)
+  sizes        Size[]
+  categories   Category[]  @relation(fields: [categoryIds], references: [id])
+  categoryIds  String[]    @db.ObjectId
   orderItems   OrderItem[]
   colors       Color[]
   images       Image[]
+  reviews      Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  reviews   Review[]
 
   @@map("products")
 }
@@ -106,13 +111,13 @@ model OrderItem {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   quantity Int    @default(1)
 
-  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String      @db.ObjectId
-  color     Color       @relation(fields: [colorId], references: [id])
-  colorId   String      @db.ObjectId
-  order     Order?      @relation(fields: [orderId], references: [id])
-  orderId   String?     @db.ObjectId
-  size      ProductSize
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String  @db.ObjectId
+  color     Color   @relation(fields: [colorId], references: [id])
+  colorId   String  @db.ObjectId
+  order     Order?  @relation(fields: [orderId], references: [id])
+  orderId   String? @db.ObjectId
+  size      Size
 
   @@map("orderItems")
 }
@@ -131,4 +136,67 @@ model Review {
   updatedAt DateTime @updatedAt
 
   @@map("reviews")
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @map("refreshToken") @db.String
+  access_token      String? @map("accessToken") @db.String
+  expires_at        Int?
+  token_type        String? @map("tokenType")
+  scope             String?
+  id_token          String? @map("idToken") @db.String
+  session_state     String? @map("sessionState")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationTokens")
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @id @map("_id")
+  userId               String  @db.ObjectId
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, credentialID])
+  @@map("authenticators")
 }
