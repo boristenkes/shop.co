@@ -2,12 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { formatDate, formatPrice } from '@/lib/utils'
-import {
-	Category,
-	Product,
-	Image as ProductImage,
-	ProductSize
-} from '@prisma/client'
+import { Category, Product, Image as ProductImage, Size } from '@prisma/client'
 import { ColumnDef } from '@tanstack/react-table'
 import { CheckIcon, XIcon } from 'lucide-react'
 import Image from 'next/image'
@@ -98,7 +93,7 @@ export const columns: ColumnDef<Product>[] = [
 		accessorKey: 'sizes',
 		header: 'Sizes',
 		cell: info => {
-			const sizes = info.getValue() as ProductSize[]
+			const sizes = info.getValue() as Size[]
 
 			if (!sizes.length) return 'No sizes'
 
@@ -158,7 +153,12 @@ export const columns: ColumnDef<Product>[] = [
 		cell: ({ row }) => {
 			const product = row.original
 
-			return <TableActions productId={product.id} />
+			return (
+				<TableActions
+					productId={product.id}
+					productSlug={product.slug}
+				/>
+			)
 		}
 	}
 ]

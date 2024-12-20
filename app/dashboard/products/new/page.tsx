@@ -7,20 +7,15 @@ import {
 } from '@/components/ui/card'
 import { BackButton } from '@/components/utils/back-button'
 import { getCategories } from '@/features/category/lib/actions'
-import { isAdmin } from '@/lib/auth'
 import { ChevronLeftIcon } from 'lucide-react'
 import { Metadata } from 'next'
-import NewProductForm from './_components/new-product-form'
+import ProductForm from '../_components/product-form'
 
 export const metadata: Metadata = {
 	title: 'Create Product'
 }
 
 export default async function NewProductPage() {
-	const isAuthorized = await isAdmin()
-
-	// if (!isAuthorized) redirect('/')
-
 	const categories = await getCategories()
 
 	return (
@@ -49,7 +44,10 @@ export default async function NewProductPage() {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<NewProductForm categories={categories} />
+					<ProductForm
+						categories={categories}
+						isEdit={false}
+					/>
 				</CardContent>
 			</Card>
 		</main>

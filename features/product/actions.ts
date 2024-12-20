@@ -54,6 +54,7 @@ export async function createProduct(
 
 		if (uploadedImages.some(image => image.error)) {
 			console.error(
+				'[CREATE_PRODUCT_UPLOADTHING_ERROR]:',
 				uploadedImages.map(image => image.error?.message).join('. ')
 			)
 			throw new Error('Invalid data')
@@ -120,6 +121,109 @@ export async function getProductsForAdmin({
 	} catch (error: any) {
 		console.error('[GET_PRODUCTS_FOR_ADMIN]:', error)
 		return { success: false, message: error.message }
+	}
+}
+
+export async function getProductById(id: string) {
+	const product = await prisma.product.findUnique({
+		where: { id },
+		include: { categories: true }
+	})
+
+	return product
+}
+
+export async function getProductBySlug(slug: string) {
+	const product = await prisma.product.findUnique({
+		where: { slug },
+		include: { categories: true }
+	})
+
+	return product
+}
+
+export async function updateProduct(
+	id: string,
+	newData: NewProductSchema,
+	formData: FormData,
+	path = `/dashboard/products`
+) {
+	try {
+		if (typeof id !== 'string') throw new Error('Invalid data')
+
+		const result = newProductSchema.safeParse(newData)
+
+		if (!result.success) throw new Error('Invalid data')
+
+		const slug = slugify(result.data.name)
+
+		if (!slug.length) throw new Error('Failed to generate slug')
+
+		const providedImages = formData.getAll('images')
+
+		console.log(providedImages)
+
+		// const oldImages = prisma.product
+		// 	.findUnique({ where: { id }, select: { images: true } })
+		// 	.then(product => product?.images)
+
+		// if (!oldImages) throw new Error('Something went wrong.')
+
+		// const imageValidationsResults = providedImages.map(image =>
+		// 	productImageSchema.safeParse(image)
+		// )
+
+		// if (imageValidationsResults.some(res => !res.success)) {
+		// 	console.error(
+		// 		imageValidationsResults.map(res =>
+		// 			res.error?.flatten().formErrors.join('. ')
+		// 		)
+		// 	)
+		// 	throw new Error('Invalid data')
+		// }
+
+		// const validImages = imageValidationsResults.map(res => res.data) as File[]
+
+		// const uploadedImages = await uploadthingApi.uploadFiles(validImages)
+
+		// if (uploadedImages.some(image => image.error)) {
+		// 	console.error(
+		// 		uploadedImages.map(image => image.error?.message).join('. ')
+		// 	)
+		// 	throw new Error('Invalid data')
+		// }
+
+		// const images = uploadedImages.map(image => ({
+		// 	key: image.data?.key!,
+		// 	url: image.data?.url!
+		// }))
+
+		const {
+			price: priceInDollars,
+			categories: categoryIds,
+			...product
+		} = result.data
+
+		const updatedProduct = await prisma.product.update({
+			where: { id },
+			data: {
+				...product,
+				priceInCents: toCents(priceInDollars),
+				categories: {
+					set: categoryIds.map(id => ({ id }))
+				}
+			}
+		})
+
+		if (!updatedProduct)
+			throw new Error('Something went wrong. Please try again later.')
+
+		revalidatePath(path)
+
+		return { success: true, message: 'Successfully edited product' }
+	} catch (error: any) {
+		console.log('[UPDATE_PRODUCT]:', error)
+		return { success: false, message: error.message as string }
 	}
 }
 

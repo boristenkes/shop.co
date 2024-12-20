@@ -8,6 +8,7 @@ import {
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog'
 import {
@@ -24,7 +25,9 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-export default function TableActions({ productId }: { productId: string }) {
+type Props = { productId: string; productSlug: string }
+
+export default function TableActions({ productId, productSlug }: Props) {
 	const form = useForm()
 	const { isSubmitting } = form.formState
 	const [isOpen, setIsOpen] = useState(false)
@@ -59,7 +62,7 @@ export default function TableActions({ productId }: { productId: string }) {
 				<DropdownMenuContent align='end'>
 					<DropdownMenuLabel>Actions</DropdownMenuLabel>
 					<DropdownMenuItem>
-						<Link href={`/dashboard/products/edit/${productId}`}>
+						<Link href={`/dashboard/products/edit/${productSlug}`}>
 							Edit product
 						</Link>
 					</DropdownMenuItem>
@@ -70,7 +73,9 @@ export default function TableActions({ productId }: { productId: string }) {
 			</DropdownMenu>
 
 			<DialogContent>
-				<DialogHeader>Are you sure?</DialogHeader>
+				<DialogHeader>
+					<DialogTitle>Are you sure?</DialogTitle>
+				</DialogHeader>
 				<DialogDescription>
 					You are about to permamently delete this product. Proceed with
 					caution.

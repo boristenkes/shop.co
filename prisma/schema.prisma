@@ -14,8 +14,8 @@ datasource db {
 }
 
 enum Role {
-  customer
-  admin
+  CUSTOMER @map("customer")
+  ADMIN    @map("admin")
 }
 
 enum Size {
@@ -39,7 +39,7 @@ model User {
   email         String?         @unique
   emailVerified DateTime?
   image         String?
-  role          Role            @default(customer)
+  role          Role            @default(CUSTOMER)
   accounts      Account[]
   sessions      Session[]
   Authenticator Authenticator[]
@@ -99,7 +99,7 @@ model Order {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   user String @db.ObjectId
 
-  orderItems OrderItem[]
+  items OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

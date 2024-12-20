@@ -19,9 +19,8 @@ const variants = {
 }
 
 export type FileState = {
-	file: File
+	file: File | string
 	key: string // used to identify the file in the progress callback
-	progress: 'PENDING' | 'COMPLETE' | 'ERROR' | number
 }
 
 type InputProps = {
@@ -103,8 +102,7 @@ const ImageDropzone = forwardRef<HTMLInputElement, InputProps>(
 				if (acceptedFiles) {
 					const addedFiles = acceptedFiles.map<FileState>(file => ({
 						file,
-						key: Math.random().toString(36).slice(2),
-						progress: 'PENDING'
+						key: Math.random().toString(36).slice(2)
 					}))
 					void onFilesAdded?.(addedFiles)
 					void onChange?.([...(value ?? []), ...addedFiles])
@@ -156,7 +154,7 @@ const ImageDropzone = forwardRef<HTMLInputElement, InputProps>(
 			<div>
 				<div className='grid grid-cols-[repeat(1,1fr)] gap-2 sm:grid-cols-[repeat(2,1fr)] lg:grid-cols-[repeat(3,1fr)] xl:grid-cols-[repeat(4,1fr)]'>
 					{/* Images */}
-					{value?.map(({ file, progress }, index) => (
+					{value?.map(({ file }, index) => (
 						<div
 							key={index}
 							className={cn(variants.image + ' aspect-square', {
@@ -169,14 +167,8 @@ const ImageDropzone = forwardRef<HTMLInputElement, InputProps>(
 								alt={typeof file === 'string' ? file : file.name}
 								fill
 							/>
-							{/* Progress Bar */}
-							{typeof progress === 'number' && (
-								<div className='absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-md bg-black bg-opacity-70'>
-									<CircleProgress progress={progress} />
-								</div>
-							)}
 							{/* Remove Image Icon */}
-							{imageUrls[index] && !disabled && progress === 'PENDING' && (
+							{imageUrls[index] && !disabled && (
 								<div
 									className='group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform'
 									onClick={e => {
@@ -184,7 +176,7 @@ const ImageDropzone = forwardRef<HTMLInputElement, InputProps>(
 										void onChange?.(value.filter((_, i) => i !== index) ?? [])
 									}}
 								>
-									<div className='flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black'>
+									<div className='flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-transform duration-300 hover:scale-110 dark:border-gray-400 dark:bg-black'>
 										<XIcon
 											className='text-gray-500 dark:text-gray-400'
 											width={16}
@@ -240,48 +232,3 @@ const ImageDropzone = forwardRef<HTMLInputElement, InputProps>(
 ImageDropzone.displayName = 'ImageDropzone'
 
 export { ImageDropzone }
-
-function CircleProgress({ progress }: { progress: number }) {
-	const strokeWidth = 10
-	const radius = 50
-	const circumference = 2 * Math.PI * radius
-
-	return (
-		<div className='relative h-16 w-16'>
-			<svg
-				className='absolute top-0 left-0 -rotate-90 transform'
-				width='100%'
-				height='100%'
-				viewBox={`0 0 ${(radius + strokeWidth) * 2} ${
-					(radius + strokeWidth) * 2
-				}`}
-				xmlns='http://www.w3.org/2000/svg'
-			>
-				<circle
-					className='text-gray-400'
-					stroke='currentColor'
-					strokeWidth={strokeWidth}
-					fill='none'
-					cx={radius + strokeWidth}
-					cy={radius + strokeWidth}
-					r={radius}
-				/>
-				<circle
-					className='text-white transition-all duration-300 ease-in-out'
-					stroke='currentColor'
-					strokeWidth={strokeWidth}
-					strokeDasharray={circumference}
-					strokeDashoffset={((100 - progress) / 100) * circumference}
-					strokeLinecap='round'
-					fill='none'
-					cx={radius + strokeWidth}
-					cy={radius + strokeWidth}
-					r={radius}
-				/>
-			</svg>
-			<div className='absolute top-0 left-0 flex h-full w-full items-center justify-center text-xs text-white'>
-				{Math.round(progress)}%
-			</div>
-		</div>
-	)
-}

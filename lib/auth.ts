@@ -15,19 +15,20 @@ declare module 'next-auth' {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	adapter: PrismaAdapter(prisma),
-	providers: [Google]
+	providers: [Google],
+	session: {
+		strategy: 'database'
+	}
 })
 
 export const isAdmin = async () => {
 	const session = await auth()
 
-	const user = session?.user
-
-	return user?.role === Role.admin
+	return session?.user?.role === Role.ADMIN
 }
 
 export const checkAuthorization = async () => {
-	const session = await auth()
+	const isAuthorized = await isAdmin()
 
-	if (session?.user?.role !== Role.admin) throw new Error('Unauthorized')
+	if (!isAuthorized) throw new Error('Unauthorized')
 }

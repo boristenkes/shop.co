@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const productImageSchema = z
+const productImageFile = z
 	.instanceof(File)
 	.refine(
 		file => !file || file.size <= 1024 * 1024 * 4, // 4MB
@@ -10,6 +10,13 @@ export const productImageSchema = z
 		file => file.type.startsWith('image/'),
 		'Invalid file type. Must be image'
 	)
+
+const productOldImage = z.object({
+	url: z.string().trim().url(),
+	key: z.string().trim()
+})
+
+export const productImageSchema = productImageFile.or(productOldImage)
 
 export const newProductSchema = z.object({
 	name: z.string().trim().min(1, 'Name is required'),
