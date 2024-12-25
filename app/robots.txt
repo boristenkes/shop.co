@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Disallow: /dashboard/
+
+Sitemap: https://shopco.vercel.app/sitemap.xml
