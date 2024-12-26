@@ -1,6 +1,7 @@
 import { User } from '@/db/schema/users.schema'
 import { auth, signIn, signOut } from '@/lib/auth'
 import { getInitials } from '@/lib/utils'
+import Link from 'next/link'
 import SubmitButton from './submit-button'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
@@ -12,7 +13,7 @@ import {
 	DropdownMenuTrigger
 } from './ui/dropdown-menu'
 
-export default async function UserButton() {
+export default async function UserButton({ ...props }) {
 	const session = await auth()
 
 	if (!session || !session.user) {
@@ -22,6 +23,7 @@ export default async function UserButton() {
 					'use server'
 					await signIn('google')
 				}}
+				{...props}
 			>
 				<SubmitButton>Sign In</SubmitButton>
 			</form>
@@ -32,7 +34,7 @@ export default async function UserButton() {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>
+			<DropdownMenuTrigger {...props}>
 				<Avatar>
 					<AvatarImage
 						src={currentUser.image!}
@@ -45,7 +47,11 @@ export default async function UserButton() {
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>Profile</DropdownMenuItem>
-				<DropdownMenuItem>Billing</DropdownMenuItem>
+				{['admin', 'moderator'].includes(currentUser.role!) && (
+					<DropdownMenuItem>
+						<Link href='/dashboard'>Dashboard</Link>
+					</DropdownMenuItem>
+				)}
 				<DropdownMenuItem>Team</DropdownMenuItem>
 				<DropdownMenuItem>Subscription</DropdownMenuItem>
 				<DropdownMenuSeparator />

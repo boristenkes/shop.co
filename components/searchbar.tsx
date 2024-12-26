@@ -1,27 +1,54 @@
+'use client'
+
 import { SearchIcon } from 'lucide-react'
-import Form from 'next/form'
-import SubmitButton from './submit-button'
-import SubmitInput from './submit-input'
+import Link from 'next/link'
 
 export default function Searchbar() {
 	return (
-		<Form
-			action='/products'
-			className='relative bg-gray-100 rounded-sm max-w-2xl w-full'
-		>
-			<SubmitButton
-				variant='ghost'
-				aria-label='Search'
-				className='absolute left-0 top-0 h-full px-3'
-			>
-				<SearchIcon />
-			</SubmitButton>
-
-			<SubmitInput
-				name='query'
-				type='search'
-				className='bg-transparent pl-10 inline-block w-full'
-			/>
-		</Form>
+		<Link href='/search'>
+			<SearchIcon />
+		</Link>
 	)
 }
+
+// export default function Searchbar() {
+// 	const [expanded, setExpanded] = useState(false)
+// 	const [searchTerm, setSearchTerm] = useState('')
+// 	const debouncedValue = useDebounce(searchTerm, 250)
+
+// 	useEffect(() => {
+// 		if (debouncedValue) {
+// 			console.log(`Sending request for "${debouncedValue}"...`)
+// 		}
+// 	}, [debouncedValue])
+
+// 	if (!expanded)
+// 		return (
+// 			<button onClick={() => setExpanded(true)}>
+// 				<SearchIcon />
+// 			</button>
+// 		)
+
+// 	return (
+// 		<Form
+// 			action='/products'
+// 			className='absolute inset-0 bg-gray-100 rounded-sm max-w-2xl w-full'
+// 		>
+// 			<SubmitButton
+// 				variant='ghost'
+// 				aria-label='Search'
+// 				className='absolute left-0 top-0 h-full px-3'
+// 			>
+// 				<SearchIcon />
+// 			</SubmitButton>
+
+// 			<SubmitInput
+// 				value={searchTerm}
+// 				onChange={e => setSearchTerm(e.target.value)}
+// 				name='query'
+// 				type='search'
+// 				className='absolute inset-0 z-10 bg-gray-100 pl-10 inline-block w-full'
+// 			/>
+// 		</Form>
+// 	)
+// }

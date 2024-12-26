@@ -41,7 +41,8 @@ export const products = pgTable(
 		createdAt: timestamp().defaultNow(),
 		updatedAt: timestamp()
 			.defaultNow()
-			.$onUpdate(() => new Date())
+			.$onUpdate(() => new Date()),
+		deletedAt: timestamp()
 	},
 	t => [uniqueIndex('product_slug_idx').on(t.slug)]
 )

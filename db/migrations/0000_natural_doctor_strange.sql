@@ -1,5 +1,5 @@
 CREATE TYPE "public"."order_status" AS ENUM('pending', 'shipped', 'delivered', 'canceled');--> statement-breakpoint
-CREATE TYPE "public"."role" AS ENUM('customer', 'admin');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('admin', 'customer', 'moderator', 'anonymous');--> statement-breakpoint
 CREATE TYPE "public"."size" AS ENUM('XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL');--> statement-breakpoint
 CREATE TABLE "accounts" (
 	"user_id" integer NOT NULL,
@@ -124,17 +124,25 @@ CREATE TABLE "products" (
 	"category_id" integer NOT NULL,
 	"user_id" integer NOT NULL,
 	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now()
+	"updated_at" timestamp DEFAULT now(),
+	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "reviews" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"comment" text NOT NULL,
 	"rating" smallint NOT NULL,
+	"approved" boolean DEFAULT false,
 	"user_id" integer NOT NULL,
 	"product_id" integer NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "subscribers" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	CONSTRAINT "subscribers_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -176,4 +184,5 @@ CREATE INDEX "products_to_colors_color_id_index" ON "products_to_colors" USING b
 CREATE INDEX "products_to_colors_product_id_index" ON "products_to_colors" USING btree ("product_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "product_slug_idx" ON "products" USING btree ("slug");--> statement-breakpoint
 CREATE UNIQUE INDEX "reviews_user_id_product_id_index" ON "reviews" USING btree ("user_id","product_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "subscribers_email_index" ON "subscribers" USING btree ("email");--> statement-breakpoint
 CREATE UNIQUE INDEX "users_email_index" ON "users" USING btree ("email");
