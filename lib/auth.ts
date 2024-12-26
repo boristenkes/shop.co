@@ -1,5 +1,3 @@
-// @ts-nocheck DrizzleAdapter doesn't like my schemas
-
 import { db } from '@/db'
 import {
 	accounts,
@@ -7,18 +5,25 @@ import {
 	sessions,
 	verificationTokens
 } from '@/db/schema/auth.schema'
-import { users } from '@/db/schema/users.schema'
+import { User, users } from '@/db/schema/users.schema'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
-import NextAuth from 'next-auth'
+import NextAuth, { DefaultSession } from 'next-auth'
 import Google from 'next-auth/providers/google'
+
+declare module 'next-auth' {
+	interface Session {
+		user: DefaultSession['user'] & User
+	}
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	adapter: DrizzleAdapter(db, {
-		accountsTable: accounts,
-		usersTable: users,
-		authenticatorsTable: authenticators,
-		sessionsTable: sessions,
-		verificationTokensTable: verificationTokens
+		// @ts-expect-error DrizzleAdapter doesn't like my schemas
+		accountsTable: accounts, usersTable: users, authenticatorsTable: authenticators, sessionsTable: sessions, verificationTokensTable: verificationTokens
 	}),
-	providers: [Google]
+	providers: [Google],
+	session: {
+		strategy: 'database'
+	},
+	trustHost: true
 })

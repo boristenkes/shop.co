@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm'
 import {
+	boolean,
 	integer,
 	pgTable,
 	serial,
@@ -17,6 +18,7 @@ export const reviews = pgTable(
 		id: serial().primaryKey(),
 		comment: text().notNull(),
 		rating: smallint().notNull(),
+		approved: boolean().default(false),
 
 		userId: integer()
 			.notNull()

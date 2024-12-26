@@ -2,11 +2,18 @@ import { pgEnum } from 'drizzle-orm/pg-core'
 
 // Role
 
-export const roleEnum = pgEnum('role', ['customer', 'admin'])
+export const roleEnum = pgEnum('role', [
+	'admin',
+	'customer',
+	'moderator',
+	'anonymous'
+])
 
 export const Role = {
 	ADMIN: 'admin',
-	CUSTOMER: 'customer'
+	CUSTOMER: 'customer',
+	MODERATOR: 'moderator',
+	ANONYMOUS: 'anonymous'
 } as const
 
 export type TRole = (typeof Role)[keyof typeof Role]
