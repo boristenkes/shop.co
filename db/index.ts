@@ -9,6 +9,7 @@ import * as productImagesSchema from './schema/product-images.schema'
 import * as productsToColorsSchema from './schema/products-to-colors'
 import * as productsSchema from './schema/products.schema'
 import * as reviewsSchema from './schema/reviews.schema'
+import * as subscribersSchema from './schema/subscribers.schema'
 import * as usersSchema from './schema/users.schema'
 
 const schema = {
@@ -21,6 +22,7 @@ const schema = {
 	...productImagesSchema,
 	...productsToColorsSchema,
 	...productsSchema,
+	...subscribersSchema,
 	...reviewsSchema,
 	...usersSchema
 }

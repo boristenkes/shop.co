@@ -10,6 +10,7 @@ export default function SubmitButton({ children, ...props }: ButtonProps) {
 	return (
 		<Button
 			disabled={pending || props.disabled}
+			type='submit'
 			{...props}
 		>
 			{pending ? <Loader2Icon className='size-4 animate-spin' /> : children}

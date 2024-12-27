@@ -8,7 +8,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 		<TooltipProvider>
 			{/* <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} /> */}
 			{children}
-			<Toaster richColors={true} />
+			<Toaster
+				richColors={true}
+				theme='light'
+			/>
 			<ClientOnly>
 				<NextTopLoader showSpinner={false} />
 			</ClientOnly>

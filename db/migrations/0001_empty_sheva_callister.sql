@@ -1,0 +1,1 @@
+ALTER TABLE "subscribers" ADD COLUMN "subscribed_at" timestamp DEFAULT now();
