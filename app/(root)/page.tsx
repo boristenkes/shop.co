@@ -1,6 +1,6 @@
 import Navbar from '@/components/navbar'
-import Brands from './_components/brands'
-import Hero from './_components/hero'
+import Brands from '../_components/brands'
+import Hero from '../_components/hero'
 
 export default function Home() {
 	return (

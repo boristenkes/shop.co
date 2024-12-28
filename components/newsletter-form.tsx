@@ -66,7 +66,7 @@ export default function NewsletterForm({
 						id='subscriber-email'
 						type='email'
 						placeholder='Enter your email address'
-						className={cn('rounded-full pl-11 h-12 max-w-80 w-full', {
+						className={cn('rounded-full pl-11 h-12 max-w-80 w-full border-2', {
 							'border-zinc-200': !errors.email,
 							'border-red-500': errors.email
 						})}
@@ -74,6 +74,9 @@ export default function NewsletterForm({
 						{...form.register('email')}
 					/>
 				</div>
+				{errors.email && (
+					<p className='text-red-500 -mt-3'>{errors.email.message}</p>
+				)}
 				<SubmitButton
 					type='submit'
 					variant='secondary'
