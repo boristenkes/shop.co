@@ -6,6 +6,11 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+.container {
+	width: min(100% - 2rem, 1300px);
+	margin-inline: auto;
+}
+
 @layer base {
 	:root {
 		--radius: 0.5rem;
