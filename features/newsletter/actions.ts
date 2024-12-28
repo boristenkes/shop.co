@@ -15,7 +15,8 @@ export async function subcribeToNewsletter(email: string) {
 			where: eq(subscribers.email, validatedEmail)
 		})
 
-		if (existingEmail) throw new Error('This email is already subscribed')
+		if (existingEmail)
+			return { success: false, message: 'This email is already subscribed.' }
 
 		const newSubcriber = await db
 			.insert(subscribers)
