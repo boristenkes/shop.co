@@ -22,8 +22,6 @@ export async function subcribeToNewsletter(email: string) {
 			.insert(subscribers)
 			.values({ email: validatedEmail })
 
-		console.log(newSubcriber)
-
 		if (!newSubcriber)
 			throw new Error('Failed to subscribe. Please try again later.')
 

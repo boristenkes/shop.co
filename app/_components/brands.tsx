@@ -4,7 +4,7 @@ import Image from 'next/image'
 export default function Brands() {
 	return (
 		<div className='h-full bg-neutral-950 grow py-11 w-full'>
-			<ul className='container flex h-full items-center justify-center gap-12 flex-wrap'>
+			<ul className='container flex h-full items-center justify-around px-4 gap-12 flex-wrap'>
 				{brands.map(brand => (
 					<li key={brand.name}>
 						<a
