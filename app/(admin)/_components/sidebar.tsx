@@ -5,6 +5,8 @@ import {
 	LogOutIcon,
 	Palette,
 	ShoppingBag,
+	ShoppingBasket,
+	ShoppingCart,
 	Star,
 	Tag,
 	Users
@@ -15,6 +17,8 @@ const navItems = [
 	{ name: 'Dashboard', href: '/dashboard', icon: Home },
 	{ name: 'Users', href: '/dashboard/users', icon: Users },
 	{ name: 'Products', href: '/dashboard/products', icon: ShoppingBag },
+	{ name: 'Orders', href: '/dashboard/orders', icon: ShoppingCart },
+	{ name: 'Carts', href: '/dashboard/carts', icon: ShoppingBasket },
 	{ name: 'Reviews', href: '/dashboard/reviews', icon: Star },
 	{ name: 'Categories', href: '/dashboard/categories', icon: Tag },
 	{ name: 'Colors', href: '/dashboard/colors', icon: Palette }
