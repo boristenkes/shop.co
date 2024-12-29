@@ -5,6 +5,7 @@ import SubmitButton from '@/components/submit-button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
 	Dialog,
 	DialogContent,
@@ -87,125 +88,140 @@ export function UsersTable({ initialPage, initialData }: DataTableProps) {
 	return (
 		<div>
 			<div className='rounded-md border'>
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead>ID</TableHead>
-							<TableHead>Image</TableHead>
-							<TableHead>Name</TableHead>
-							<TableHead>Email</TableHead>
-							<TableHead>Role</TableHead>
-							<TableHead>Created At</TableHead>
-							<TableHead>Actions</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{isLoading ? (
-							<Loader2Icon className='animate-spin' />
-						) : !data.success ? (
-							<ErrorMessage message={data.message} />
-						) : data.users.length === 0 ? (
-							<TableRow>
-								<TableCell className='h-24 text-center'>No results.</TableCell>
-							</TableRow>
-						) : (
-							data.users.map(user => (
-								<TableRow key={user.id}>
-									<TableCell>{user.id}</TableCell>
-									<TableCell>
-										<Avatar>
-											<AvatarImage
-												src={user.image!}
-												alt={user.name!}
-											/>
-											<AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-										</Avatar>
-									</TableCell>
-									<TableCell>{user.name}</TableCell>
-									<TableCell>{user.email}</TableCell>
-									<TableCell>
-										<Badge
-											className='capitalize'
-											variant={getRoleBadgeVariant(user.role!)}
-										>
-											{user.role}
-										</Badge>
-									</TableCell>
-									<TableCell>{formatDate(user.createdAt!)}</TableCell>
-									<TableCell>
-										<Dialog>
-											<DropdownMenu>
-												<DropdownMenuTrigger asChild>
-													<Button
-														variant='ghost'
-														size='icon'
-														className='size-8 rounded-sm'
-													>
-														<span className='sr-only'>Open menu</span>
-														<MoreHorizontal className='size-4' />
-													</Button>
-												</DropdownMenuTrigger>
-												<DropdownMenuContent align='end'>
-													<DropdownMenuLabel>Actions</DropdownMenuLabel>
-													<DropdownMenuItem>Copy payment ID</DropdownMenuItem>
-													<DropdownMenuItem>
-														<Link href={`/dashboard/users/${user.id}`}>
-															View customer
-														</Link>
-													</DropdownMenuItem>
-													<DropdownMenuSeparator />
-													<DropdownMenuItem>
-														<DialogTrigger>Delete user</DialogTrigger>
-													</DropdownMenuItem>
-												</DropdownMenuContent>
-											</DropdownMenu>
-
-											<DialogContent>
-												<DialogTitle>Are you sure?</DialogTitle>
-												<DialogDescription>
-													You are about to permamently remove{' '}
-													<strong>{user.name}</strong>'s data. This cannot be
-													undone. Proceed with caution.
-												</DialogDescription>
-
-												{deleteUserState?.success === false && (
-													<ErrorMessage message={deleteUserState?.message} />
-												)}
-												<DialogFooter>
-													<DialogClose asChild>
-														<Button
-															variant='secondary'
-															disabled={isDeletePending}
-														>
-															Cancel
-														</Button>
-													</DialogClose>
-
-													<form action={deleteUserAction}>
-														<input
-															type='hidden'
-															hidden
-															readOnly
-															name='userId'
-															value={user.id}
-														/>
-														<SubmitButton
-															variant='destructive'
-															pendingText='Deleting'
-															// disabled={isDeletePending}
-														>
-															Delete
-														</SubmitButton>
-													</form>
-												</DialogFooter>
-											</DialogContent>
-										</Dialog>
-									</TableCell>
+				<Card>
+					<CardHeader>
+						<CardTitle>Users</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead>ID</TableHead>
+									<TableHead>Image</TableHead>
+									<TableHead>Name</TableHead>
+									<TableHead>Email</TableHead>
+									<TableHead>Role</TableHead>
+									<TableHead>Created At</TableHead>
+									<TableHead>Actions</TableHead>
 								</TableRow>
-							))
-						)}
-					</TableBody>
-				</Table>
+							</TableHeader>
+							<TableBody>
+								{isLoading ? (
+									<Loader2Icon className='animate-spin' />
+								) : !data.success ? (
+									<ErrorMessage message={data.message} />
+								) : data.users.length === 0 ? (
+									<TableRow>
+										<TableCell className='h-24 text-center'>
+											No results.
+										</TableCell>
+									</TableRow>
+								) : (
+									data.users.map(user => (
+										<TableRow key={user.id}>
+											<TableCell>{user.id}</TableCell>
+											<TableCell>
+												<Avatar>
+													<AvatarImage
+														src={user.image!}
+														alt={user.name!}
+													/>
+													<AvatarFallback>
+														{getInitials(user.name)}
+													</AvatarFallback>
+												</Avatar>
+											</TableCell>
+											<TableCell>{user.name}</TableCell>
+											<TableCell>{user.email}</TableCell>
+											<TableCell>
+												<Badge
+													className='capitalize'
+													variant={getRoleBadgeVariant(user.role!)}
+												>
+													{user.role}
+												</Badge>
+											</TableCell>
+											<TableCell>{formatDate(user.createdAt!)}</TableCell>
+											<TableCell>
+												<Dialog>
+													<DropdownMenu>
+														<DropdownMenuTrigger asChild>
+															<Button
+																variant='ghost'
+																size='icon'
+																className='size-8 rounded-sm'
+															>
+																<span className='sr-only'>Open menu</span>
+																<MoreHorizontal className='size-4' />
+															</Button>
+														</DropdownMenuTrigger>
+														<DropdownMenuContent align='end'>
+															<DropdownMenuLabel>Actions</DropdownMenuLabel>
+															<DropdownMenuItem>
+																Copy payment ID
+															</DropdownMenuItem>
+															<DropdownMenuItem>
+																<Link href={`/dashboard/users/${user.id}`}>
+																	View customer
+																</Link>
+															</DropdownMenuItem>
+															<DropdownMenuSeparator />
+															<DropdownMenuItem>
+																<DialogTrigger>Delete user</DialogTrigger>
+															</DropdownMenuItem>
+														</DropdownMenuContent>
+													</DropdownMenu>
+
+													<DialogContent>
+														<DialogTitle>Are you sure?</DialogTitle>
+														<DialogDescription>
+															You are about to permamently remove{' '}
+															<strong>{user.name}</strong>'s data. This cannot
+															be undone. Proceed with caution.
+														</DialogDescription>
+
+														{deleteUserState?.success === false && (
+															<ErrorMessage
+																message={deleteUserState?.message}
+															/>
+														)}
+														<DialogFooter>
+															<DialogClose asChild>
+																<Button
+																	variant='secondary'
+																	disabled={isDeletePending}
+																>
+																	Cancel
+																</Button>
+															</DialogClose>
+
+															<form action={deleteUserAction}>
+																<input
+																	type='hidden'
+																	hidden
+																	readOnly
+																	name='userId'
+																	value={user.id}
+																/>
+																<SubmitButton
+																	variant='destructive'
+																	pendingText='Deleting'
+																	// disabled={isDeletePending}
+																>
+																	Delete
+																</SubmitButton>
+															</form>
+														</DialogFooter>
+													</DialogContent>
+												</Dialog>
+											</TableCell>
+										</TableRow>
+									))
+								)}
+							</TableBody>
+						</Table>
+					</CardContent>
+				</Card>
 			</div>
 
 			<div className='flex items-center justify-end space-x-2 py-4'>

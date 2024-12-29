@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
 	Table,
 	TableBody,
@@ -23,45 +24,52 @@ export default function ColorsPage() {
 				</h1>
 				<Button>Add Color</Button>
 			</div>
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead>Name</TableHead>
-						<TableHead>Hex Code</TableHead>
-						<TableHead>Preview</TableHead>
-						<TableHead>Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{colors.map(color => (
-						<TableRow key={color.id}>
-							<TableCell>{color.name}</TableCell>
-							<TableCell>{color.hex}</TableCell>
-							<TableCell>
-								<div
-									className='w-8 h-8 rounded'
-									style={{ backgroundColor: color.hex }}
-								></div>
-							</TableCell>
-							<TableCell>
-								<Button
-									variant='outline'
-									size='sm'
-									className='mr-2'
-								>
-									Edit
-								</Button>
-								<Button
-									variant='destructive'
-									size='sm'
-								>
-									Delete
-								</Button>
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+			<Card>
+				<CardHeader>
+					<CardTitle>Colors</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Name</TableHead>
+								<TableHead>Hex Code</TableHead>
+								<TableHead>Preview</TableHead>
+								<TableHead>Actions</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{colors.map(color => (
+								<TableRow key={color.id}>
+									<TableCell>{color.name}</TableCell>
+									<TableCell>{color.hex}</TableCell>
+									<TableCell>
+										<div
+											className='w-8 h-8 rounded'
+											style={{ backgroundColor: color.hex }}
+										></div>
+									</TableCell>
+									<TableCell>
+										<Button
+											variant='outline'
+											size='sm'
+											className='mr-2'
+										>
+											Edit
+										</Button>
+										<Button
+											variant='destructive'
+											size='sm'
+										>
+											Delete
+										</Button>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
 		</div>
 	)
 }

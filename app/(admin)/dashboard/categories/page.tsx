@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
 	Table,
 	TableBody,
@@ -21,38 +22,45 @@ export default async function CategoriesPage() {
 				<h1 className='text-3xl font-bold'>Categories Management</h1>
 				<Button>Add Category</Button>
 			</div>
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead>Name</TableHead>
-						<TableHead>Product Count</TableHead>
-						<TableHead>Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{categories.map(category => (
-						<TableRow key={category.id}>
-							<TableCell>{category.name}</TableCell>
-							<TableCell>{category.productCount}</TableCell>
-							<TableCell>
-								<Button
-									variant='outline'
-									size='sm'
-									className='mr-2'
-								>
-									Edit
-								</Button>
-								<Button
-									variant='destructive'
-									size='sm'
-								>
-									Delete
-								</Button>
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+			<Card>
+				<CardHeader>
+					<CardTitle>Categories</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Name</TableHead>
+								<TableHead>Product Count</TableHead>
+								<TableHead>Actions</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{categories.map(category => (
+								<TableRow key={category.id}>
+									<TableCell>{category.name}</TableCell>
+									<TableCell>{category.productCount}</TableCell>
+									<TableCell>
+										<Button
+											variant='outline'
+											size='sm'
+											className='mr-2'
+										>
+											Edit
+										</Button>
+										<Button
+											variant='destructive'
+											size='sm'
+										>
+											Delete
+										</Button>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
 		</div>
 	)
 }
