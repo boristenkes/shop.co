@@ -1,3 +1,4 @@
+import { Role, TRole } from '@/db/schema/enums'
 import { clsx, type ClassValue } from 'clsx'
 import slugifyOriginal from 'slugify'
 import { twMerge } from 'tailwind-merge'
@@ -17,8 +18,8 @@ export const slugify = (str: string) =>
 		strict: true
 	})
 
-export function getInitials(name: string) {
-	if (!name.length) return name
+export function getInitials(name?: string | null) {
+	if (!name?.length) return ''
 
 	const words = name.split(' ')
 
@@ -68,4 +69,15 @@ export function formatFileSize(size: number) {
 	const formattedSize = parseFloat((size / Math.pow(1024, i)).toFixed(2))
 
 	return `${formattedSize} ${units[i]}`
+}
+
+export function getRoleBadgeVariant(role: TRole) {
+	switch (role) {
+		case Role.ADMIN:
+			return 'destructive'
+		case Role.MODERATOR:
+			return 'default'
+		default:
+			return 'outline'
+	}
 }

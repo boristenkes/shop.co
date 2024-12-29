@@ -1,43 +1,36 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+import { getUsers } from '@/features/user/actions'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
+import { SearchParams } from '@/lib/types'
+import { Loader2Icon } from 'lucide-react'
+import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
+import { UsersTable } from './users-table'
 
-const users = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Customer' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Admin' },
-  { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Customer' },
-]
+export default async function UsersPage(props: {
+	searchParams: Promise<SearchParams>
+}) {
+	const session = await auth()
 
-export default function UsersPage() {
-  return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Users Management</h1>
-        <Button>Add User</Button>
-      </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.role}</TableCell>
-              <TableCell>
-                <Button variant="outline" size="sm" className="mr-2">Edit</Button>
-                <Button variant="destructive" size="sm">Delete</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  )
+	const currentUser = session?.user
+
+	if (!hasPermission(currentUser?.role!, 'users', ['read'])) notFound()
+
+	const searchParams = await props.searchParams
+	const currentPage = Number(searchParams.page ?? '1')
+
+	const response = await getUsers({ page: currentPage })
+
+	return (
+		<div className='space-y-8'>
+			<h1 className='text-3xl font-bold'>Users Management</h1>
+
+			<Suspense fallback={<Loader2Icon className='animate-spin mx-auto' />}>
+				<UsersTable
+					initialPage={currentPage}
+					initialData={response}
+				/>
+			</Suspense>
+		</div>
+	)
 }
-

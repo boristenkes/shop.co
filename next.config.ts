@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
 				protocol: 'https',
 				hostname: 'utfs.io',
 				pathname: '/f/*'
+			},
+			{
+				protocol: 'https',
+				hostname: 'lh3.googleusercontent.com',
+				pathname: '/a/*'
 			}
 		]
 	}
