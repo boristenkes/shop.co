@@ -16,11 +16,11 @@ export const orders = pgTable('orders', {
 	id: serial().primaryKey(),
 	totalPriceInCents: integer().notNull(),
 	status: orderStatusEnum().default('pending'),
+	shippingAddress: text(),
 
 	userId: integer()
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
-	shippingAddress: text(),
 
 	createdAt: timestamp().defaultNow(),
 	updatedAt: timestamp()
@@ -52,7 +52,7 @@ export const orderItems = pgTable('order_items', {
 		.references(() => orders.id, { onDelete: 'cascade' }),
 	colorId: integer()
 		.notNull()
-		.references(() => colors.id, { onDelete: 'cascade' }),
+		.references(() => colors.id, { onDelete: 'restrict' }),
 
 	createdAt: timestamp().defaultNow(),
 	updatedAt: timestamp()

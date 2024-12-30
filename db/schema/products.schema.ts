@@ -31,12 +31,10 @@ export const products = pgTable(
 		featured: boolean().default(false),
 		sizes: sizeEnum().array(),
 
-		categoryId: integer()
-			.notNull()
-			.references(() => categories.id),
-		userId: integer()
-			.notNull()
-			.references(() => users.id, { onDelete: 'cascade' }),
+		categoryId: integer().references(() => categories.id, {
+			onDelete: 'set null'
+		}),
+		userId: integer().references(() => users.id, { onDelete: 'set null' }),
 
 		createdAt: timestamp().defaultNow(),
 		updatedAt: timestamp()

@@ -1,66 +1,44 @@
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow
-} from '@/components/ui/table'
+import ErrorMessage from '@/components/error-message'
+import { getCategories } from '@/features/category/actions'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
+import { SearchParams } from '@/lib/types'
+import { notFound } from 'next/navigation'
+import { CategoriesTable } from './categories-table'
+import { columns } from './columns'
+import NewCategoryButton from './components'
 
-const categories = [
-	{ id: 1, name: 'Clothing', productCount: 50 },
-	{ id: 2, name: 'Footwear', productCount: 30 },
-	{ id: 3, name: 'Accessories', productCount: 20 }
-]
+export default async function CategoriesPage(props: {
+	searchParams: Promise<SearchParams>
+}) {
+	const session = await auth()
+	const currentUser = session?.user
 
-export default async function CategoriesPage() {
+	if (!currentUser || !hasPermission(currentUser.role!, 'categories', ['read']))
+		notFound()
+
+	const searchParams = await props.searchParams
+	const currentPage = Number(searchParams.page || '1')
+
+	const response = await getCategories()
+
 	return (
 		<div className='space-y-8'>
 			<div className='flex justify-between items-center'>
 				<h1 className='text-3xl font-bold'>Categories Management</h1>
-				<Button>Add Category</Button>
+				{hasPermission(currentUser.role!, 'categories', ['create']) && (
+					<NewCategoryButton />
+				)}
 			</div>
-			<Card>
-				<CardHeader>
-					<CardTitle>Categories</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>Name</TableHead>
-								<TableHead>Product Count</TableHead>
-								<TableHead>Actions</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{categories.map(category => (
-								<TableRow key={category.id}>
-									<TableCell>{category.name}</TableCell>
-									<TableCell>{category.productCount}</TableCell>
-									<TableCell>
-										<Button
-											variant='outline'
-											size='sm'
-											className='mr-2'
-										>
-											Edit
-										</Button>
-										<Button
-											variant='destructive'
-											size='sm'
-										>
-											Delete
-										</Button>
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</CardContent>
-			</Card>
+
+			{response.success ? (
+				<CategoriesTable
+					data={response.categories}
+					columns={columns}
+				/>
+			) : (
+				<ErrorMessage message={response.message} />
+			)}
 		</div>
 	)
 }

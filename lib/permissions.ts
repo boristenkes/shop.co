@@ -12,32 +12,47 @@ const permissions: Permissions = {
 		orders: ['read', 'update', 'delete'],
 		carts: ['read', 'delete'],
 		reviews: ['read', 'update', 'delete'],
-		users: ['read', 'update', 'delete']
+		users: ['read', 'update', 'delete'],
+		categories: ['create', 'read', 'update', 'delete'],
+		colors: ['create', 'read', 'update', 'delete']
 	},
 	moderator: {
 		products: ['read', 'update'],
 		orders: ['read', 'update'],
 		carts: ['read', 'update'],
 		reviews: ['read', 'update'],
-		users: ['read']
+		users: ['read'],
+		categories: ['read'],
+		colors: ['read']
 	},
 	customer: {
 		products: ['read'],
 		orders: ['create', 'read:own'],
 		carts: ['create', 'read:own', 'update:own', 'delete:own'],
 		reviews: ['read', 'create', 'delete:own', 'update:own'],
-		users: []
+		users: [],
+		categories: [],
+		colors: []
 	},
 	anonymous: {
 		products: ['read'],
 		orders: [],
 		carts: [],
 		reviews: ['read'],
-		users: []
+		users: [],
+		categories: [],
+		colors: []
 	}
 } as const
 
-type Entity = 'products' | 'orders' | 'carts' | 'reviews' | 'users'
+type Entity =
+	| 'products'
+	| 'orders'
+	| 'carts'
+	| 'reviews'
+	| 'users'
+	| 'categories'
+	| 'colors'
 type Action =
 	| 'create'
 	| 'read'

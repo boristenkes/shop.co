@@ -8,33 +8,24 @@ import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
 export type GetUsersConfig = {
-	page?: number
-	pageSize?: number
 	throwOnError?: boolean
 }
 
 export type GetUsersReturn =
-	| { success: true; hasMore: boolean; users: Omit<User, 'hashedPassword'>[] }
+	| { success: true; users: Omit<User, 'hashedPassword'>[] }
 	| { success: false; message: string }
 
 export async function getUsers({
-	page = 1,
-	pageSize = 10,
 	throwOnError = false
 }: GetUsersConfig = {}): Promise<GetUsersReturn> {
 	try {
 		const session = await auth()
+		const currentUser = session?.user
 
-		const currentUserRole = session?.user?.role ?? 'anonymous'
-
-		if (!hasPermission(currentUserRole, 'users', ['read']))
+		if (!currentUser || !hasPermission(currentUser.role!, 'users', ['read']))
 			throw new Error('Unauthorized')
 
-		const skipAmount = (page - 1) * pageSize
-
 		const results = await db.query.users.findMany({
-			limit: pageSize + 1, // Get extra element to check if we've reached last row or not
-			offset: skipAmount,
 			orderBy: (users, { desc }) => [desc(users.createdAt)],
 			columns: {
 				hashedPassword: false
@@ -43,8 +34,7 @@ export async function getUsers({
 
 		return {
 			success: true,
-			hasMore: results.length > pageSize,
-			users: results.length <= pageSize ? results : results.slice(0, -1)
+			users: results
 		}
 	} catch (error: any) {
 		console.error('[GET_USERS]:', error)
@@ -55,10 +45,15 @@ export async function getUsers({
 	}
 }
 
+export type DeleteUserConfig = {
+	path?: string
+	throwOnError?: boolean
+}
+
 export async function deleteUser(
 	prev: any,
-	formData: FormData,
-	path = '/dashboard/users'
+	formData?: FormData,
+	{ path = '/dashboard/users', throwOnError = false }: DeleteUserConfig = {}
 ) {
 	try {
 		// If user ID is passed as first parameter, use it
@@ -66,7 +61,7 @@ export async function deleteUser(
 		const targetUserId =
 			typeof prev === 'number'
 				? prev
-				: parseInt(formData.get('userId') as string)
+				: parseInt(formData?.get('userId') as string)
 
 		const session = await auth()
 
@@ -93,6 +88,9 @@ export async function deleteUser(
 		return { success: true, userId: targetUserId }
 	} catch (error: any) {
 		console.error('[DELETE_USER]:', error)
+
+		if (throwOnError) throw new Error(error.message)
+
 		return { success: false, message: error.message }
 	}
 }

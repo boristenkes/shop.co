@@ -1,8 +1,19 @@
 'use client'
 
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import ErrorMessage from '@/components/error-message'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogTitle,
+	DialogTrigger
+} from '@/components/ui/dialog'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -12,15 +23,20 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { User } from '@/db/schema/users.schema'
+import { deleteUser } from '@/features/user/actions'
 import { formatDate, getInitials, getRoleBadgeVariant } from '@/lib/utils'
+import { useMutation } from '@tanstack/react-query'
 import { ColumnDef } from '@tanstack/react-table'
-import { CheckIcon, CopyIcon, MoreHorizontal } from 'lucide-react'
+import { Loader2Icon, MoreHorizontal } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 	{
 		accessorKey: 'id',
-		header: 'ID'
+		header: 'ID',
+		cell: ({ row }) => '#' + String(row.original.id).padStart(5, '0')
 	},
 	{
 		accessorKey: 'image',
@@ -46,35 +62,16 @@ export const columns: ColumnDef<User>[] = [
 	},
 	{
 		accessorKey: 'email',
-		header: 'Email',
-		cell: ({ row }) => {
-			const [copied, setCopied] = useState(false)
-
-			const copy = async () => {
-				await navigator.clipboard.writeText(row.original.email ?? '')
-				setCopied(true)
-
-				setTimeout(() => setCopied(false), 2000)
-			}
-
-			return (
-				<div className='flex items-center'>
-					{row.original.email}
-					<Button
-						onClick={copy}
-						size='icon'
-						variant='ghost'
-						aria-label={copied ? 'Copied' : 'Copy' + ' user email'}
-					>
-						{copied ? <CheckIcon /> : <CopyIcon />}
-					</Button>
-				</div>
-			)
-		}
+		header: 'Email'
 	},
 	{
 		accessorKey: 'role',
-		header: 'Role',
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				column={column}
+				title='Role'
+			/>
+		),
 		cell: ({ row }) => (
 			<Badge
 				className='capitalize'
@@ -86,34 +83,89 @@ export const columns: ColumnDef<User>[] = [
 	},
 	{
 		accessorKey: 'createdAt',
-		header: 'Created At',
-		cell: ({ row }) => formatDate(row.original.createdAt ?? '')
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				column={column}
+				title='Created At'
+			/>
+		),
+		cell: ({ row }) => formatDate(row.original.createdAt!)
 	},
 	{
 		id: 'actions',
 		header: 'Actions',
 		cell: ({ row }) => {
-			const payment = row.original
+			const user = row.original
+			const [open, setOpen] = useState(false)
+			const mutation = useMutation({
+				mutationKey: ['delete:users', user.id],
+				mutationFn: () => deleteUser(user.id),
+				onSuccess: () => {
+					toast.success('Deleted successfully')
+					setOpen(false)
+				}
+			})
 
 			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button
-							variant='ghost'
-							className='h-8 w-8 p-0 rounded-sm'
-						>
-							<span className='sr-only'>Open menu</span>
-							<MoreHorizontal className='h-4 w-4' />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align='end'>
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem>Copy user email</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>View customer</DropdownMenuItem>
-						<DropdownMenuItem>View payment details</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				<Dialog
+					open={open}
+					onOpenChange={setOpen}
+				>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button
+								variant='ghost'
+								size='icon'
+								className='size-8 rounded-sm'
+							>
+								<span className='sr-only'>Open menu</span>
+								<MoreHorizontal className='size-4' />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align='end'>
+							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+							<DropdownMenuItem>Copy payment ID</DropdownMenuItem>
+							<DropdownMenuItem>
+								<Link href={`/dashboard/users/${user.id}`}>View customer</Link>
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem>
+								<DialogTrigger>Delete user</DialogTrigger>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+
+					<DialogContent>
+						<DialogTitle>Are you sure?</DialogTitle>
+						<DialogDescription>
+							You are about to permamently remove <strong>{user.name}</strong>
+							&apos;s data. This cannot be undone. Proceed with caution.
+						</DialogDescription>
+
+						{mutation.isError && (
+							<ErrorMessage message={mutation.error.message} />
+						)}
+						<DialogFooter>
+							<DialogClose asChild>
+								<Button
+									variant='secondary'
+									disabled={mutation.isPending}
+								>
+									Cancel
+								</Button>
+							</DialogClose>
+
+							<Button
+								onClick={() => mutation.mutate()}
+								variant='destructive'
+								disabled={mutation.isPending}
+							>
+								{mutation.isPending && <Loader2Icon className='animate-spin' />}
+								{mutation.isPending ? 'Deleting' : 'Delete'}
+							</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			)
 		}
 	}

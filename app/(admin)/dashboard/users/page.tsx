@@ -1,36 +1,38 @@
+import ErrorMessage from '@/components/error-message'
 import { getUsers } from '@/features/user/actions'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { SearchParams } from '@/lib/types'
-import { Loader2Icon } from 'lucide-react'
 import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
+import { columns } from './columns'
 import { UsersTable } from './users-table'
 
 export default async function UsersPage(props: {
 	searchParams: Promise<SearchParams>
 }) {
 	const session = await auth()
-
 	const currentUser = session?.user
 
-	if (!hasPermission(currentUser?.role!, 'users', ['read'])) notFound()
+	if (!currentUser || !hasPermission(currentUser.role!, 'users', ['read']))
+		notFound()
 
 	const searchParams = await props.searchParams
 	const currentPage = Number(searchParams.page ?? '1')
 
-	const response = await getUsers({ page: currentPage })
+	const response = await getUsers()
 
 	return (
 		<div className='space-y-8'>
 			<h1 className='text-3xl font-bold'>Users Management</h1>
 
-			<Suspense fallback={<Loader2Icon className='animate-spin mx-auto' />}>
+			{response.success ? (
 				<UsersTable
-					initialPage={currentPage}
-					initialData={response}
+					data={response.users}
+					columns={columns}
 				/>
-			</Suspense>
+			) : (
+				<ErrorMessage message={response.message} />
+			)}
 		</div>
 	)
 }
