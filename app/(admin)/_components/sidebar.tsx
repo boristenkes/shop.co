@@ -1,3 +1,4 @@
+import NavLink from '@/components/utils/nav-links'
 import { signOut } from '@/lib/auth'
 import {
 	Home,
@@ -34,13 +35,14 @@ export function Sidebar() {
 				<ul className='p-4 space-y-2'>
 					{navItems.map(item => (
 						<li key={item.name}>
-							<Link
+							<NavLink
 								href={item.href}
 								className='flex items-center p-2 text-gray-700 rounded hover:bg-gray-100'
+								activeStyles='bg-gray-100'
 							>
 								<item.icon className='w-5 h-5 mr-3' />
 								{item.name}
-							</Link>
+							</NavLink>
 						</li>
 					))}
 				</ul>
@@ -61,7 +63,7 @@ export function Sidebar() {
 						<form
 							action={async () => {
 								'use server'
-								signOut()
+								await signOut({ redirectTo: '/' })
 							}}
 						>
 							<button className='flex items-center p-2 text-gray-700 w-full rounded hover:bg-gray-100'>
