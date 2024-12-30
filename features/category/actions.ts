@@ -11,7 +11,7 @@ import { revalidatePath } from 'next/cache'
 
 export async function createCategory(
 	prev: any,
-	formData: FormData,
+	formData?: FormData,
 	path = '/dashboard/categories'
 ) {
 	try {
@@ -24,7 +24,8 @@ export async function createCategory(
 		)
 			throw new Error('Unauthorized')
 
-		const name = formData.get('name') as string
+		const name =
+			typeof prev === 'string' ? prev : (formData?.get('name') as string)
 		const slug = slugify(name)
 
 		if (!name?.length || !slug) throw new Error('Invalid data')

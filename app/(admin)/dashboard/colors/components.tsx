@@ -22,7 +22,8 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { createCategory } from '@/features/category/actions'
+import { createColor } from '@/features/color/actions'
+import { newColorSchema } from '@/features/color/zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon } from 'lucide-react'
 import { useState } from 'react'
@@ -30,23 +31,22 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-export const newCategorySchema = z.object({
-	name: z.string().min(1, 'Name is required')
-})
-
-export default function NewCategoryButton() {
+export default function NewColorButton() {
 	const form = useForm({
-		defaultValues: { name: '' },
-		resolver: zodResolver(newCategorySchema)
+		defaultValues: {
+			name: '',
+			hexCode: ''
+		},
+		resolver: zodResolver(newColorSchema)
 	})
 	const { errors, isSubmitting } = form.formState
 	const [open, setOpen] = useState(false)
 
-	const onSubmit = async (data: z.infer<typeof newCategorySchema>) => {
-		const response = await createCategory(data.name)
+	const onSubmit = async (data: z.infer<typeof newColorSchema>) => {
+		const response = await createColor(data)
 
 		if (response.success) {
-			toast.success('Category created successfully')
+			toast.success('Color created successfully')
 			setOpen(false)
 			form.reset()
 		} else {
@@ -86,12 +86,33 @@ export default function NewCategoryButton() {
 									<FormLabel>Name</FormLabel>
 									<FormControl>
 										<Input
-											placeholder='Winter clothes'
+											placeholder='Red'
 											disabled={isSubmitting}
 											{...field}
 										/>
 									</FormControl>
-									<FormDescription>Enter category name here.</FormDescription>
+									<FormDescription>Enter color name here.</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name='hexCode'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Value</FormLabel>
+									<FormControl>
+										<Input
+											placeholder='#FF0000'
+											type='color'
+											className='h-16'
+											disabled={isSubmitting}
+											{...field}
+										/>
+									</FormControl>
+									<FormDescription>Pick your color</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}

@@ -1,13 +1,11 @@
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow
-} from '@/components/ui/table'
+import ErrorMessage from '@/components/error-message'
+import { getColors } from '@/features/color/actions'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
+import { notFound } from 'next/navigation'
+import { ColorsTable } from './colors-table'
+import { columns } from './columns'
+import NewColorButton from './components'
 
 const colors = [
 	{ id: 1, name: 'Red', hex: '#FF0000' },
@@ -15,16 +13,36 @@ const colors = [
 	{ id: 3, name: 'Green', hex: '#00FF00' }
 ]
 
-export default function ColorsPage() {
+export default async function ColorsPage() {
+	const session = await auth()
+	const currentUser = session?.user
+
+	if (!currentUser || !hasPermission(currentUser.role!, 'colors', ['read']))
+		notFound()
+
+	const response = await getColors()
+
 	return (
 		<div className='space-y-8'>
 			<div className='flex justify-between items-center'>
 				<h1 className='text-3xl font-bold flex items-center gap-2'>
 					Colors Management
 				</h1>
-				<Button>Add Color</Button>
+				{hasPermission(currentUser.role!, 'colors', ['create']) && (
+					<NewColorButton />
+				)}
 			</div>
-			<Card>
+
+			{response.success ? (
+				<ColorsTable
+					columns={columns}
+					data={response.colors}
+				/>
+			) : (
+				<ErrorMessage message={response.message} />
+			)}
+
+			{/* <Card>
 				<CardHeader>
 					<CardTitle>Colors</CardTitle>
 				</CardHeader>
@@ -69,7 +87,7 @@ export default function ColorsPage() {
 						</TableBody>
 					</Table>
 				</CardContent>
-			</Card>
+			</Card> */}
 		</div>
 	)
 }
