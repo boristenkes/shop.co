@@ -1,70 +1,53 @@
+import ErrorMessage from '@/components/error-message'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow
-} from '@/components/ui/table'
+import { getProductsForAdmin } from '@/features/product/actions'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
+import { Trash2Icon } from 'lucide-react'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { columns } from './columns'
+import { ProductsTable } from './products-table'
 
-const products = [
-	{ id: 1, name: 'T-Shirt', category: 'Clothing', price: 19.99, stock: 100 },
-	{ id: 2, name: 'Jeans', category: 'Clothing', price: 49.99, stock: 50 },
-	{ id: 3, name: 'Sneakers', category: 'Footwear', price: 79.99, stock: 30 }
-]
+export default async function ProductsPage() {
+	const session = await auth()
+	const currentUser = session?.user
 
-export default function ProductsPage() {
+	if (!currentUser || !hasPermission(currentUser.role!, 'products', ['read']))
+		notFound()
+
+	const response = await getProductsForAdmin()
+
 	return (
-		<div className='space-y-8'>
+		<div className='space-y-8 container'>
 			<div className='flex justify-between items-center'>
 				<h1 className='text-3xl font-bold'>Products Management</h1>
-				<Button>Add Product</Button>
+				<div className='flex items-center gap-2'>
+					<Button
+						asChild
+						variant='outline'
+					>
+						<Link href='/dashboard/products/trash'>
+							<Trash2Icon />
+							Trash
+						</Link>
+					</Button>
+					{hasPermission(currentUser.role!, 'products', ['create']) && (
+						<Button asChild>
+							<Link href='/dashboard/products/new'>Add Product</Link>
+						</Button>
+					)}
+				</div>
 			</div>
-			<Card>
-				<CardHeader>
-					<CardTitle>Products</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>Name</TableHead>
-								<TableHead>Category</TableHead>
-								<TableHead>Price</TableHead>
-								<TableHead>Stock</TableHead>
-								<TableHead>Actions</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{products.map(product => (
-								<TableRow key={product.id}>
-									<TableCell>{product.name}</TableCell>
-									<TableCell>{product.category}</TableCell>
-									<TableCell>${product.price.toFixed(2)}</TableCell>
-									<TableCell>{product.stock}</TableCell>
-									<TableCell>
-										<Button
-											variant='outline'
-											size='sm'
-											className='mr-2'
-										>
-											Edit
-										</Button>
-										<Button
-											variant='destructive'
-											size='sm'
-										>
-											Delete
-										</Button>
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</CardContent>
-			</Card>
+
+			{response.success ? (
+				<ProductsTable
+					data={response.products}
+					columns={columns}
+				/>
+			) : (
+				<ErrorMessage message={response.message!} />
+			)}
 		</div>
 	)
 }

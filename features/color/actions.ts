@@ -36,7 +36,7 @@ export async function createColor(data: NewColor, path = '/dashboard/colors') {
 	}
 }
 
-type GetColorsReturn =
+export type GetColorsReturn =
 	| { success: true; colors: Color[] }
 	| { success: false; message: string }
 

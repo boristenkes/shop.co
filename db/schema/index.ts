@@ -19,7 +19,7 @@ export {
 	orders,
 	ordersRelations
 } from './orders.schema'
-export { productImages } from './product-images.schema'
+export { productImages, productImagesRelations } from './product-images.schema'
 export {
 	productsToColors,
 	productsToColorsRelations

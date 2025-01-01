@@ -36,7 +36,7 @@ const reviews = [
 
 export default function ReviewsPage() {
 	return (
-		<div className='space-y-8'>
+		<div className='space-y-8 container'>
 			<h1 className='text-3xl font-bold'>Reviews Management</h1>
 			<Card>
 				<CardHeader>

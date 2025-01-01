@@ -28,6 +28,11 @@ import { toast } from 'sonner'
 
 export const columns: ColumnDef<Color>[] = [
 	{
+		accessorKey: 'id',
+		header: 'ID',
+		cell: ({ row }) => '#' + String(row.original.id).padStart(5, '0')
+	},
+	{
 		accessorKey: 'name',
 		header: 'Name'
 	},
@@ -42,7 +47,7 @@ export const columns: ColumnDef<Color>[] = [
 		cell: ({ row }) => (
 			<div
 				style={{ backgroundColor: row.original.hexCode }}
-				className='size-8 rounded-sm'
+				className='size-8 rounded-sm border border-neutral-900'
 			/>
 		)
 	},
@@ -81,10 +86,10 @@ export const columns: ColumnDef<Color>[] = [
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
 
 							<DropdownMenuItem>
-								<DialogTrigger>Edit category</DialogTrigger>
+								<DialogTrigger>Edit color</DialogTrigger>
 							</DropdownMenuItem>
 							<DropdownMenuItem>
-								<DialogTrigger>Delete category</DialogTrigger>
+								<DialogTrigger>Delete color</DialogTrigger>
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>

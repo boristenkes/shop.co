@@ -23,7 +23,7 @@ export default async function CategoriesPage(props: {
 	const response = await getCategories()
 
 	return (
-		<div className='space-y-8'>
+		<div className='space-y-8 container'>
 			<div className='flex justify-between items-center'>
 				<h1 className='text-3xl font-bold'>Categories Management</h1>
 				{hasPermission(currentUser.role!, 'categories', ['create']) && (

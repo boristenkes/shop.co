@@ -22,7 +22,7 @@ export default async function UsersPage(props: {
 	const response = await getUsers()
 
 	return (
-		<div className='space-y-8'>
+		<div className='space-y-8 container'>
 			<h1 className='text-3xl font-bold'>Users Management</h1>
 
 			{response.success ? (

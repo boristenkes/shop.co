@@ -14,6 +14,7 @@ import { categories } from './categories.schema'
 import { sizeEnum } from './enums'
 import { orderItems } from './orders.schema'
 import { productImages } from './product-images.schema'
+import { productsToColors } from './products-to-colors'
 import { reviews } from './reviews.schema'
 import { users } from './users.schema'
 
@@ -54,6 +55,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
 		fields: [products.categoryId],
 		references: [categories.id]
 	}),
+	productsToColors: many(productsToColors),
 	orderItems: many(orderItems),
 	images: many(productImages),
 	reviews: many(reviews)

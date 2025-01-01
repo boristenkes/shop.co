@@ -5,7 +5,7 @@ import { subscribers } from '@/db/schema/subscribers.schema'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-const emailSchema = z.string().email()
+const emailSchema = z.string().trim().email()
 
 export async function subcribeToNewsletter(email: string) {
 	try {

@@ -101,8 +101,10 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 				mutationKey: ['delete:users', user.id],
 				mutationFn: () => deleteUser(user.id),
 				onSuccess: () => {
-					toast.success('Deleted successfully')
-					setOpen(false)
+					if (mutation.data?.success) {
+						toast.success('Deleted successfully')
+						setOpen(false)
+					}
 				}
 			})
 
@@ -142,8 +144,8 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 							&apos;s data. This cannot be undone. Proceed with caution.
 						</DialogDescription>
 
-						{mutation.isError && (
-							<ErrorMessage message={mutation.error.message} />
+						{mutation.data?.success === false && (
+							<ErrorMessage message={mutation.data.message} />
 						)}
 						<DialogFooter>
 							<DialogClose asChild>

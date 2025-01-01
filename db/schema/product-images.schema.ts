@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import {
 	integer,
 	pgTable,
@@ -19,6 +20,13 @@ export const productImages = pgTable(
 	},
 	t => [uniqueIndex('product_image_key_idx').on(t.key)]
 )
+
+export const productImagesRelations = relations(productImages, ({ one }) => ({
+	product: one(products, {
+		fields: [productImages.productId],
+		references: [products.id]
+	})
+}))
 
 export type ProductImage = typeof productImages.$inferSelect
 export type NewProductImage = typeof productImages.$inferInsert

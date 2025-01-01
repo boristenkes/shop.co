@@ -1,9 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { auth } from '@/lib/auth'
 import { DollarSign, ShoppingBag, Star, Users } from 'lucide-react'
+import { notFound } from 'next/navigation'
 
-export default function Dashboard() {
+export default async function Dashboard() {
+	const session = await auth()
+	const currentUser = session?.user
+
+	if (!currentUser || !['moderator', 'admin'].includes(currentUser.role!))
+		notFound()
+
 	return (
-		<div className='space-y-8'>
+		<div className='space-y-8 container'>
 			<h1 className='text-3xl font-bold'>Dashboard Overview</h1>
 			<div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
 				<Card>

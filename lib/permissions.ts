@@ -45,7 +45,7 @@ const permissions: Permissions = {
 	}
 } as const
 
-type Entity =
+export type Entity =
 	| 'products'
 	| 'orders'
 	| 'carts'
@@ -53,7 +53,7 @@ type Entity =
 	| 'users'
 	| 'categories'
 	| 'colors'
-type Action =
+export type Action =
 	| 'create'
 	| 'read'
 	| 'update'

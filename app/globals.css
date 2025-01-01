@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-	width: min(100% - 2rem, 1440px);
+	width: min(100% - 2rem, var(--max-width, 1440px));
 	margin-inline: auto;
 }
 

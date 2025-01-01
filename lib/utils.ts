@@ -45,7 +45,7 @@ export function formatDate(
 }
 
 export function formatPrice(
-	price: number | string,
+	priceInCents: number | string,
 	options: Intl.NumberFormatOptions = {}
 ) {
 	return new Intl.NumberFormat('en-US', {
@@ -53,7 +53,7 @@ export function formatPrice(
 		currency: options.currency ?? 'USD',
 		notation: options.notation ?? 'standard',
 		...options
-	}).format(Number(price))
+	}).format(Number(priceInCents) / 100)
 }
 
 export const toCents = (usd: number) => Math.round(usd * 100)
