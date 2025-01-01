@@ -11,7 +11,7 @@ import { User } from '@/db/schema/users.schema'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify, toCents } from '@/lib/utils'
-import { eq } from 'drizzle-orm'
+import { eq, isNotNull } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
@@ -253,11 +253,57 @@ export async function restoreProduct(
 	}
 }
 
+type PurgeSoftDeletedProductsReturn =
+	| { success: true }
+	| { success: false; message: string }
+
+export async function purgeSoftDeletedProducts(
+	path = '/dashboard/products/trash'
+): Promise<PurgeSoftDeletedProductsReturn> {
+	try {
+		await requirePermission('products', ['delete'])
+
+		const softDeletedProducts = await db.query.products.findMany({
+			where: (products, { isNotNull }) => isNotNull(products.deletedAt),
+			columns: { id: true },
+			with: {
+				images: { columns: { key: true } }
+			}
+		})
+
+		const imagesToDelete = softDeletedProducts.flatMap(product =>
+			product.images.map(image => image.key)
+		)
+
+		const deleteImages = uploadthingApi.deleteFiles(imagesToDelete)
+		const removeFromDB = db
+			.delete(products)
+			.where(isNotNull(products.deletedAt))
+
+		await Promise.all([deleteImages, removeFromDB])
+
+		revalidatePath(path)
+
+		return { success: true }
+	} catch (error) {
+		console.error('[PURGE_SOFT_DELETED_PRODUCTS]:', error)
+		return {
+			success: false,
+			message:
+				'Something went wrong while emptying trash bin. Please try again later.'
+		}
+	}
+}
+
+type DeleteProductReturn =
+	| { success: true }
+	| { success: false; message: string }
+
 export async function deleteProduct(
 	prev: any,
 	formData?: FormData,
 	path = '/dashboard/products/trash'
-) {
+): Promise<DeleteProductReturn> {
 	try {
 		await requirePermission('products', ['delete'])
 

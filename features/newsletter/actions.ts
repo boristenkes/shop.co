@@ -28,6 +28,9 @@ export async function subcribeToNewsletter(email: string) {
 		return { success: true, message: 'Subscribed successfully' }
 	} catch (error: any) {
 		console.error('[SUBSCRIBE_NEWSLETTER]:', error)
-		return { success: false, message: error.message }
+		return {
+			success: false,
+			message: 'Failed to subscribe to newsletter. Please try again later.'
+		}
 	}
 }

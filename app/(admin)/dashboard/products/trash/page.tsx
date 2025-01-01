@@ -1,5 +1,4 @@
 import ErrorMessage from '@/components/error-message'
-import { Button } from '@/components/ui/button'
 import { BackButton } from '@/components/utils/back-button'
 import { getDeletedProducts } from '@/features/product/actions'
 import { auth } from '@/lib/auth'
@@ -8,6 +7,7 @@ import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { ProductsTable } from '../products-table'
 import { columns } from './columns'
+import EmptyTrashButton from './empty-trash-button'
 
 export default async function DeletedProductsPage() {
 	const session = await auth()
@@ -32,7 +32,9 @@ export default async function DeletedProductsPage() {
 					<h1 className='text-3xl font-bold'>Trash</h1>
 				</div>
 
-				<Button>Empty</Button>
+				<EmptyTrashButton
+					disabled={!response.success || response.products.length === 0}
+				/>
 			</div>
 
 			{response.success ? (

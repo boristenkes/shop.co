@@ -60,9 +60,11 @@ export const columns: ColumnDef<Category>[] = [
 			const mutation = useMutation({
 				mutationKey: ['admin:categories', category.id],
 				mutationFn: (categoryId: number) => deleteCategory(categoryId),
-				onSuccess: () => {
-					toast.success('Deleted successfully')
-					setOpen(false)
+				onSettled(data) {
+					if (data?.success) {
+						toast.success('Deleted successfully')
+						setOpen(false)
+					}
 				}
 			})
 
@@ -102,8 +104,8 @@ export const columns: ColumnDef<Category>[] = [
 							undone. Proceed with caution.
 						</DialogDescription>
 
-						{mutation.isError && (
-							<ErrorMessage message={mutation.error.message} />
+						{mutation.data?.success === false && (
+							<ErrorMessage message={mutation.data.message} />
 						)}
 
 						<DialogFooter>

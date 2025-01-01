@@ -4,6 +4,7 @@ import { db } from '@/db'
 import { Color, colors, NewColor } from '@/db/schema/colors.schema'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { slugify } from '@/lib/utils'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { newColorSchema } from './zod'
@@ -24,7 +25,7 @@ export async function createColor(data: NewColor, path = '/dashboard/colors') {
 
 		const [newColor] = await db
 			.insert(colors)
-			.values(parsed)
+			.values({ ...parsed, slug: slugify(parsed.name) })
 			.returning({ id: colors.id })
 
 		revalidatePath(path)
@@ -32,7 +33,11 @@ export async function createColor(data: NewColor, path = '/dashboard/colors') {
 		return { success: true, colorId: newColor.id }
 	} catch (error: any) {
 		console.error('[CREATE_COLOR]:', error)
-		return { success: false, message: error.message }
+		return {
+			success: false,
+			message:
+				'Something went wrong while creating color. Please try again later.'
+		}
 	}
 }
 

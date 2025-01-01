@@ -100,8 +100,8 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 			const mutation = useMutation({
 				mutationKey: ['delete:users', user.id],
 				mutationFn: () => deleteUser(user.id),
-				onSuccess: () => {
-					if (mutation.data?.success) {
+				onSettled(data) {
+					if (data?.success) {
 						toast.success('Deleted successfully')
 						setOpen(false)
 					}

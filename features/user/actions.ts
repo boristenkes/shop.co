@@ -39,9 +39,16 @@ export async function getUsers({
 	} catch (error: any) {
 		console.error('[GET_USERS]:', error)
 
-		if (throwOnError) throw new Error(error.message)
+		if (throwOnError)
+			throw new Error(
+				'Something went wrong while trying to later users. Please try again later'
+			)
 
-		return { success: false, message: error.message }
+		return {
+			success: false,
+			message:
+				'Something went wrong while trying to later users. Please try again later'
+		}
 	}
 }
 
@@ -50,11 +57,15 @@ export type DeleteUserConfig = {
 	throwOnError?: boolean
 }
 
+type DeleteUserReturn =
+	| { success: true; userId: number }
+	| { success: false; message: string }
+
 export async function deleteUser(
 	prev: any,
 	formData?: FormData,
 	{ path = '/dashboard/users', throwOnError = false }: DeleteUserConfig = {}
-) {
+): Promise<DeleteUserReturn> {
 	try {
 		// If user ID is passed as first parameter, use it
 		// If `useActionState` is used, get `userId` from `formData`,
@@ -89,8 +100,15 @@ export async function deleteUser(
 	} catch (error: any) {
 		console.error('[DELETE_USER]:', error)
 
-		if (throwOnError) throw new Error(error.message)
+		if (throwOnError)
+			throw new Error(
+				'Something went wrong while deleting user. Please try again later.'
+			)
 
-		return { success: false, message: error.message }
+		return {
+			success: false,
+			message:
+				'Something went wrong while deleting user. Please try again later.'
+		}
 	}
 }

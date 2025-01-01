@@ -52,7 +52,11 @@ export async function createCategory(
 		return { success: true, category: newCategory }
 	} catch (error: any) {
 		console.error('[CREATE_CATEGORY]:', error)
-		return { success: false, message: error.message }
+		return {
+			success: false,
+			message:
+				'Something went wrong while adding category. Please try again later'
+		}
 	}
 }
 
@@ -99,9 +103,16 @@ export async function getCategories({
 	} catch (error: any) {
 		console.error('[GET_CATEGORIES]:', error)
 
-		if (throwOnError) throw new Error(error.message)
+		if (throwOnError)
+			throw new Error(
+				'Something went wrong while getting categories. Please try again later.'
+			)
 
-		return { success: false, message: error.message }
+		return {
+			success: false,
+			message:
+				'Something went wrong while getting categories. Please try again later.'
+		}
 	}
 }
 
@@ -136,7 +147,11 @@ export async function deleteCategory(
 		return { success: true, categoryId }
 	} catch (error: any) {
 		console.error('[DELETE_CATEGORY]:', error)
-		return { success: false, message: error.message }
+		return {
+			success: false,
+			message:
+				'Something went wrong while deleting category. Please try again later'
+		}
 	}
 }
 

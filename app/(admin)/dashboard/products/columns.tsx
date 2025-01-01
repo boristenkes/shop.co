@@ -182,11 +182,11 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 			const product = row.original
 			const [open, setOpen] = useState(false)
 			const mutation = useMutation({
-				mutationKey: ['admin:products', product.id],
+				mutationKey: ['softdelete:products', product.id],
 				mutationFn: (productId: number) => softDeleteProduct(productId),
-				onSuccess: () => {
-					if (mutation.data?.success) {
-						toast.success('Deleted successfully')
+				onSettled(data) {
+					if (data?.success) {
+						toast.success('Moved to trash')
 						setOpen(false)
 					}
 				}
@@ -217,7 +217,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem>
-								<DialogTrigger>Delete product</DialogTrigger>
+								<DialogTrigger>Move to trash</DialogTrigger>
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
@@ -250,7 +250,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 								variant='destructive'
 							>
 								{mutation.isPending && <Loader2Icon className='animate-spin' />}
-								{mutation.isPending ? 'Deleting' : 'Delete'}
+								{mutation.isPending ? 'Moving to trash' : 'Move to trash'}
 							</Button>
 						</DialogFooter>
 					</DialogContent>
