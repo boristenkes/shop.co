@@ -1,7 +1,7 @@
 'use client'
 
 import ErrorMessage from '@/components/error-message'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import {
 	Dialog,
 	DialogClose,
@@ -26,12 +26,14 @@ import { createColor } from '@/features/color/actions'
 import { newColorSchema } from '@/features/color/zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-export default function NewColorButton() {
+export default function NewColorButton(props: ButtonProps) {
+	const pathname = usePathname()
 	const form = useForm({
 		defaultValues: {
 			name: '',
@@ -43,7 +45,7 @@ export default function NewColorButton() {
 	const [open, setOpen] = useState(false)
 
 	const onSubmit = async (data: z.infer<typeof newColorSchema>) => {
-		const response = await createColor(data)
+		const response = await createColor(data, pathname)
 
 		if (response.success) {
 			toast.success('Color created successfully')
@@ -60,14 +62,14 @@ export default function NewColorButton() {
 			onOpenChange={setOpen}
 		>
 			<DialogTrigger asChild>
-				<Button>Add Category</Button>
+				<Button {...props} />
 			</DialogTrigger>
 
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Add new category</DialogTitle>
+					<DialogTitle>Add new color</DialogTitle>
 					<DialogDescription>
-						Enter category name below. Click save when you&apos;re done.
+						Enter color name below. Click save when you&apos;re done.
 					</DialogDescription>
 				</DialogHeader>
 
@@ -75,7 +77,7 @@ export default function NewColorButton() {
 
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(onSubmit)}
+						// onSubmit={form.handleSubmit(onSubmit)}
 						className='space-y-2'
 					>
 						<FormField
@@ -129,7 +131,10 @@ export default function NewColorButton() {
 								</Button>
 							</DialogClose>
 
-							<Button disabled={isSubmitting}>
+							<Button
+								onClick={form.handleSubmit(onSubmit)}
+								disabled={isSubmitting}
+							>
 								{isSubmitting && <Loader2Icon className='animate-spin' />}
 								{isSubmitting ? 'Saving' : 'Save'}
 							</Button>

@@ -32,12 +32,13 @@ import { newProductSchema } from '@/features/product/zod'
 import { useUploadThing } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2Icon } from 'lucide-react'
-import { useRouter } from 'nextjs-toploader/app'
+import { Loader2Icon, PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import NewCategoryButton from '../../categories/components'
+import NewColorButton from '../../colors/components'
 
 export function NewProductForm({
 	getCategoriesResponse,
@@ -46,6 +47,7 @@ export function NewProductForm({
 	getCategoriesResponse: GetCategoriesReturn
 	getColorsResponse: GetColorsReturn
 }) {
+	const [isCategoryOpen, setIsCategoryOpen] = useState(false)
 	const form = useForm({
 		resolver: zodResolver(newProductSchema),
 		defaultValues: {
@@ -63,7 +65,6 @@ export function NewProductForm({
 	})
 	const [files, setFiles] = useState<(File | string)[]>([])
 	const { isUploading, startUpload } = useUploadThing('imageUploader')
-	const router = useRouter()
 
 	const { errors, isSubmitting } = form.formState
 
@@ -84,7 +85,6 @@ export function NewProductForm({
 				toast.success('Product created successfully')
 				form.reset()
 				setFiles([])
-				router.push('/dashboard/products')
 			} else {
 				form.setError('root', { message: response.message })
 			}
@@ -268,6 +268,13 @@ export function NewProductForm({
 													{color.name}
 												</Button>
 											))}
+										<NewColorButton
+											type='button'
+											disabled={isSubmitting || !getColorsResponse.success}
+											variant='outline'
+										>
+											<PlusIcon /> Add new
+										</NewColorButton>
 									</div>
 								</FormControl>
 								<FormMessage />
@@ -287,6 +294,8 @@ export function NewProductForm({
 								<FormLabel>Category</FormLabel>
 								<Select
 									onValueChange={field.onChange}
+									open={isCategoryOpen}
+									onOpenChange={setIsCategoryOpen}
 									disabled={!getCategoriesResponse.success || isSubmitting}
 								>
 									<FormControl>
@@ -304,6 +313,13 @@ export function NewProductForm({
 													{category.name}
 												</SelectItem>
 											))}
+										<NewCategoryButton
+											className='flex items-center justify-start gap-2 text-sm py-1.5 pl-8 pr-2 w-full rounded-sm'
+											variant='ghost'
+										>
+											Add new
+											<PlusIcon className='size-4' />
+										</NewCategoryButton>
 									</SelectContent>
 								</Select>
 								<FormMessage />
@@ -357,18 +373,26 @@ export function NewProductForm({
 						)}
 					/>
 
-					<ImageDropzone
-						value={files}
-						dropzoneOptions={{
-							maxFiles: 10,
-							maxSize: 1024 * 1024 * 4 // 4MB
-						}}
-						onChange={files => setFiles(files)}
-						onFilesAdded={async addedFiles =>
-							setFiles([...files, ...addedFiles])
-						}
-						disabled={isSubmitting}
-					/>
+					<div>
+						<FormLabel htmlFor='image-input'>Upload images</FormLabel>
+						<ImageDropzone
+							id='image-input'
+							value={files}
+							dropzoneOptions={{
+								maxFiles: 10,
+								maxSize: 1024 * 1024 * 4 // 4MB
+							}}
+							onChange={files => setFiles(files)}
+							onFilesAdded={async addedFiles =>
+								setFiles([...files, ...addedFiles])
+							}
+							disabled={isSubmitting}
+						/>
+						<FormDescription>
+							Upload up to 10 images either from computer or by drag and
+							dropping. It is recommended to optimize images before uploading.
+						</FormDescription>
+					</div>
 				</div>
 
 				<Button

@@ -116,11 +116,15 @@ export async function getCategories({
 	}
 }
 
+type DeleteCategoryReturn =
+	| { success: true; categoryId: number }
+	| { success: false; message: string }
+
 export async function deleteCategory(
 	prev: any,
 	formData?: FormData,
 	path = '/dashboard/categories'
-) {
+): Promise<DeleteCategoryReturn> {
 	try {
 		const session = await auth()
 		const currentUser = session?.user
@@ -154,15 +158,3 @@ export async function deleteCategory(
 		}
 	}
 }
-
-async function seedCategories(n: number) {
-	const mockCategories = Array.from({ length: n }, (_, idx) => idx).map(
-		idx => ({ name: `Category-${idx + 1}`, slug: `category-${idx + 1}` })
-	)
-
-	await db.insert(categories).values(mockCategories)
-
-	console.log('done')
-}
-
-// seedCategories(20)

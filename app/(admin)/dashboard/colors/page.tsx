@@ -23,7 +23,7 @@ export default async function ColorsPage() {
 					Colors Management
 				</h1>
 				{hasPermission(currentUser.role!, 'colors', ['create']) && (
-					<NewColorButton />
+					<NewColorButton>Add Color</NewColorButton>
 				)}
 			</div>
 

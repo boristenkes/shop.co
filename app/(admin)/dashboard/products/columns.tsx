@@ -161,14 +161,20 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 	{
 		accessorKey: 'category',
 		header: 'Category',
-		cell: ({ row }) => (
-			<Badge
-				variant='default'
-				className='whitespace-nowrap overflow-hidden'
-			>
-				{row.original.category.name}
-			</Badge>
-		)
+		cell: ({ row }) => {
+			const category = row.original.category
+
+			return category ? (
+				<Badge
+					variant='default'
+					className='whitespace-nowrap overflow-hidden'
+				>
+					{category?.name}
+				</Badge>
+			) : (
+				'No category'
+			)
+		}
 	},
 	{
 		accessorKey: 'createdAt',

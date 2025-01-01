@@ -1,19 +1,23 @@
 'use server'
 
 import { db } from '@/db'
-import { Color, colors, NewColor } from '@/db/schema/colors.schema'
+import { Color, colors } from '@/db/schema/colors.schema'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify } from '@/lib/utils'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 import { newColorSchema } from './zod'
 
 export type CreateColorReturn =
 	| { success: true; colorId: number }
 	| { success: false; message: string }
 
-export async function createColor(data: NewColor, path = '/dashboard/colors') {
+export async function createColor(
+	data: z.infer<typeof newColorSchema>,
+	path = '/dashboard/colors'
+) {
 	try {
 		const session = await auth()
 		const currentUser = session?.user

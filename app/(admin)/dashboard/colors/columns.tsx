@@ -47,7 +47,7 @@ export const columns: ColumnDef<Color>[] = [
 		cell: ({ row }) => (
 			<div
 				style={{ backgroundColor: row.original.hexCode }}
-				className='size-8 rounded-sm border border-neutral-900'
+				className='size-8 rounded-sm'
 			/>
 		)
 	},

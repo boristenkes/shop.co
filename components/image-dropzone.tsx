@@ -25,6 +25,7 @@ type InputProps = {
 	onFilesAdded?: (addedFiles: (File | string)[]) => void | Promise<void>
 	disabled?: boolean
 	dropzoneOptions?: Omit<DropzoneOptions, 'disabled'>
+	id?: string
 }
 
 const ERROR_MESSAGES = {

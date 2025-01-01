@@ -27,7 +27,7 @@ export default async function CategoriesPage(props: {
 			<div className='flex justify-between items-center'>
 				<h1 className='text-3xl font-bold'>Categories Management</h1>
 				{hasPermission(currentUser.role!, 'categories', ['create']) && (
-					<NewCategoryButton />
+					<NewCategoryButton>Add new category</NewCategoryButton>
 				)}
 			</div>
 

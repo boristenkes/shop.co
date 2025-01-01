@@ -1,7 +1,7 @@
 'use client'
 
 import ErrorMessage from '@/components/error-message'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import {
 	Dialog,
 	DialogClose,
@@ -34,7 +34,7 @@ export const newCategorySchema = z.object({
 	name: z.string().trim().min(1, 'Name is required')
 })
 
-export default function NewCategoryButton() {
+export default function NewCategoryButton(props: ButtonProps) {
 	const form = useForm({
 		defaultValues: { name: '' },
 		resolver: zodResolver(newCategorySchema)
@@ -60,7 +60,7 @@ export default function NewCategoryButton() {
 			onOpenChange={setOpen}
 		>
 			<DialogTrigger asChild>
-				<Button>Add Category</Button>
+				<Button {...props} />
 			</DialogTrigger>
 
 			<DialogContent>
@@ -75,7 +75,7 @@ export default function NewCategoryButton() {
 
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(onSubmit)}
+						// onSubmit={form.handleSubmit(onSubmit)}
 						className='space-y-2'
 					>
 						<FormField
@@ -108,7 +108,10 @@ export default function NewCategoryButton() {
 								</Button>
 							</DialogClose>
 
-							<Button disabled={isSubmitting}>
+							<Button
+								onClick={form.handleSubmit(onSubmit)}
+								disabled={isSubmitting}
+							>
 								{isSubmitting && <Loader2Icon className='animate-spin' />}
 								{isSubmitting ? 'Saving' : 'Save'}
 							</Button>
