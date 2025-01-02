@@ -4,7 +4,11 @@ import { db } from '@/db'
 import { products, productsToColors } from '@/db/schema'
 import { Category } from '@/db/schema/categories.schema'
 import { Color } from '@/db/schema/colors.schema'
-import { ProductImage, productImages } from '@/db/schema/product-images.schema'
+import {
+	NewProductImage,
+	ProductImage,
+	productImages
+} from '@/db/schema/product-images.schema'
 import { ProductToColor } from '@/db/schema/products-to-colors'
 import { Product } from '@/db/schema/products.schema'
 import { User } from '@/db/schema/users.schema'
@@ -35,7 +39,7 @@ const uploadthingApi = new UTApi()
 
 export async function createProduct(
 	data: z.infer<typeof newProductSchema>,
-	images: ProductImage[],
+	images: NewProductImage[],
 	path = '/dashboard/products'
 ) {
 	try {
@@ -47,6 +51,8 @@ export async function createProduct(
 			!hasPermission(currentUser.role!, 'products', ['create'])
 		)
 			throw new Error('Unauthorized')
+
+		console.log(images)
 
 		const validatedImages = imagesSchema.parse(images)
 		const validatedData = newProductSchema.parse(data)
@@ -88,7 +94,7 @@ export async function createProduct(
 	} catch (error) {
 		console.error('[CREATE_PRODUCT]:', error)
 
-		await uploadthingApi.deleteFiles(images.map(image => image.key))
+		await uploadthingApi.deleteFiles(images?.map(image => image.key))
 
 		return {
 			success: false,

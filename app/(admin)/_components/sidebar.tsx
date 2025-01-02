@@ -37,7 +37,7 @@ export function Sidebar() {
 						<li key={item.name}>
 							<NavLink
 								href={item.href}
-								className='flex items-center p-2 text-gray-700 rounded hover:bg-gray-100'
+								className='flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 transition-colors'
 								activeStyles='bg-gray-100'
 							>
 								<item.icon className='w-5 h-5 mr-3' />

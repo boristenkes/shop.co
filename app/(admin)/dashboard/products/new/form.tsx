@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Size, TSize } from '@/db/schema/enums'
-import { ProductImage } from '@/db/schema/product-images.schema'
 import { GetCategoriesReturn } from '@/features/category/actions'
 import { GetColorsReturn } from '@/features/color/actions'
 import { createProduct } from '@/features/product/actions'
@@ -74,10 +73,12 @@ export function NewProductForm({
 				files.filter(file => file instanceof File)
 			)
 
-			const images = uploadedImages?.map(image => ({
+			if (!uploadedImages) throw new Error('Invalid images')
+
+			const images = uploadedImages.map(image => ({
 				key: image.key,
 				url: image.url
-			})) as ProductImage[]
+			}))
 
 			const response = await createProduct(data, images)
 
@@ -114,6 +115,7 @@ export function NewProductForm({
 										{...field}
 									/>
 								</FormControl>
+								<FormDescription>Enter product name</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -133,6 +135,9 @@ export function NewProductForm({
 										{...field}
 									/>
 								</FormControl>
+								<FormDescription>
+									Enter product price in US dollars
+								</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -143,7 +148,7 @@ export function NewProductForm({
 						name='discount'
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Discount (%)</FormLabel>
+								<FormLabel>Discount (%) (Optional)</FormLabel>
 								<FormControl>
 									<Input
 										type='number'
@@ -154,6 +159,9 @@ export function NewProductForm({
 										{...field}
 									/>
 								</FormControl>
+								<FormDescription>
+									Enter discount percentage (0-100)
+								</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -172,6 +180,9 @@ export function NewProductForm({
 										{...field}
 									/>
 								</FormControl>
+								<FormDescription>
+									Enter the quantity of this product you have in stock
+								</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -189,6 +200,9 @@ export function NewProductForm({
 										{...field}
 									/>
 								</FormControl>
+								<FormDescription>
+									Enter brief description of the product
+								</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -228,6 +242,9 @@ export function NewProductForm({
 										))}
 									</div>
 								</FormControl>
+								<FormDescription>
+									Select available sizes for this product
+								</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -277,6 +294,9 @@ export function NewProductForm({
 										</NewColorButton>
 									</div>
 								</FormControl>
+								<FormDescription>
+									Enter available colors for this product{' '}
+								</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -322,6 +342,9 @@ export function NewProductForm({
 										</NewCategoryButton>
 									</SelectContent>
 								</Select>
+								<FormDescription>
+									Assign a category to this product
+								</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
