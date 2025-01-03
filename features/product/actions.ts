@@ -256,7 +256,8 @@ export async function getProducts({
 			with: {
 				images: {
 					columns: { url: true },
-					limit: 1
+					limit: 1,
+					orderBy: (images, { asc }) => asc(images.id)
 				}
 			},
 			offset: (page - 1) * pageSize,
@@ -265,7 +266,51 @@ export async function getProducts({
 
 		return { success: true, products: results }
 	} catch (error) {
-		console.error('[GET_LATEST_PRODUCTS]:', error)
+		console.error('[GET_PRODUCTS]:', error)
+		return {
+			success: false,
+			message:
+				'Something went wrong while getting products. Please try again later.'
+		}
+	}
+}
+
+type GetFeaturedProductsProps = GetProductsProps
+
+export async function getFeaturedProducts({
+	page = 1,
+	pageSize = 4,
+	orderBy = 'desc'
+}: GetFeaturedProductsProps = {}): Promise<GetProductsReturn> {
+	try {
+		const results = await db.query.products.findMany({
+			where: (products, { isNull }) =>
+				and(
+					eq(products.featured, true),
+					isNull(products.deletedAt),
+					eq(products.archived, false)
+				),
+			orderBy: (products, { ...conf }) => [conf[orderBy](products.createdAt)],
+			columns: {
+				discount: true,
+				name: true,
+				priceInCents: true,
+				slug: true
+			},
+			with: {
+				images: {
+					columns: { url: true },
+					limit: 1,
+					orderBy: (images, { asc }) => asc(images.id)
+				}
+			},
+			offset: (page - 1) * pageSize,
+			limit: pageSize
+		})
+
+		return { success: true, products: results }
+	} catch (error) {
+		console.error('[GET_FEATURED_PRODUCTS]:', error)
 		return {
 			success: false,
 			message:

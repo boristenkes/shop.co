@@ -16,8 +16,9 @@ export default async function NewArrivals() {
 				New Arrivals
 			</h2>
 
+			<div className='bg-[#f0eeed] object-fill size-full size-64 size-80 aspect-square hidden' />
 			{response.success ? (
-				<div className='flex items-end justify-between gap-4 mt-14 mb-9'>
+				<div className='flex flex-wrap justify-center mx-auto w-fit gap-8 mt-16'>
 					{response.products.map(product => (
 						<ProductCard
 							key={product.slug}

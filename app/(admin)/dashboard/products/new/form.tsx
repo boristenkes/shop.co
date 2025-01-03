@@ -412,10 +412,24 @@ export function NewProductForm({
 							}
 							disabled={isSubmitting}
 						/>
-						<FormDescription>
-							Upload up to 10 images either from computer or by drag and
-							dropping. It is recommended to optimize images before uploading.
+						<FormDescription className='text-pretty'>
+							Upload up to 10 images directly from your computer or by
+							drag-and-dropping. To ensure the best results, optimize your
+							images before uploading:
 						</FormDescription>
+						<ul className='list-disc ml-4 mt-2 text-sm text-zinc-500'>
+							<li>Resize to have the same width and height</li>
+							<li>Use web-friendly foramts like .webp</li>
+							<li>
+								Compress the file size using online tools without losing on
+								quality
+							</li>
+						</ul>
+						{/* Upload up to 10 images either from computer or by drag and
+							dropping. It is recommended to optimize images before uploading.
+							Resize them to be same width and height, use extensions suitable
+							for web such as .webp and use online tools to compress file size
+							without losing on quality */}
 					</div>
 				</div>
 

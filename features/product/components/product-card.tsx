@@ -1,27 +1,28 @@
 import { Rating } from '@/components/rating'
 import { ProductImage } from '@/db/schema/product-images.schema'
 import { type ProductCard } from '@/features/product/types'
-import { calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
+import { calculatePriceWithDiscount, cn, formatPrice } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ComponentProps } from 'react'
 
-export default function ProductCard({
-	product
-}: {
+type ProductCardProps = ComponentProps<'article'> & {
 	product: ProductCard & { images: Pick<ProductImage, 'url'>[] }
-}) {
+}
+
+export default function ProductCard({ product, className }: ProductCardProps) {
 	return (
-		<article className='grid gap-4'>
+		<article className={cn('flex flex-col gap-4', className)}>
 			<Link
 				href={`/products/${product.slug}`}
-				className='inline-block bg-[#f0eeed] size-64 rounded-lg'
+				className='bg-[#f0eeed] size-80 rounded-lg grow p-4'
 			>
 				<Image
 					src={product.images[0].url}
 					alt={product.name}
 					width={250}
 					height={250}
-					className='size-[250px] object-contain'
+					className='object-contain size-full'
 				/>
 			</Link>
 
