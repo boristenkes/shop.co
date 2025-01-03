@@ -32,7 +32,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatInt(productCount.count + 2412)}
+							{formatInt(productCount.count)}
 						</div>
 					</CardContent>
 				</Card>
