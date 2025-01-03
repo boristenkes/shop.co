@@ -69,6 +69,12 @@ export function formatPrice(
 	}).format(Number(priceInCents) / 100)
 }
 
+export function formatInt(int: number) {
+	return new Intl.NumberFormat('en-US', {
+		style: 'decimal'
+	}).format(int)
+}
+
 export const toCents = (usd: number) => Math.round(usd * 100)
 
 export const absoluteUrl = (path: string) =>

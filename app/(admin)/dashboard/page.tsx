@@ -1,5 +1,8 @@
+import ErrorMessage from '@/components/error-message'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { getStatistics } from '@/features/action-utils'
 import { auth } from '@/lib/auth'
+import { formatInt, formatPrice } from '@/lib/utils'
 import { DollarSign, ShoppingBag, Star, Users } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
@@ -9,6 +12,12 @@ export default async function Dashboard() {
 
 	if (!currentUser || !['moderator', 'admin'].includes(currentUser.role!))
 		notFound()
+
+	const response = await getStatistics()
+
+	if (!response.success) return <ErrorMessage message={response.message} />
+
+	const [productCount, userCount, reviewCount, totalRevenue] = response.results
 
 	return (
 		<div className='space-y-8 container'>
@@ -22,7 +31,9 @@ export default async function Dashboard() {
 						<ShoppingBag className='h-4 w-4 text-muted-foreground' />
 					</CardHeader>
 					<CardContent>
-						<div className='text-2xl font-bold'>1,234</div>
+						<div className='text-2xl font-bold'>
+							{formatInt(productCount.count + 2412)}
+						</div>
 					</CardContent>
 				</Card>
 				<Card>
@@ -31,7 +42,9 @@ export default async function Dashboard() {
 						<Users className='h-4 w-4 text-muted-foreground' />
 					</CardHeader>
 					<CardContent>
-						<div className='text-2xl font-bold'>10,543</div>
+						<div className='text-2xl font-bold'>
+							{formatInt(userCount.count)}
+						</div>
 					</CardContent>
 				</Card>
 				<Card>
@@ -40,7 +53,9 @@ export default async function Dashboard() {
 						<Star className='h-4 w-4 text-muted-foreground' />
 					</CardHeader>
 					<CardContent>
-						<div className='text-2xl font-bold'>3,456</div>
+						<div className='text-2xl font-bold'>
+							{formatInt(reviewCount.count)}
+						</div>
 					</CardContent>
 				</Card>
 				<Card>
@@ -49,7 +64,9 @@ export default async function Dashboard() {
 						<DollarSign className='h-4 w-4 text-muted-foreground' />
 					</CardHeader>
 					<CardContent>
-						<div className='text-2xl font-bold'>$54,321</div>
+						<div className='text-2xl font-bold'>
+							{formatPrice(totalRevenue.total ?? 0)}
+						</div>
 					</CardContent>
 				</Card>
 			</div>

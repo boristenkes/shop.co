@@ -425,11 +425,6 @@ export function NewProductForm({
 								quality
 							</li>
 						</ul>
-						{/* Upload up to 10 images either from computer or by drag and
-							dropping. It is recommended to optimize images before uploading.
-							Resize them to be same width and height, use extensions suitable
-							for web such as .webp and use online tools to compress file size
-							without losing on quality */}
 					</div>
 				</div>
 
