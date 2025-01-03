@@ -88,6 +88,7 @@ export function NewProductForm({
 				setFiles([])
 			} else {
 				form.setError('root', { message: response.message })
+				window.scrollTo({ top: 0, behavior: 'smooth' })
 			}
 		} catch (error: any) {
 			form.setError('root', { message: error.message })

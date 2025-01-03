@@ -4,12 +4,12 @@ import NewsletterForm from './newsletter-form'
 
 export default function Footer() {
 	return (
-		<footer className='mt-20 bg-gray-100 pb-12'>
-			<div className='mx-4'>
+		<footer className='mt-40 bg-gray-100 pb-12'>
+			<div className='mx-4 -translate-y-1/2'>
 				<NewsletterForm className='' />
 			</div>
 
-			<div className='container mt-12 px-4 flex flex-wrap justify-between gap-4 border-b-2 border-b-gray-200 pb-12'>
+			<div className='container px-4 flex flex-wrap justify-between gap-4 border-b-2 border-b-gray-200 pb-12'>
 				<div>
 					<Logo />
 					<p className='text-balance text-gray-600 max-w-[30rem] mt-6 mb-9'>

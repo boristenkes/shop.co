@@ -1,7 +1,10 @@
 import { Sidebar } from '../_components/sidebar'
 
 export const metadata = {
-	title: 'Ecommerce Admin Dashboard',
+	title: {
+		default: 'Admin',
+		template: '%s • shop.co'
+	},
 	description: 'Manage your ecommerce store'
 }
 
@@ -11,9 +14,9 @@ export default function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<div className='flex h-screen bg-gray-100'>
+		<div className='flex min-h-screen bg-gray-100'>
 			<Sidebar />
-			<main className='flex-1 overflow-y-auto p-8'>{children}</main>
+			<main className='grow p-8 container'>{children}</main>
 		</div>
 	)
 }

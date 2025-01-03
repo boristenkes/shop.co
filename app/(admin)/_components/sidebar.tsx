@@ -1,5 +1,6 @@
+import Logo from '@/components/icons/logo'
+import LogoutButton from '@/components/utils/logout-button'
 import NavLink from '@/components/utils/nav-links'
-import { signOut } from '@/lib/auth'
 import {
 	Home,
 	HomeIcon,
@@ -27,10 +28,14 @@ const navItems = [
 
 export function Sidebar() {
 	return (
-		<div className='flex flex-col w-64 bg-white border-r'>
-			<div className='flex items-center justify-center h-16 border-b'>
-				<span className='text-2xl font-semibold'>Admin Dashboard</span>
-			</div>
+		<div className='sticky top-0 shrink-0 h-screen flex flex-col w-64 bg-white border-r'>
+			<Link
+				href='/'
+				className='grid place-items-center py-4 border-b'
+			>
+				<Logo width={96} />
+			</Link>
+
 			<nav className='flex-1 overflow-y-auto'>
 				<ul className='p-4 space-y-2'>
 					{navItems.map(item => (
@@ -60,17 +65,12 @@ export function Sidebar() {
 						</Link>
 					</li>
 					<li>
-						<form
-							action={async () => {
-								'use server'
-								await signOut({ redirectTo: '/' })
-							}}
-						>
+						<LogoutButton redirectTo='/'>
 							<button className='flex items-center p-2 text-gray-700 w-full rounded hover:bg-gray-100'>
 								<LogOutIcon className='w-5 h-5 mr-3' />
 								Log out
 							</button>
-						</form>
+						</LogoutButton>
 					</li>
 				</ul>
 			</div>

@@ -44,6 +44,19 @@ export function formatDate(
 	}).format(new Date(date))
 }
 
+export function calculatePriceWithDiscount(
+	priceInCents: number,
+	discountPercentage: number
+): number {
+	if (priceInCents < 0 || discountPercentage < 0 || discountPercentage > 100)
+		return 0
+
+	const discount = (priceInCents * discountPercentage) / 100
+	const discountedPriceInCents = Math.round(priceInCents - discount)
+
+	return discountedPriceInCents
+}
+
 export function formatPrice(
 	priceInCents: number | string,
 	options: Intl.NumberFormatOptions = {}
@@ -61,12 +74,12 @@ export const toCents = (usd: number) => Math.round(usd * 100)
 export const absoluteUrl = (path: string) =>
 	new URL(path, process.env.NEXT_PUBLIC_APP_URL).href
 
-export function formatFileSize(size: number) {
-	if (size === 0) return '0 Bytes'
+export function formatFileSize(sizeInBytes: number) {
+	if (sizeInBytes === 0) return '0 Bytes'
 
 	const units = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-	const i = Math.floor(Math.log(size) / Math.log(1024))
-	const formattedSize = parseFloat((size / Math.pow(1024, i)).toFixed(2))
+	const i = Math.floor(Math.log(sizeInBytes) / Math.log(1024))
+	const formattedSize = parseFloat((sizeInBytes / Math.pow(1024, i)).toFixed(2))
 
 	return `${formattedSize} ${units[i]}`
 }

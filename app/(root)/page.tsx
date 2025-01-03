@@ -1,6 +1,7 @@
 import Navbar from '@/components/navbar'
 import Brands from '../_components/brands'
 import Hero from '../_components/hero'
+import NewArrivals from '../_components/new-arrivals'
 
 export default function Home() {
 	return (
@@ -9,8 +10,8 @@ export default function Home() {
 				<Navbar />
 				<Hero />
 			</div>
-
 			<Brands />
+			<NewArrivals />
 		</>
 	)
 }

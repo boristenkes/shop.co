@@ -40,6 +40,10 @@ const carts = [
 	}
 ]
 
+export const metadata = {
+	title: 'Carts Management'
+}
+
 export default function CartsPage() {
 	return (
 		<div className='space-y-8 container'>

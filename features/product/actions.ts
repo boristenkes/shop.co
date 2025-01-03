@@ -15,11 +15,12 @@ import { User } from '@/db/schema/users.schema'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify, toCents } from '@/lib/utils'
-import { eq, isNotNull } from 'drizzle-orm'
+import { and, eq, isNotNull } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
 import { requirePermission } from '../action-utils'
+import { ProductCard } from './types'
 import { newProductSchema } from './zod'
 
 const imagesSchema = z
@@ -153,6 +154,39 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 	}
 }
 
+type GetProductBySlugReturn =
+	| { success: true; product: Product }
+	| { success: false; message: string }
+
+export async function getProductBySlug(
+	slug: string
+): Promise<GetProductBySlugReturn> {
+	try {
+		const product = await db.query.products.findFirst({
+			where: (products, { isNull }) =>
+				and(
+					eq(products.slug, slug),
+					isNull(products.deletedAt),
+					eq(products.archived, false)
+				),
+			with: {
+				images: {
+					columns: {
+						url: true
+					}
+				}
+			}
+		})
+
+		if (!product) throw new Error('Product not found.')
+
+		return { success: true, product }
+	} catch (error) {
+		console.error('[GET_PRODUCT_BY_SLUG]:', error)
+		return { success: false, message: 'Product not found or it was deleted' }
+	}
+}
+
 export async function getDeletedProducts(): Promise<GetProductsForAdminReturn> {
 	try {
 		await requirePermission('products', ['delete'])
@@ -186,6 +220,56 @@ export async function getDeletedProducts(): Promise<GetProductsForAdminReturn> {
 		return {
 			success: false,
 			message: 'Something went wrong. Please try again later'
+		}
+	}
+}
+
+export type GetProductsReturn =
+	| {
+			success: true
+			products: ProductCard[]
+	  }
+	| { success: false; message: string }
+
+export type GetProductsProps = {
+	orderBy?: 'asc' | 'desc'
+	page?: number
+	pageSize?: number
+}
+
+export async function getProducts({
+	orderBy = 'desc',
+	page = 1,
+	pageSize = 4
+}: GetProductsProps = {}): Promise<GetProductsReturn> {
+	try {
+		const results = await db.query.products.findMany({
+			where: (products, { isNull }) =>
+				and(isNull(products.deletedAt), eq(products.archived, false)),
+			orderBy: (products, { ...conf }) => [conf[orderBy](products.createdAt)],
+			columns: {
+				discount: true,
+				name: true,
+				priceInCents: true,
+				slug: true
+			},
+			with: {
+				images: {
+					columns: { url: true },
+					limit: 1
+				}
+			},
+			offset: (page - 1) * pageSize,
+			limit: pageSize
+		})
+
+		return { success: true, products: results }
+	} catch (error) {
+		console.error('[GET_LATEST_PRODUCTS]:', error)
+		return {
+			success: false,
+			message:
+				'Something went wrong while getting products. Please try again later.'
 		}
 	}
 }

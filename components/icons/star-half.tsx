@@ -1,0 +1,19 @@
+import { ComponentProps } from 'react'
+
+export default function StarHalf(props: ComponentProps<'svg'>) {
+	return (
+		<svg
+			width={10}
+			height={17}
+			viewBox='0 0 10 17'
+			fill='none'
+			xmlns='http://www.w3.org/2000/svg'
+			{...props}
+		>
+			<path
+				d='M3.66099 16.9793L9.09503 13.956V0.255005L6.47582 5.89491L0.302567 6.6431L4.85706 10.8769L3.66099 16.9793Z'
+				fill='#FFC633'
+			/>
+		</svg>
+	)
+}
