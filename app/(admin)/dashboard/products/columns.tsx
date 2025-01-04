@@ -218,7 +218,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
 
 							<DropdownMenuItem>
-								<Link href={`/dashboard/products/${product.slug}`}>
+								<Link href={`/dashboard/products/edit/${product.slug}`}>
 									Edit product
 								</Link>
 							</DropdownMenuItem>

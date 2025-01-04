@@ -15,13 +15,13 @@ import { User } from '@/db/schema/users.schema'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify, toCents } from '@/lib/utils'
-import { and, eq, isNotNull } from 'drizzle-orm'
+import { and, eq, inArray, isNotNull } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
 import { requirePermission } from '../action-utils'
 import { ProductCard } from './types'
-import { newProductSchema } from './zod'
+import { editProductSchema, newProductSchema } from './zod'
 
 const imagesSchema = z
 	.object({
@@ -154,29 +154,33 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 	}
 }
 
-type GetProductBySlugReturn =
-	| { success: true; product: Product }
+export type GetProductBySlugReturnProduct = Product & {
+	productsToColors: (ProductToColor & { color: Color })[]
+	images: ProductImage[]
+}
+
+export type GetProductBySlugReturn =
+	| { success: true; product: GetProductBySlugReturnProduct }
 	| { success: false; message: string }
 
 export async function getProductBySlug(
 	slug: string
 ): Promise<GetProductBySlugReturn> {
 	try {
-		const product = await db.query.products.findFirst({
+		const product = (await db.query.products.findFirst({
 			where: (products, { isNull }) =>
 				and(
 					eq(products.slug, slug),
-					isNull(products.deletedAt),
-					eq(products.archived, false)
+					isNull(products.deletedAt)
+					// eq(products.archived, false)
 				),
 			with: {
-				images: {
-					columns: {
-						url: true
-					}
+				images: true,
+				productsToColors: {
+					with: { color: true }
 				}
 			}
-		})
+		})) as GetProductBySlugReturnProduct
 
 		if (!product) throw new Error('Product not found.')
 
@@ -324,6 +328,121 @@ export async function searchProducts(query: string) {
 
 	// TODO: Implement search feature
 	return db.query.products.findMany()
+}
+
+type UpdateProductReturn =
+	| { success: true; slug: string }
+	| { success: false; message: string }
+
+export async function updateProduct(
+	productId: number,
+	newData: z.infer<typeof editProductSchema>,
+	images?: NewProductImage[]
+): Promise<UpdateProductReturn> {
+	try {
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (
+			!currentUser ||
+			!hasPermission(currentUser.role!, 'products', ['update'])
+		)
+			throw new Error('Unauthorized')
+
+		const validatedData = editProductSchema.parse(newData)
+
+		if (images) {
+			await handleImages(productId, images)
+		}
+
+		const {
+			price: priceInDollars,
+			category: categoryId,
+			colors,
+			...rest
+		} = validatedData
+
+		await db.transaction(async tx => {
+			await tx
+				.delete(productsToColors)
+				.where(eq(productsToColors.productId, productId))
+			await tx.insert(productsToColors).values(
+				colors.map(colorId => ({
+					colorId,
+					productId
+				}))
+			)
+		})
+
+		const slug = slugify(rest.name)
+
+		await db
+			.update(products)
+			.set({
+				...rest,
+				priceInCents: toCents(priceInDollars),
+				slug,
+				categoryId
+			})
+			.where(eq(products.id, productId))
+
+		return { success: true, slug }
+	} catch (error) {
+		console.error('[UPDATE_PRODUCT]:', error)
+		return {
+			success: false,
+			message: 'Something went wrong. Please try again later.'
+		}
+	}
+}
+
+async function handleImages(productId: number, images: NewProductImage[]) {
+	if (images.length === 0) throw new Error('No images provided')
+
+	// Validate images
+	const validatedImages = imagesSchema.parse(images)
+
+	// Fetch current product image keys
+	const existingKeys = await db.query.productImages
+		.findMany({
+			where: eq(productImages.productId, productId),
+			columns: { key: true }
+		})
+		.then(images => images.map(image => image.key))
+
+	// Determine images to delete and add
+	const imagesToDelete = existingKeys.filter(key =>
+		validatedImages.every(image => image.key !== key)
+	)
+	const imagesToAdd = validatedImages.filter(
+		image => !existingKeys.includes(image.key)
+	)
+
+	await db.transaction(async tx => {
+		const res = await db
+			.delete(productImages)
+			.where(
+				and(
+					eq(productImages.productId, productId),
+					inArray(productImages.key, imagesToDelete)
+				)
+			)
+
+		if (res.rowCount !== imagesToDelete.length) {
+			tx.rollback()
+		}
+
+		await uploadthingApi.deleteFiles(imagesToDelete)
+
+		if (imagesToAdd.length > 0) {
+			await db.insert(productImages).values(
+				imagesToAdd.map(image => ({
+					...image,
+					productId
+				}))
+			)
+		}
+	})
 }
 
 type SoftDeleteReturn = { success: true } | { success: false; message: string }

@@ -75,6 +75,10 @@ export function formatInt(int: number) {
 	}).format(int)
 }
 
+export function getUploadthingKey(imageUrl: string): string {
+	return imageUrl.split('/f/').pop() as string
+}
+
 export const toCents = (usd: number) => Math.round(usd * 100)
 
 export const absoluteUrl = (path: string) =>

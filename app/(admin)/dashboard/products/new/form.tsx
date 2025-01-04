@@ -46,7 +46,6 @@ export function NewProductForm({
 	getCategoriesResponse: GetCategoriesReturn
 	getColorsResponse: GetColorsReturn
 }) {
-	const [isCategoryOpen, setIsCategoryOpen] = useState(false)
 	const form = useForm({
 		resolver: zodResolver(newProductSchema),
 		defaultValues: {
@@ -69,6 +68,8 @@ export function NewProductForm({
 
 	const onSubmit = async (data: z.infer<typeof newProductSchema>) => {
 		try {
+			if (!files.length) throw new Error('Please upload at least one image')
+
 			const uploadedImages = await startUpload(
 				files.filter(file => file instanceof File)
 			)
@@ -87,11 +88,11 @@ export function NewProductForm({
 				form.reset()
 				setFiles([])
 			} else {
-				form.setError('root', { message: response.message })
-				window.scrollTo({ top: 0, behavior: 'smooth' })
+				throw new Error(response.message)
 			}
 		} catch (error: any) {
 			form.setError('root', { message: error.message })
+			window.scrollTo({ top: 0, behavior: 'smooth' })
 		}
 	}
 
@@ -315,8 +316,6 @@ export function NewProductForm({
 								<FormLabel>Category</FormLabel>
 								<Select
 									onValueChange={field.onChange}
-									open={isCategoryOpen}
-									onOpenChange={setIsCategoryOpen}
 									disabled={!getCategoriesResponse.success || isSubmitting}
 								>
 									<FormControl>

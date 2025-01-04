@@ -17,7 +17,7 @@ export default async function NewArrivals() {
 			>
 				New Arrivals
 			</h2>
-
+			{/* <div className='bg-[#f0eeed] object-fill size-full size-64 size-80 aspect-square hidden' /> */}
 			{response.success ? (
 				<ProductCardList products={response.products} />
 			) : (
