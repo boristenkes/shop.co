@@ -157,6 +157,7 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 export type GetProductBySlugReturnProduct = Product & {
 	productsToColors: (ProductToColor & { color: Color })[]
 	images: ProductImage[]
+	category: Category
 }
 
 export type GetProductBySlugReturn =
@@ -171,14 +172,15 @@ export async function getProductBySlug(
 			where: (products, { isNull }) =>
 				and(
 					eq(products.slug, slug),
-					isNull(products.deletedAt)
-					// eq(products.archived, false)
+					isNull(products.deletedAt),
+					eq(products.archived, false)
 				),
 			with: {
 				images: true,
 				productsToColors: {
 					with: { color: true }
-				}
+				},
+				category: true
 			}
 		})) as GetProductBySlugReturnProduct
 
@@ -340,14 +342,7 @@ export async function updateProduct(
 	images?: NewProductImage[]
 ): Promise<UpdateProductReturn> {
 	try {
-		const session = await auth()
-		const currentUser = session?.user
-
-		if (
-			!currentUser ||
-			!hasPermission(currentUser.role!, 'products', ['update'])
-		)
-			throw new Error('Unauthorized')
+		await requirePermission('products', ['update'])
 
 		const validatedData = editProductSchema.parse(newData)
 

@@ -1,29 +1,9 @@
-import { getProductBySlug } from '@/features/product/actions'
-import { notFound } from 'next/navigation'
+'use client'
 
-export default async function ProductPage(props: {
-	params: Promise<{ slug: string }>
-}) {
-	const slug = (await props.params)?.slug
+import { useEffect } from 'react'
 
-	if (!slug) notFound()
+export default function ProductPage() {
+	useEffect(() => window.scrollTo({ top: 0 }), [])
 
-	const response = await getProductBySlug(slug)
-
-	if (!response.success) notFound()
-
-	const { product } = response
-
-	return (
-		<div>
-			{product.images.map(image => (
-				<img
-					key={image.url}
-					src={image.url}
-					alt={product.name}
-				/>
-			))}
-			<h1>{product.name}</h1>
-		</div>
-	)
+	return <div>ProductPage</div>
 }

@@ -1,4 +1,3 @@
-import Navbar from '@/components/navbar'
 import { Suspense } from 'react'
 import Brands from '../_components/brands'
 import FeaturedProducts, {
@@ -10,11 +9,7 @@ import NewArrivals, { NewArrivalsSkeleton } from '../_components/new-arrivals'
 export default function Home() {
 	return (
 		<>
-			<div className='min-h-[100dvh] flex flex-col'>
-				<Navbar />
-				<Hero />
-			</div>
-
+			<Hero />
 			<Brands />
 
 			<Suspense fallback={<NewArrivalsSkeleton />}>

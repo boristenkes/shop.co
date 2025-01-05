@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 export default function Hero() {
 	return (
-		<div className='bg-gray-100 grow flex items-end max-xl:flex-col'>
+		<main className='bg-gray-100 grow flex items-end max-xl:flex-col min-h-[calc(100dvh-80px)]'>
 			<header className='container relative flex max-xl:flex-col items-end justify-around gap-8'>
 				<div className='space-y-8 xl:-translate-y-16 px-4 max-xl:mt-16'>
 					<h1
@@ -56,6 +56,6 @@ export default function Hero() {
 					<Star className='absolute top-1/3 left-4 size-16' />
 				</div>
 			</header>
-		</div>
+		</main>
 	)
 }
