@@ -57,6 +57,10 @@ export function calculatePriceWithDiscount(
 	return discountedPriceInCents
 }
 
+export function limitTextLength(text: string, limit: number) {
+	return text.length > limit ? text.slice(0, limit) : text
+}
+
 export function formatPrice(
 	priceInCents: number | string,
 	options: Intl.NumberFormatOptions = {}

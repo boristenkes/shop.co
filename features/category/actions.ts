@@ -185,8 +185,6 @@ export async function deleteCategory(
 			.delete(categories)
 			.where(eq(categories.id, categoryId))
 
-		if (response.rowCount < 1) throw new Error('Failed to delete category')
-
 		revalidatePath(path)
 
 		return { success: true, categoryId }

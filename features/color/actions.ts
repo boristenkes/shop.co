@@ -90,9 +90,6 @@ export async function deleteColor(
 
 		const response = await db.delete(colors).where(eq(colors.id, colorId))
 
-		if (response.rowCount < 1)
-			throw new Error(`Failed to delete color with ID:${colorId}`)
-
 		revalidatePath(path)
 
 		return { success: true, colorId }

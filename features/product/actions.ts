@@ -15,7 +15,7 @@ import { User } from '@/db/schema/users.schema'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify, toCents } from '@/lib/utils'
-import { and, eq, inArray, isNotNull } from 'drizzle-orm'
+import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
@@ -152,6 +152,15 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 				'Something went wrong while trying to get products. Please try again later'
 		}
 	}
+}
+
+export async function getProductSlugs() {
+	const results = await db.query.products.findMany({
+		columns: { slug: true },
+		where: and(isNull(products.deletedAt), eq(products.archived, false))
+	})
+
+	return results.map(product => product.slug)
 }
 
 export type GetProductBySlugReturnProduct = Product & {

@@ -67,7 +67,7 @@ export default function ProductPageForm({
 		else searchParams.delete('size')
 
 		history.replaceState(null, '', `?${searchParams.toString()}`)
-	}, [colorId, size])
+	}, [colorId, size, colors, params])
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()

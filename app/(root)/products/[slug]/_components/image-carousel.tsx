@@ -21,7 +21,7 @@ export default function ImageCarousel({ images }: { images: ProductImage[] }) {
 		>
 			<div className='relative basis-3/4 bg-stone-100'>
 				<CarouselMainContainer className='h-[30rem]'>
-					{images.map(image => (
+					{images.map((image, idx) => (
 						<SliderMainItem
 							key={image.key}
 							className='border border-muted flex items-center justify-center h-full rounded-md'
@@ -32,7 +32,7 @@ export default function ImageCarousel({ images }: { images: ProductImage[] }) {
 								width={384}
 								height={384}
 								className='size-full object-contain'
-								priority
+								priority={idx === 0}
 							/>
 						</SliderMainItem>
 					))}

@@ -91,9 +91,6 @@ export async function deleteUser(
 
 		const response = await db.delete(users).where(eq(users.id, targetUserId))
 
-		if (response.rowCount < 1)
-			throw new Error('Failed to delete user. Please try again later.')
-
 		revalidatePath(path)
 
 		return { success: true, userId: targetUserId }
