@@ -1,45 +1,60 @@
 'use client'
 
+import {
+	Carousel,
+	CarouselMainContainer,
+	CarouselThumbsContainer,
+	SliderMainItem,
+	SliderThumbItem
+} from '@/components/ui/ext/carousel'
 import { ProductImage } from '@/db/schema/product-images.schema'
-import { cn } from '@/lib/utils'
+import useMediaQuery from '@/hooks/use-media-query'
 import Image from 'next/image'
-import { useState } from 'react'
 
 export default function ImageCarousel({ images }: { images: ProductImage[] }) {
-	const [currentIdx, setCurrentIdx] = useState(0)
+	const isMobile = useMediaQuery('(max-width: 1024px)')
 
 	return (
-		<div className='h-full flex gap-2'>
-			<div className='flex flex-col overflow-y-auto h-full gap-1'>
+		<Carousel
+			orientation={isMobile ? 'horizontal' : 'vertical'}
+			className='flex items-center basis-1/2 flex-col lg:flex-row-reverse gap-2'
+		>
+			<div className='relative basis-3/4 bg-stone-100'>
+				<CarouselMainContainer className='h-[30rem]'>
+					{images.map(image => (
+						<SliderMainItem
+							key={image.key}
+							className='border border-muted flex items-center justify-center h-full rounded-md'
+						>
+							<Image
+								src={image.url}
+								alt=''
+								width={384}
+								height={384}
+								className='size-full object-contain'
+								priority
+							/>
+						</SliderMainItem>
+					))}
+				</CarouselMainContainer>
+			</div>
+			<CarouselThumbsContainer className='lg:h-80 basis-1/4 rounded-md'>
 				{images.map((image, idx) => (
-					<button
+					<SliderThumbItem
 						key={image.key}
-						onClick={() => setCurrentIdx(idx)}
-						className={cn(
-							'border-2 border-transparent transition-colors rounded-2xl bg-stone-100',
-							{
-								'border-neutral-900': idx === currentIdx
-							}
-						)}
+						index={idx}
+						className='bg-transparent size-24 aspect-square bg-stone-100 cursor-pointer'
 					>
 						<Image
 							src={image.url}
 							alt=''
-							width={100}
-							height={100}
-							className='object-contain size-28'
+							width={196}
+							height={196}
+							className='object-contain aspect-square size-full'
 						/>
-					</button>
+					</SliderThumbItem>
 				))}
-			</div>
-			<div className='bg-stone-100 rounded-lg w-fit'>
-				<Image
-					src={images[currentIdx].url}
-					alt=''
-					width={396}
-					height={396}
-				/>
-			</div>
-		</div>
+			</CarouselThumbsContainer>
+		</Carousel>
 	)
 }

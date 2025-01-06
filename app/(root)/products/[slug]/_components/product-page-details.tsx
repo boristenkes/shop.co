@@ -1,6 +1,7 @@
 import { Rating } from '@/components/rating'
 import { TSize } from '@/db/schema/enums'
 import { GetProductBySlugReturnProduct } from '@/features/product/actions'
+import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
 import { calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
 import ProductPageForm from './form'
@@ -13,13 +14,16 @@ type ProductPageDataProps = {
 export default async function ProductPageDetails({
 	product
 }: ProductPageDataProps) {
+	const session = await auth()
+	const currentUserId = session?.user.id
+
 	return (
-		<div className='container py-9 flex items-start justify-center gap-10'>
-			<div className='grow shrink-0'>
+		<div className='container py-9 flex items-start justify-center gap-10 flex-col lg:flex-row'>
+			<div className='basis-1/2 shrink-0'>
 				<ImageCarousel images={product.images} />
 			</div>
 
-			<div className='grow space-y-4'>
+			<div className=' space-y-4'>
 				<h1 className={`${integralCf.className} text-4xl font-bold uppercase`}>
 					{product.name}
 				</h1>
@@ -55,6 +59,8 @@ export default async function ProductPageDetails({
 					colors={product.productsToColors.map(({ color }) => color)}
 					sizes={product.sizes as TSize[]}
 					stock={product.stock as number}
+					currentUserId={currentUserId}
+					productId={product.id}
 				/>
 			</div>
 		</div>

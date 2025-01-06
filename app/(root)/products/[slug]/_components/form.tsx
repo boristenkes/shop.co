@@ -1,27 +1,38 @@
 'use client'
 
+import ErrorMessage from '@/components/error-message'
 import NumberInput from '@/components/number-input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { useCart } from '@/context/cart'
 import { Color } from '@/db/schema/colors.schema'
 import { Size, TSize } from '@/db/schema/enums'
+import { NewItemData, saveToCart } from '@/features/cart/actions'
+import { useMutation } from '@tanstack/react-query'
+import { Loader2Icon, ShoppingCartIcon } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 type ProductPageFormProps = {
 	colors: Color[]
 	sizes: TSize[]
 	stock: number
+	currentUserId: number | undefined
+	productId: number
 }
 
 export default function ProductPageForm({
 	colors,
 	sizes,
-	stock
+	stock,
+	currentUserId,
+	productId
 }: ProductPageFormProps) {
 	const params = useSearchParams()
+	const { addToCart } = useCart()
 	const [colorId, setColorId] = useState<number | null>(
 		colors.find(c => c.slug === params.get('color'))?.id ?? null
 	)
@@ -31,10 +42,18 @@ export default function ProductPageForm({
 			: null
 	)
 	const [quantity, setQuantity] = useState(1)
-	const [error, setError] = useState(null)
-	const [loading, setLoading] = useState(false)
+	const mutation = useMutation({
+		mutationKey: ['cart:create'],
+		mutationFn: async (data: NewItemData) => saveToCart(data),
+		onSettled(data) {
+			if (data?.success) {
+				toast.success('Added to cart')
+			}
+		}
+	})
 
 	useEffect(() => {
+		// Persist color and size in URL search params
 		const searchParams = new URLSearchParams(params)
 
 		if (colorId)
@@ -61,13 +80,17 @@ export default function ProductPageForm({
 				.finite()
 				.refine(colorId => colors.some(c => c.id === colorId)), // Must be included in `colors`
 			size: z.nativeEnum(Size).refine(size => sizes.includes(size)), // must be included in `sizes`
-			quantity: z.coerce.number().int().positive().lte(stock)
+			quantity: z.coerce.number().int().positive().lte(Math.min(stock, 20))
 		})
 
 		try {
 			const parsed = productPageFormSchema.parse({ colorId, size, quantity })
 
-			// Add to cart if user is logged in, else store it in localStorage
+			if (currentUserId) {
+				mutation.mutate({ ...parsed, productId })
+			} else {
+				addToCart({ ...parsed, productId }) // Use local cart context
+			}
 		} catch (error) {
 			console.error(error)
 		}
@@ -91,6 +114,7 @@ export default function ProductPageForm({
 								value={color.id.toString()}
 								className='size-8'
 								style={{ backgroundColor: color.hexCode }}
+								disabled={mutation.isPending}
 							/>
 						))}
 					</RadioGroup>
@@ -107,6 +131,7 @@ export default function ProductPageForm({
 								type='button'
 								variant={size === s ? 'default' : 'outline'}
 								onClick={() => setSize(s)}
+								disabled={mutation.isPending}
 							>
 								{s}
 							</Button>
@@ -115,21 +140,32 @@ export default function ProductPageForm({
 				</div>
 			</div>
 
+			{mutation.data && !mutation.data.success && (
+				<ErrorMessage message={mutation.data.message} />
+			)}
+
 			<div className='flex items-center gap-5 mt-6'>
-				<Label className='sr-only'>Quantity (max {stock})</Label>
+				<Label className='sr-only'>Quantity (max {Math.min(stock, 20)})</Label>
 				<NumberInput
 					value={quantity}
 					onChange={setQuantity}
 					min={1}
-					max={stock}
+					max={Math.min(stock, 20)}
 					step={1}
+					disabled={mutation.isPending}
 				/>
 
 				<Button
 					size='lg'
 					className='grow'
+					disabled={mutation.isPending}
 				>
-					Add to cart
+					{mutation.isPending ? (
+						<Loader2Icon className='animate-spin' />
+					) : (
+						<ShoppingCartIcon />
+					)}
+					{mutation.isPending ? 'Adding to cart' : 'Add to cart'}
 				</Button>
 			</div>
 		</form>

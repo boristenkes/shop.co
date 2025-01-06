@@ -1,14 +1,16 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import { MinusIcon, PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 
 export type NumberInputProps = {
-	value?: number
-	onChange?: (value: number) => void
+	value: number
+	onChange: (value: number) => void
 	min?: number
 	max?: number
 	step?: number
+	disabled?: boolean
 }
 
 export default function NumberInput({
@@ -16,7 +18,9 @@ export default function NumberInput({
 	onChange,
 	min = 1,
 	max = 100,
-	step = 1
+	step = 1,
+	disabled,
+	...props
 }: NumberInputProps) {
 	const [inputValue, setInputValue] = useState<number>(value)
 
@@ -45,10 +49,18 @@ export default function NumberInput({
 	}
 
 	return (
-		<div className='flex items-center border rounded-full px-2 py-3 bg-gray-100'>
+		<div
+			className={cn(
+				'flex items-center border rounded-full px-2 py-3 bg-gray-100',
+				{
+					'opacity-50': disabled
+				}
+			)}
+		>
 			<button
 				type='button'
 				onClick={handleDecrement}
+				disabled={disabled}
 				className='px-2 text-lg font-bold text-gray-600 hover:text-gray-900'
 			>
 				<MinusIcon />
@@ -61,10 +73,13 @@ export default function NumberInput({
 				min={min}
 				max={max}
 				step={step}
+				disabled={disabled}
+				{...props}
 			/>
 			<button
 				type='button'
 				onClick={handleIncrement}
+				disabled={disabled}
 				className='px-2 text-lg font-bold text-gray-600 hover:text-gray-900'
 			>
 				<PlusIcon />
