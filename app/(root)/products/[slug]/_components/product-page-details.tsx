@@ -4,6 +4,7 @@ import { GetProductBySlugReturnProduct } from '@/features/product/actions'
 import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
 import { calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
+import Link from 'next/link'
 import ProductPageForm from './form'
 import ImageCarousel from './image-carousel'
 
@@ -24,9 +25,19 @@ export default async function ProductPageDetails({
 			</div>
 
 			<div className=' space-y-4'>
-				<h1 className={`${integralCf.className} text-4xl font-bold uppercase`}>
-					{product.name}
-				</h1>
+				<div>
+					<Link
+						href={`/products?category=${product.category.slug}`}
+						className='hover:opacity-80'
+					>
+						{product.category.name}
+					</Link>
+					<h1
+						className={`${integralCf.className} text-4xl font-bold uppercase`}
+					>
+						{product.name}
+					</h1>
+				</div>
 
 				<Rating rating={9} />
 
