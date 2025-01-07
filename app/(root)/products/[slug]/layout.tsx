@@ -1,4 +1,3 @@
-import ErrorMessage from '@/components/error-message'
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -8,12 +7,15 @@ import {
 	BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
-import { getProductBySlug } from '@/features/product/actions'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { unslugify } from '@/lib/utils'
 import { EditIcon } from 'lucide-react'
 import Link from 'next/link'
-import ProductPageDetails from './_components/product-page-details'
+import { Suspense } from 'react'
+import ProductPageDetails, {
+	ProductPageDetailsSkeleton
+} from './_components/product-page-details'
 
 export default async function ProductLayout({
 	params,
@@ -25,10 +27,6 @@ export default async function ProductLayout({
 	const session = await auth()
 	const currentUser = session?.user
 	const slug = (await params).slug
-
-	const response = await getProductBySlug(slug)
-
-	if (!response.success) return <ErrorMessage message={response.message} />
 
 	return (
 		<div>
@@ -59,7 +57,7 @@ export default async function ProductLayout({
 						<BreadcrumbSeparator />
 						<BreadcrumbItem>
 							<BreadcrumbPage className='text-base'>
-								{response.product.name}
+								{unslugify(slug)}
 							</BreadcrumbPage>
 						</BreadcrumbItem>
 					</BreadcrumbList>
@@ -70,7 +68,7 @@ export default async function ProductLayout({
 						variant='secondary'
 						asChild
 					>
-						<Link href={`/dashboard/products/edit/${response.product.slug}`}>
+						<Link href={`/dashboard/products/edit/${slug}`}>
 							Edit product
 							<EditIcon />
 						</Link>
@@ -78,7 +76,9 @@ export default async function ProductLayout({
 				)}
 			</div>
 
-			<ProductPageDetails product={response.product} />
+			<Suspense fallback={<ProductPageDetailsSkeleton />}>
+				<ProductPageDetails slug={slug} />
+			</Suspense>
 
 			{children}
 		</div>

@@ -18,6 +18,14 @@ export const slugify = (str: string) =>
 		strict: true
 	})
 
+export const unslugify = (str: string) => {
+	const words = str.split('-')
+	const upper = words.map(
+		word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+	)
+	return upper.join(' ')
+}
+
 export const isArray = (a: unknown) => Array.isArray(a)
 
 export function getInitials(name?: string | null) {
