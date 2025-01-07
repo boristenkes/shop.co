@@ -18,7 +18,7 @@ export default function ProductCard({
 }: ProductCardProps) {
 	return (
 		<article
-			className={cn('flex flex-col gap-4', className)}
+			className={cn('flex flex-col gap-4 group', className)}
 			{...props}
 		>
 			<Link
@@ -30,7 +30,7 @@ export default function ProductCard({
 					alt={product.name}
 					width={250}
 					height={250}
-					className='object-contain size-full'
+					className='object-contain size-full group-hover:scale-105 transition-transform'
 				/>
 			</Link>
 

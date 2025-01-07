@@ -1,7 +1,7 @@
 'use client'
 
+import useUpdateEffect from '@/hooks/use-update-effect'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
 
 export default function ScrollToTop({
 	children
@@ -10,7 +10,7 @@ export default function ScrollToTop({
 }) {
 	const pathname = usePathname()
 
-	useEffect(() => {
+	useUpdateEffect(() => {
 		if (typeof window === 'undefined') return
 
 		window.scrollTo({ top: 0, behavior: 'instant' })
