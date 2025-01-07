@@ -18,6 +18,8 @@ export const slugify = (str: string) =>
 		strict: true
 	})
 
+export const isArray = (a: unknown) => Array.isArray(a)
+
 export function getInitials(name?: string | null) {
 	if (!name?.length) return ''
 

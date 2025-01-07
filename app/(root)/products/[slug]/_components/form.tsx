@@ -44,6 +44,7 @@ export default function ProductPageForm({
 	const [quantity, setQuantity] = useState(1)
 	const mutation = useMutation({
 		mutationKey: ['cart:create'],
+		// TODO: Check if `localCartItems` includes item we want to add. Throw error if it does
 		mutationFn: async (data: NewItemData) => saveToCart(data),
 		onSettled(data) {
 			if (data?.success) {
