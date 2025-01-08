@@ -8,8 +8,9 @@ import {
 } from '@/components/ui/sheet'
 import UserButton from '@/components/user-button'
 import { navLinks } from '@/constants'
-import { MenuIcon, ShoppingCartIcon } from 'lucide-react'
+import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
+import CartButton from './cart-button'
 import Searchbar from './searchbar'
 
 export default function Navbar() {
@@ -62,12 +63,7 @@ export default function Navbar() {
 				<div className='flex items-center gap-4'>
 					<Searchbar />
 
-					<Link
-						href='/cart'
-						aria-label='Cart'
-					>
-						<ShoppingCartIcon className='size-6' />
-					</Link>
+					<CartButton />
 
 					<UserButton />
 				</div>

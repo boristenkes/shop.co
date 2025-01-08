@@ -1,12 +1,16 @@
 'use server'
 
+import { LocalCartItem } from '@/context/cart'
 import { db } from '@/db'
-import { cartItems, carts } from '@/db/schema'
+import { cartItems, carts, colors, products } from '@/db/schema'
+import { Color } from '@/db/schema/colors.schema'
 import { Size, TSize } from '@/db/schema/enums'
+import { ProductImage } from '@/db/schema/product-images.schema'
+import { Product } from '@/db/schema/products.schema'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { isArray } from '@/lib/utils'
-import { eq } from 'drizzle-orm'
+import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { z } from 'zod'
 
 export type NewItemData = {
@@ -134,5 +138,83 @@ export async function saveItemsToCart(
 	} catch (error) {
 		console.error('[SAVE_ITEMS_TO_CART]', error)
 		return { success: false, message: 'Something went wrong.' }
+	}
+}
+
+type PopulatedCartProduct = Pick<
+	Product,
+	'name' | 'slug' | 'priceInCents' | 'discount' | 'slug'
+>
+type PopulateLocalCartItem =
+	| (PopulatedCartProduct & {
+			images: Pick<ProductImage, 'url'>[]
+			color: Pick<Color, 'name' | 'hexCode'>
+	  })
+	| undefined
+
+type PopulateLocalCartItemsReturn =
+	| { success: true; items: PopulateLocalCartItem[] }
+	| { success: false; message: string }
+
+export async function populateLocalCartItems(
+	items: LocalCartItem[]
+): Promise<PopulateLocalCartItemsReturn> {
+	try {
+		const productIds: number[] = []
+		const colorIds: number[] = []
+
+		items.forEach(item => {
+			productIds.push(item.productId)
+			colorIds.push(item.colorId)
+		})
+
+		const getProducts = db.query.products.findMany({
+			where: and(
+				inArray(products.id, productIds),
+				isNull(products.deletedAt),
+				eq(products.archived, false)
+			),
+			columns: {
+				priceInCents: true,
+				discount: true,
+				name: true,
+				slug: true,
+				stock: true
+			},
+			with: {
+				images: { columns: { url: true }, limit: 1 }
+			},
+			orderBy: products.id
+		})
+
+		const getColors = db.query.colors.findMany({
+			where: inArray(colors.id, colorIds),
+			columns: {
+				name: true,
+				hexCode: true
+			}
+		})
+
+		const [cartProductItems, cartColorItems] = await Promise.all([
+			getProducts,
+			getColors
+		])
+
+		const merged = cartProductItems.map((item, idx) =>
+			item
+				? {
+						...item,
+						color: cartColorItems[idx]
+				  }
+				: undefined
+		)
+
+		return { success: true, items: merged }
+	} catch (error) {
+		console.error('[POPULATE_LOCAL_CART_ITEMS]:', error)
+		return {
+			success: false,
+			message: 'Something went wrong. Please try again later'
+		}
 	}
 }

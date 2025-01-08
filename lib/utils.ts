@@ -26,7 +26,7 @@ export const unslugify = (str: string) => {
 	return upper.join(' ')
 }
 
-export const isArray = (a: unknown) => Array.isArray(a)
+export const { isArray } = Array
 
 export function getInitials(name?: string | null) {
 	if (!name?.length) return ''

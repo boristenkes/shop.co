@@ -159,10 +159,13 @@ function CartSyncAlert() {
 				<DialogFooter className='space-x-2'>
 					<Button
 						variant='secondary'
-						onClick={() => setShowDialog(false)}
+						onClick={() => {
+							clearCart()
+							setShowDialog(false)
+						}}
 						disabled={mutation.isPending}
 					>
-						Cancel
+						Empty local cart
 					</Button>
 					<Button
 						onClick={() => mutation.mutate()}
