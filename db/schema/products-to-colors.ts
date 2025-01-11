@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { index, integer, pgTable, primaryKey } from 'drizzle-orm/pg-core'
-import { colors } from './colors.schema'
-import { products } from './products.schema'
+import { colors } from './colors'
+import { products } from './products'
 
 export const productsToColors = pgTable(
 	'products_to_colors',

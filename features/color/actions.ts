@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/db'
-import { Color, colors } from '@/db/schema/colors.schema'
+import { Color, colors } from '@/db/schema/colors'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify } from '@/lib/utils'

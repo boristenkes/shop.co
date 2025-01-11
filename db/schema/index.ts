@@ -1,30 +1,20 @@
-export {
-	accounts,
-	authenticators,
-	sessions,
-	verificationTokens
-} from './auth.schema'
-export {
-	cartItems,
-	cartItemsRelations,
-	carts,
-	cartsRelations
-} from './carts.schema'
-export { categories, categoriesRelations } from './categories.schema'
-export { colors } from './colors.schema'
+export { accounts, authenticators, sessions, verificationTokens } from './auth'
+export { cartItems, cartItemsRelations, carts, cartsRelations } from './carts'
+export { categories, categoriesRelations } from './categories'
+export { colors } from './colors'
 export { orderStatusEnum, roleEnum, sizeEnum } from './enums'
 export {
 	orderItems,
 	orderItemsRelations,
 	orders,
 	ordersRelations
-} from './orders.schema'
-export { productImages, productImagesRelations } from './product-images.schema'
+} from './orders'
+export { productImages, productImagesRelations } from './product-images'
+export { products, productsRelations } from './products'
 export {
 	productsToColors,
 	productsToColorsRelations
 } from './products-to-colors'
-export { products, productsRelations } from './products.schema'
-export { reviews, reviewsRelations } from './reviews.schema'
-export { subscribers } from './subscribers.schema'
-export { users, usersRelations } from './users.schema'
+export { reviews, reviewsRelations } from './reviews'
+export { subscribers } from './subscribers'
+export { users, usersRelations } from './users'

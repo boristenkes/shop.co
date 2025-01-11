@@ -18,7 +18,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Category } from '@/db/schema/categories.schema'
+import { Category } from '@/db/schema/categories'
 import { deleteCategory } from '@/features/category/actions'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'

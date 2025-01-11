@@ -2,16 +2,16 @@
 
 import { db } from '@/db'
 import { products, productsToColors } from '@/db/schema'
-import { Category } from '@/db/schema/categories.schema'
-import { Color } from '@/db/schema/colors.schema'
+import { Category } from '@/db/schema/categories'
+import { Color } from '@/db/schema/colors'
 import {
 	NewProductImage,
 	ProductImage,
 	productImages
-} from '@/db/schema/product-images.schema'
+} from '@/db/schema/product-images'
+import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
-import { Product } from '@/db/schema/products.schema'
-import { User } from '@/db/schema/users.schema'
+import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify, toCents } from '@/lib/utils'

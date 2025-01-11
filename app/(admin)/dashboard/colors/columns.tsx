@@ -17,7 +17,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { type Color } from '@/db/schema/colors.schema'
+import { type Color } from '@/db/schema/colors'
 import { deleteColor } from '@/features/color/actions'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'

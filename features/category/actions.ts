@@ -2,7 +2,7 @@
 
 import { db } from '@/db'
 import { categories, products } from '@/db/schema'
-import { Category } from '@/db/schema/categories.schema'
+import { Category } from '@/db/schema/categories'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify } from '@/lib/utils'

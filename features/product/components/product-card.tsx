@@ -1,6 +1,6 @@
 import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ProductImage } from '@/db/schema/product-images.schema'
+import { ProductImage } from '@/db/schema/product-images'
 import { type ProductCard } from '@/features/product/types'
 import { calculatePriceWithDiscount, cn, formatPrice } from '@/lib/utils'
 import Image from 'next/image'

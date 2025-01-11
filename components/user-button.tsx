@@ -1,4 +1,4 @@
-import { User } from '@/db/schema/users.schema'
+import { User } from '@/db/schema/users'
 import { auth, signIn, signOut } from '@/lib/auth'
 import { getInitials } from '@/lib/utils'
 import Link from 'next/link'

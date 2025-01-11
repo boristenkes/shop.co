@@ -22,7 +22,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { User } from '@/db/schema/users.schema'
+import { User } from '@/db/schema/users'
 import { deleteUser } from '@/features/user/actions'
 import { formatDate, getInitials, getRoleBadgeVariant } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'

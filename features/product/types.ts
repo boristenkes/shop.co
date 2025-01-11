@@ -1,5 +1,5 @@
-import { ProductImage } from '@/db/schema/product-images.schema'
-import { Product } from '@/db/schema/products.schema'
+import { ProductImage } from '@/db/schema/product-images'
+import { Product } from '@/db/schema/products'
 
 export type ProductCard = Pick<
 	Product,

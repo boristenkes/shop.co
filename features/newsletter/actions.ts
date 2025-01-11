@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/db'
-import { subscribers } from '@/db/schema/subscribers.schema'
+import { subscribers } from '@/db/schema/subscribers'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 

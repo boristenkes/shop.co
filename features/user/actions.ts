@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/db'
-import { User, users } from '@/db/schema/users.schema'
+import { User, users } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { eq } from 'drizzle-orm'

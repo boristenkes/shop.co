@@ -7,7 +7,7 @@ import {
 	SliderMainItem,
 	SliderThumbItem
 } from '@/components/ui/ext/carousel'
-import { ProductImage } from '@/db/schema/product-images.schema'
+import { ProductImage } from '@/db/schema/product-images'
 import useMediaQuery from '@/hooks/use-media-query'
 import Image from 'next/image'
 
