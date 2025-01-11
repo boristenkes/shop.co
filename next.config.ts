@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
 			},
 			{
 				protocol: 'https',
+				hostname: '25bc672inm.ufs.sh',
+				pathname: '/f/*'
+			},
+			{
+				protocol: 'https',
 				hostname: 'lh3.googleusercontent.com',
 				pathname: '/a/*'
 			}

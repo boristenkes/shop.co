@@ -5,9 +5,9 @@ import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
-import { ProductsTable } from '../products-table'
 import { columns } from './columns'
 import EmptyTrashButton from './empty-trash-button'
+import { ProductTrashTable } from './table'
 
 export default async function DeletedProductsPage() {
 	const session = await auth()
@@ -38,7 +38,7 @@ export default async function DeletedProductsPage() {
 			</div>
 
 			{response.success ? (
-				<ProductsTable
+				<ProductTrashTable
 					data={response.products}
 					columns={columns}
 				/>

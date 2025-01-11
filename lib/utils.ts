@@ -46,12 +46,40 @@ export function formatDate(
 	options: Intl.DateTimeFormatOptions = {
 		month: 'long',
 		day: 'numeric',
-		year: 'numeric'
+		year: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit'
 	}
 ) {
 	return new Intl.DateTimeFormat('en-US', {
 		...options
 	}).format(new Date(date))
+}
+
+export function getTimeDistanceFromNow(date: Date): string {
+	const now = new Date()
+	const diffInSeconds = Math.floor((date.getTime() - now.getTime()) / 1000)
+
+	const intervals = {
+		year: 60 * 60 * 24 * 365,
+		month: 60 * 60 * 24 * 30,
+		week: 60 * 60 * 24 * 7,
+		day: 60 * 60 * 24,
+		hour: 60 * 60,
+		minute: 60,
+		second: 1
+	}
+
+	const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+
+	for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+		if (Math.abs(diffInSeconds) >= secondsInUnit || unit === 'second') {
+			const value = Math.round(diffInSeconds / secondsInUnit)
+			return rtf.format(value, unit as Intl.RelativeTimeFormatUnit)
+		}
+	}
+
+	return ''
 }
 
 export function calculatePriceWithDiscount(

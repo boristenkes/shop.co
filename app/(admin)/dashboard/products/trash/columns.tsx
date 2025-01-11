@@ -1,6 +1,8 @@
 'use client'
 
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import ErrorMessage from '@/components/error-message'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -15,20 +17,79 @@ import {
 	ProductsReturn,
 	restoreProduct
 } from '@/features/product/actions'
+import { formatDate, getInitials, getTimeDistanceFromNow } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Loader2Icon, RefreshCw, Trash2Icon } from 'lucide-react'
+import Image from 'next/image'
 import { toast } from 'sonner'
-import { columns as adminProductsColumns } from '../columns'
-
-const adminProductsColumnsWithoutActions = adminProductsColumns.filter(
-	// @ts-expect-error TODO
-	col => col.accessorKey !== 'actions'
-)
 
 export const columns: ColumnDef<ProductsReturn>[] = [
-	...adminProductsColumnsWithoutActions,
+	{
+		accessorKey: 'id',
+		header: 'ID',
+		cell: ({ row }) => '#' + String(row.original.id).padStart(5, '0')
+	},
+	{
+		accessorKey: 'images',
+		header: 'Image',
+		cell: ({ row }) => {
+			const image = row.original.images[0]
+
+			return (
+				<Image
+					src={image.url}
+					alt={image.url}
+					width={64}
+					height={64}
+					className='size-16 rounded-sm object-cover'
+				/>
+			)
+		}
+	},
+	{
+		accessorKey: 'name',
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				column={column}
+				title='Name'
+			/>
+		)
+	},
+	{
+		accessorKey: 'user',
+		header: 'Uploaded By',
+		cell: ({ row }) => {
+			const user = row.original.user
+
+			return (
+				<div className='flex items-center gap-4'>
+					<Avatar>
+						<AvatarImage
+							src={user.image!}
+							alt={user.name!}
+						/>
+						<AvatarFallback>{getInitials(user.name!)}</AvatarFallback>
+					</Avatar>
+					<p>{user.name}</p>
+				</div>
+			)
+		}
+	},
+	{
+		accessorKey: 'deletedAt',
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				column={column}
+				title='Deleted At'
+			/>
+		),
+		cell: ({ row }) =>
+			`${formatDate(row.original.deletedAt!)} (${getTimeDistanceFromNow(
+				row.original.deletedAt!
+			)})`
+	},
 	{
 		accessorKey: 'actions',
 		header: 'Actions',
