@@ -27,6 +27,8 @@ type DataTableProps<TData, TValue> = {
 	data: TData[]
 }
 
+const defaultHiddenColumns = ['id', 'sizes', 'colors']
+
 export function ProductsTable<TData, TValue>({
 	columns,
 	data
@@ -35,6 +37,11 @@ export function ProductsTable<TData, TValue>({
 	const table = useReactTable({
 		data,
 		columns,
+		initialState: {
+			columnVisibility: Object.fromEntries(
+				defaultHiddenColumns.map(columnId => [columnId, false])
+			)
+		},
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		onSortingChange: setSorting,

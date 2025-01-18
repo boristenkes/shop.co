@@ -109,7 +109,7 @@ export type ProductsReturn = Product & {
 	category: Pick<Category, 'name'>
 	images: Pick<ProductImage, 'url'>[]
 	productsToColors: (ProductToColor & { color: Color })[]
-	user: Pick<User, 'id' | 'name' | 'image'>
+	user: Pick<User, 'id' | 'name' | 'image' | 'email'>
 }
 
 export type GetProductsForAdminReturn =
@@ -137,7 +137,8 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 					columns: {
 						id: true,
 						image: true,
-						name: true
+						name: true,
+						email: true
 					}
 				}
 			}

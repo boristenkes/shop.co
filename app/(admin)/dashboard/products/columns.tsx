@@ -20,6 +20,11 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger
+} from '@/components/ui/hover-card'
 import { ProductsReturn, softDeleteProduct } from '@/features/product/actions'
 import { formatDate, formatPrice, getInitials } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
@@ -65,26 +70,53 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 	},
 	{
 		accessorKey: 'user',
-		header: ({ column }) => (
-			<DataTableColumnHeader
-				column={column}
-				title='Uploaded By'
-			/>
-		),
+		header: 'Uploaded By',
 		cell: ({ row }) => {
 			const user = row.original.user
 
 			return (
-				<div className='flex items-center gap-4'>
-					<Avatar>
-						<AvatarImage
-							src={user.image!}
-							alt={user.name!}
-						/>
-						<AvatarFallback>{getInitials(user.name!)}</AvatarFallback>
-					</Avatar>
-					<p>{user.name}</p>
-				</div>
+				<HoverCard
+					openDelay={100}
+					closeDelay={100}
+				>
+					<HoverCardTrigger asChild>
+						<Link href={`/dashboard/users/${user.id}`}>
+							<Avatar>
+								<AvatarImage
+									src={user.image!}
+									alt={user.name!}
+									width={40}
+									height={40}
+									className='rounded-sm'
+								/>
+								<AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+							</Avatar>
+						</Link>
+					</HoverCardTrigger>
+					<HoverCardContent className=''>
+						<div className='flex gap-2'>
+							<Link href={`/dashboard/users/${user.id}`}>
+								{' '}
+								<Avatar>
+									<AvatarImage
+										src={user.image!}
+										alt={user.name!}
+										width={40}
+										height={40}
+										className='rounded-sm'
+									/>
+									<AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+								</Avatar>
+							</Link>
+							<div>
+								<h4 className='font-semibold'>
+									<Link href={`/dashboard/users/${user.id}`}>{user.name}</Link>
+								</h4>
+								<p className='text-sm text-gray-600'>{user.email}</p>
+							</div>
+						</div>
+					</HoverCardContent>
+				</HoverCard>
 			)
 		}
 	},
@@ -96,18 +128,19 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 	{
 		accessorKey: 'sizes',
 		header: 'Sizes',
-		cell: ({ row }) => (
-			<div className='flex flex-wrap gap-1'>
-				{row.original.sizes?.map(size => (
-					<Badge
-						key={size}
-						variant='outline'
-					>
-						{size}
-					</Badge>
-				))}
-			</div>
-		)
+		cell: ({ row }) => row.original.sizes?.join(', ')
+		// cell: ({ row }) => (
+		// 	<div className='flex flex-wrap gap-1'>
+		// 		{row.original.sizes?.map(size => (
+		// 			<Badge
+		// 				key={size}
+		// 				variant='outline'
+		// 			>
+		// 				{size}
+		// 			</Badge>
+		// 		))}
+		// 	</div>
+		// )
 	},
 	{
 		accessorKey: 'colors',
@@ -123,6 +156,10 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 							backgroundColor: color.hexCode + '33' // '33' = 20% opacity
 						}}
 					>
+						<div
+							className='size-3 rounded-sm mr-1'
+							style={{ backgroundColor: color.hexCode }}
+						/>{' '}
 						{color.name}
 					</Badge>
 				))}
@@ -178,7 +215,12 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 	},
 	{
 		accessorKey: 'createdAt',
-		header: 'Created At',
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				column={column}
+				title='Created At'
+			/>
+		),
 		cell: ({ row }) => formatDate(row.original.createdAt!)
 	},
 	{
