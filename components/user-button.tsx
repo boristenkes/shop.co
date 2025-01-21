@@ -64,7 +64,7 @@ export default async function UserButton({ ...props }) {
 					>
 						<SubmitButton
 							variant='ghost'
-							className='p-0 h-auto'
+							className='p-0 h-auto text-sm font-normal'
 						>
 							Sign Out
 						</SubmitButton>

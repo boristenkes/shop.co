@@ -42,7 +42,7 @@ export default function ProductCard({
 					{product.name}
 				</Link>
 
-				<Rating rating={7} />
+				<Rating rating={3.5} />
 
 				<div className='text-2xl font-bold'>
 					{!product.discount || product.discount === 0 ? (

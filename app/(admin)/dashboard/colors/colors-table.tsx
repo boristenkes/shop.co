@@ -35,6 +35,11 @@ export function ColorsTable<TData, TValue>({
 	const table = useReactTable({
 		data,
 		columns,
+		initialState: {
+			columnVisibility: {
+				hexCode: false
+			}
+		},
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		onSortingChange: setSorting,

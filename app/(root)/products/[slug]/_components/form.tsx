@@ -81,7 +81,7 @@ export default function ProductPageForm({
 				.finite()
 				.refine(colorId => colors.some(c => c.id === colorId)), // Must be included in `colors`
 			size: z.nativeEnum(Size).refine(size => sizes.includes(size)), // must be included in `sizes`
-			quantity: z.coerce.number().int().positive().lte(Math.min(stock, 20))
+			quantity: z.coerce.number().int().positive().lte(Math.min(stock, 100))
 		})
 
 		try {

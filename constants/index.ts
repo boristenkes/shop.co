@@ -70,7 +70,7 @@ export const socials = [
 	},
 	{
 		name: 'github',
-		link: 'https://github.com/boristenkes',
+		link: 'https://github.com/boristenkes/shop.co',
 		icon: Social.GithubLogo
 	}
 ]

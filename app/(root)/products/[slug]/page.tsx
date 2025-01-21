@@ -1,6 +1,7 @@
 import { getProductBySlug, getProductSlugs } from '@/features/product/actions'
 import { absoluteUrl, limitTextLength } from '@/lib/utils'
 import { Metadata } from 'next'
+import ProductPageTabs from './_components/tabs'
 
 export async function generateStaticParams() {
 	const slugs = await getProductSlugs()
@@ -35,6 +36,17 @@ export async function generateMetadata(props: {
 	}
 }
 
-export default function ProductPage() {
-	return <div>ProductPage</div>
+export default async function ProductPage(props: {
+	params: Promise<{ slug: string }>
+}) {
+	const slug = (await props.params).slug
+
+	return (
+		<div className='container'>
+			<ProductPageTabs slug={slug} />
+			<p className='p-16 text-center'>
+				This product doesn&apos;t have detailed description
+			</p>
+		</div>
+	)
 }

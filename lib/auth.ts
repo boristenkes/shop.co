@@ -25,11 +25,7 @@ export const {
 } = NextAuth({
 	adapter: DrizzleAdapter(db, {
 		// @ts-expect-error DrizzleAdapter doesn't like my schemas
-		accountsTable: accounts,
-		usersTable: users,
-		authenticatorsTable: authenticators,
-		sessionsTable: sessions,
-		verificationTokensTable: verificationTokens
+		accountsTable: accounts, usersTable: users, authenticatorsTable: authenticators, sessionsTable: sessions, verificationTokensTable: verificationTokens
 	}),
 	providers: [Google],
 	session: {

@@ -6,9 +6,8 @@ type RatingProps = {
 }
 
 export function Rating({ rating }: RatingProps) {
-	const normalizedRating = (rating / 2).toFixed(1) // Convert 1-10 to 0-5 scale
-	const fullStars = Math.floor(+normalizedRating)
-	const hasHalfStar = +normalizedRating % 1 >= 0.5
+	const fullStars = Math.floor(+rating)
+	const hasHalfStar = +rating % 1 >= 0.5
 
 	return (
 		<div className='flex items-center space-x-2'>
@@ -25,7 +24,7 @@ export function Rating({ rating }: RatingProps) {
 				{hasHalfStar && <StarHalf className='text-yellow-500' />}
 			</div>
 			<span className='text-gray-700 text-sm'>
-				{normalizedRating}
+				{rating}
 				<span className='text-gray-400'>/5</span>
 			</span>
 		</div>

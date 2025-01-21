@@ -15,7 +15,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<TooltipProvider>
-				<SessionProvider>
+				<SessionProvider
+					refetchOnWindowFocus={false}
+					refetchWhenOffline={false}
+				>
 					<CartProvider>
 						<ScrollToTop>
 							{/* <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} /> */}
