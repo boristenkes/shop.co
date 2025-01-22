@@ -9,7 +9,6 @@ import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
-import { isArray } from '@/lib/utils'
 import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { z } from 'zod'
 
@@ -32,9 +31,7 @@ export type AddToCartReturn =
 	| { success: true }
 	| { success: false; message: string }
 
-export async function saveToCart(
-	data: NewItemData | NewItemData[]
-): Promise<AddToCartReturn> {
+export async function saveToCart(data: NewItemData): Promise<AddToCartReturn> {
 	try {
 		const session = await auth()
 		const currentUser = session?.user
@@ -45,9 +42,7 @@ export async function saveToCart(
 		)
 			throw new Error('Unauthorized')
 
-		const parsed = isArray(data)
-			? data.map(item => productPageFormSchema.parse(item))
-			: productPageFormSchema.parse(data)
+		const parsed = productPageFormSchema.parse(data)
 
 		await db.transaction(async tx => {
 			// Check if the user has an active cart
@@ -73,14 +68,7 @@ export async function saveToCart(
 			}
 
 			// Add the cart item
-			await tx
-				.insert(cartItems)
-				// @ts-expect-error TS doesn't know `insert` also accepts array of rows
-				.values(
-					isArray(parsed)
-						? parsed.map(item => ({ cartId, ...item }))
-						: { cartId, ...parsed }
-				)
+			await tx.insert(cartItems).values({ cartId, ...parsed })
 		})
 
 		return { success: true }

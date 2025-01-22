@@ -41,7 +41,7 @@ export default async function ProductPageDetails({ slug }: { slug: string }) {
 					</h1>
 				</div>
 
-				<Rating rating={9} />
+				<Rating rating={4} />
 
 				<div className='text-3xl font-bold'>
 					{!product.discount || product.discount === 0 ? (

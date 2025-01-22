@@ -35,7 +35,7 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null)
 
-export const LOCAL_STORAGE_CART_KEY = 'shopco-cart'
+export const LOCAL_STORAGE_CART_KEY = 'cart'
 
 export const useCart = () => {
 	const context = useContext(CartContext)

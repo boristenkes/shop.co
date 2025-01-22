@@ -23,10 +23,7 @@ type StatisticsResults = [
 ]
 
 type GetStatisticsReturn =
-	| {
-			success: true
-			results: StatisticsResults
-	  }
+	| { success: true; results: StatisticsResults }
 	| { success: false; message: string }
 
 export async function getStatistics(): Promise<GetStatisticsReturn> {
