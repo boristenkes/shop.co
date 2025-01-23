@@ -7,8 +7,7 @@ import {
 	smallint,
 	text,
 	timestamp,
-	uniqueIndex,
-	varchar
+	uniqueIndex
 } from 'drizzle-orm/pg-core'
 import { categories } from './categories'
 import { sizeEnum } from './enums'
@@ -22,8 +21,8 @@ export const products = pgTable(
 	'products',
 	{
 		id: serial().primaryKey(),
-		name: varchar({ length: 256 }).notNull(),
-		slug: varchar({ length: 256 }).notNull(),
+		name: text().notNull(),
+		slug: text().notNull(),
 		description: text(),
 		priceInCents: integer().notNull(),
 		discount: smallint().default(0),

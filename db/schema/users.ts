@@ -4,8 +4,7 @@ import {
 	serial,
 	text,
 	timestamp,
-	uniqueIndex,
-	varchar
+	uniqueIndex
 } from 'drizzle-orm/pg-core'
 import { roleEnum } from './enums'
 import { orders } from './orders'
@@ -16,10 +15,10 @@ export const users = pgTable(
 	'users',
 	{
 		id: serial().primaryKey(),
-		name: varchar({ length: 256 }),
+		name: text(),
 		email: text().unique(),
 		emailVerified: timestamp({ mode: 'date' }),
-		hashedPassword: varchar({ length: 256 }),
+		hashedPassword: text(),
 		role: roleEnum().default('customer'),
 		image: text(),
 

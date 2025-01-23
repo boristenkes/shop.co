@@ -16,7 +16,7 @@ export const reviews = pgTable(
 	'reviews',
 	{
 		id: serial().primaryKey(),
-		comment: text().notNull(),
+		comment: text(),
 		rating: smallint().notNull(),
 		approved: boolean().default(false),
 

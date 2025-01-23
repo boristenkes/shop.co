@@ -2,7 +2,6 @@
 
 import ErrorMessage from '@/components/error-message'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Dialog,
 	DialogClose,
@@ -30,14 +29,14 @@ import {
 	FormLabel,
 	FormMessage
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { RatingInput } from '@/components/ui/rating'
 import { Textarea } from '@/components/ui/textarea'
+import { createReview } from '@/features/review/actions'
 import { reviewSchema, ReviewSchema } from '@/features/review/zod'
 import useMediaQuery from '@/hooks/use-media-query'
-import { delay } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -59,7 +58,10 @@ export default function ReviewButton() {
 					<DialogHeader>
 						<DialogTitle>Write a Review</DialogTitle>
 						<DialogDescription>
-							Rate this product and give it a comment.
+							Your review won't be visible unless you include a comment, but
+							your rating will still contribute to the average. If you do leave
+							a comment, your review will need to be approved by an
+							administrator before it appears on the page.
 						</DialogDescription>
 					</DialogHeader>
 
@@ -70,7 +72,7 @@ export default function ReviewButton() {
 	}
 
 	return (
-		<Drawer disablePreventScroll>
+		<Drawer>
 			<DrawerTrigger asChild>
 				<Button>Write a Review</Button>
 			</DrawerTrigger>
@@ -95,13 +97,12 @@ function ReviewForm({
 }: {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+	const session = useSession()
 	const form = useForm<ReviewSchema>({
 		resolver: zodResolver(reviewSchema),
 		defaultValues: {
-			name: '',
 			comment: '',
-			rating: 0,
-			recommended: false
+			rating: 0
 		}
 	})
 
@@ -109,9 +110,14 @@ function ReviewForm({
 
 	const onSubmit = async (data: ReviewSchema) => {
 		try {
-			await delay(5000)
+			if (session.status !== 'authenticated') {
+				toast.error('You must be signed in to write a review.')
+				return
+			}
 
-			console.log(data)
+			const response = await createReview({ ...data, productId: 23 })
+
+			if (!response.success) throw new Error(response.message)
 
 			form.reset()
 			setOpen(false)
@@ -131,25 +137,6 @@ function ReviewForm({
 				className='space-y-6'
 			>
 				{errors.root && <ErrorMessage message={errors.root.message!} />}
-				<FormField
-					control={form.control}
-					name='name'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Name</FormLabel>
-							<FormControl>
-								<Input
-									disabled={isSubmitting}
-									{...field}
-								/>
-							</FormControl>
-							<FormDescription>
-								Enter name to display with review
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
 
 				<FormField
 					control={form.control}
@@ -183,30 +170,8 @@ function ReviewForm({
 									{...field}
 								/>
 							</FormControl>
-							<FormDescription>Please provide your rating.</FormDescription>
+							<FormDescription>Provide your rating.</FormDescription>
 							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					control={form.control}
-					name='recommended'
-					render={({ field }) => (
-						<FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
-							<FormControl>
-								<Checkbox
-									checked={field.value}
-									onCheckedChange={field.onChange}
-									disabled={isSubmitting}
-								/>
-							</FormControl>
-							<div className='space-y-1 leading-none'>
-								<FormLabel>Recommended</FormLabel>
-								<FormDescription>
-									I would recommend this product to other users.
-								</FormDescription>
-							</div>
 						</FormItem>
 					)}
 				/>

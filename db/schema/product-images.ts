@@ -4,8 +4,7 @@ import {
 	pgTable,
 	serial,
 	text,
-	uniqueIndex,
-	varchar
+	uniqueIndex
 } from 'drizzle-orm/pg-core'
 import { products } from './products'
 
@@ -14,7 +13,7 @@ export const productImages = pgTable(
 	{
 		id: serial().primaryKey(),
 		url: text().notNull(),
-		key: varchar({ length: 48 }).notNull().unique(),
+		key: text().notNull().unique(),
 
 		productId: integer().references(() => products.id, { onDelete: 'cascade' })
 	},
