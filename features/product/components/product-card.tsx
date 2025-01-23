@@ -2,7 +2,12 @@ import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ProductImage } from '@/db/schema/product-images'
 import { type ProductCard } from '@/features/product/types'
-import { calculatePriceWithDiscount, cn, formatPrice } from '@/lib/utils'
+import {
+	average,
+	calculatePriceWithDiscount,
+	cn,
+	formatPrice
+} from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ComponentProps } from 'react'
@@ -16,13 +21,15 @@ export default function ProductCard({
 	className,
 	...props
 }: ProductCardProps) {
+	const averageRating = average(product.reviews.map(review => review.rating))
+
 	return (
 		<article
 			className={cn('flex flex-col gap-4 group', className)}
 			{...props}
 		>
 			<Link
-				href={`/products/${product.slug}`}
+				href={`/products/${product.slug}/${product.id}`}
 				className='bg-[#f0eeed] size-80 rounded-lg grow p-4'
 			>
 				<Image
@@ -42,7 +49,18 @@ export default function ProductCard({
 					{product.name}
 				</Link>
 
-				<Rating rating={3.5} />
+				{product.reviews.length > 0 ? (
+					<div className='flex items-center space-x-2'>
+						<Rating rating={averageRating} />
+
+						<span className='text-gray-700 text-sm'>
+							{averageRating}
+							<span className='text-gray-400'>/5</span>
+						</span>
+					</div>
+				) : (
+					<p>No rating</p>
+				)}
 
 				<div className='text-2xl font-bold'>
 					{!product.discount || product.discount === 0 ? (

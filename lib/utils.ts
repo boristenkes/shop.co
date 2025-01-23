@@ -115,6 +115,12 @@ export function formatInt(int: number) {
 	}).format(int)
 }
 
+export const average = (array: number[]) => {
+	if (array.length === 0) return 0
+
+	return array.reduce((a, b) => a + b) / array.length
+}
+
 export function getUploadthingKey(imageUrl: string): string {
 	return imageUrl.split('/f/').pop() as string
 }

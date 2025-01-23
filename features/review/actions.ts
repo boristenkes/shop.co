@@ -1,10 +1,14 @@
 'use server'
 
 import { db } from '@/db'
-import { NewReview, reviews } from '@/db/schema/reviews'
+import { Product } from '@/db/schema/products'
+import { NewReview, Review, reviews } from '@/db/schema/reviews'
+import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { and, eq } from 'drizzle-orm'
+import { revalidatePath } from 'next/cache'
+import { requirePermission } from '../action-utils'
 
 type CreateReviewReturn =
 	| { success: true; reviewId: number }
@@ -57,5 +61,138 @@ export async function createReview(
 			success: false,
 			message: 'Something went wrong. Please try again later.'
 		}
+	}
+}
+
+type GetProductReviewsReview = Pick<
+	Review,
+	'comment' | 'createdAt' | 'rating' | 'id'
+> & { user: Pick<User, 'name'> }
+
+type GetProductReviewsReturn =
+	| {
+			success: true
+			reviews: GetProductReviewsReview[]
+	  }
+	| { success: false; message: string }
+
+export async function getProductReviews(
+	productId: number
+): Promise<GetProductReviewsReturn> {
+	try {
+		const reviews = await db.query.reviews.findMany({
+			where: (reviews, { eq, and }) =>
+				and(eq(reviews.productId, productId), eq(reviews.approved, true)),
+			with: {
+				user: {
+					columns: { name: true }
+				}
+			},
+			columns: {
+				comment: true,
+				createdAt: true,
+				rating: true,
+				id: true
+			},
+			orderBy: (review, { desc }) => desc(review.rating)
+		})
+
+		if (!reviews)
+			throw new Error(`Failed to fetch reviews for product: ${productId}`)
+
+		return { success: true, reviews }
+	} catch (error) {
+		console.error('[GET_PRODUCT_REVIEWS]:', error)
+		return { success: false, message: 'Something went wrong' }
+	}
+}
+
+export type GetReviewsReturnReview = Review & {
+	user: Pick<User, 'id' | 'name' | 'image'>
+	product: Pick<Product, 'id' | 'name' | 'slug'>
+}
+
+export type GetReviewsReturn =
+	| { success: true; reviews: GetReviewsReturnReview[] }
+	| { success: false; message: string }
+
+export async function getReviews(): Promise<GetReviewsReturn> {
+	try {
+		await requirePermission('reviews', ['read'])
+
+		const reviews = await db.query.reviews.findMany({
+			with: {
+				user: {
+					columns: {
+						id: true,
+						name: true,
+						image: true
+					}
+				},
+				product: {
+					columns: {
+						id: true,
+						name: true,
+						slug: true
+					}
+				}
+			}
+		})
+
+		if (!reviews) throw new Error('Failed to get reviews')
+
+		return { success: true, reviews }
+	} catch (error) {
+		console.error('[GET_REVIEWS]:', error)
+		return { success: false, message: 'Something went wrong' }
+	}
+}
+
+export async function approveReview(
+	reviewId: number,
+	path = '/dashboard/reviews'
+) {
+	try {
+		await requirePermission('reviews', ['update'])
+
+		const review = await db
+			.update(reviews)
+			.set({ approved: true })
+			.where(eq(reviews.id, reviewId))
+			.returning({ id: reviews.id })
+
+		if (!review) throw new Error('Failed to approve review.')
+
+		revalidatePath(path)
+
+		return { success: true }
+	} catch (error) {
+		console.error('[APPROVE_REVIEW]:', error)
+		return {
+			success: false,
+			message: 'Something went wrong. Please try again later.'
+		}
+	}
+}
+
+export type DeleteReviewReturn =
+	| { success: true }
+	| { success: false; message: string }
+
+export async function deleteReview(
+	reviewId: number,
+	path = '/dashboard/reviews'
+): Promise<DeleteReviewReturn> {
+	try {
+		await requirePermission('reviews', ['delete'])
+
+		await db.delete(reviews).where(eq(reviews.id, reviewId))
+
+		revalidatePath(path)
+
+		return { success: true }
+	} catch (error) {
+		console.error('[DELETE_REVIEW]:', error)
+		return { success: false, message: 'Something went wrong.' }
 	}
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import ErrorMessage from '@/components/error-message'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import {
 	Dialog,
 	DialogClose,
@@ -37,11 +37,12 @@ import useMediaQuery from '@/hooks/use-media-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import { useParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-export default function ReviewButton() {
+export default function ReviewButton(props: ButtonProps) {
 	const [open, setOpen] = useState(false)
 	const isDesktop = useMediaQuery('(min-width: 768px)')
 
@@ -52,7 +53,7 @@ export default function ReviewButton() {
 				onOpenChange={setOpen}
 			>
 				<DialogTrigger asChild>
-					<Button>Write a Review</Button>
+					<Button {...props}>Write a Review</Button>
 				</DialogTrigger>
 				<DialogContent>
 					<DialogHeader>
@@ -72,9 +73,12 @@ export default function ReviewButton() {
 	}
 
 	return (
-		<Drawer>
+		<Drawer
+			open={open}
+			onOpenChange={setOpen}
+		>
 			<DrawerTrigger asChild>
-				<Button>Write a Review</Button>
+				<Button {...props}>Write a Review</Button>
 			</DrawerTrigger>
 			<DrawerContent>
 				<DrawerHeader>
@@ -98,6 +102,7 @@ function ReviewForm({
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
 	const session = useSession()
+	const params = useParams()
 	const form = useForm<ReviewSchema>({
 		resolver: zodResolver(reviewSchema),
 		defaultValues: {
@@ -115,7 +120,10 @@ function ReviewForm({
 				return
 			}
 
-			const response = await createReview({ ...data, productId: 23 })
+			const response = await createReview({
+				...data,
+				productId: Number(params.id)
+			})
 
 			if (!response.success) throw new Error(response.message)
 

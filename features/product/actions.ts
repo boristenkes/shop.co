@@ -15,7 +15,7 @@ import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify, toCents } from '@/lib/utils'
-import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm'
+import { and, eq, inArray, isNotNull } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
@@ -155,15 +155,6 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 	}
 }
 
-export async function getProductSlugs() {
-	const results = await db.query.products.findMany({
-		columns: { slug: true },
-		where: and(isNull(products.deletedAt), eq(products.archived, false))
-	})
-
-	return results.map(product => product.slug)
-}
-
 export type GetProductBySlugReturnProduct = Product & {
 	productsToColors: (ProductToColor & { color: Color })[]
 	images: ProductImage[]
@@ -199,6 +190,45 @@ export async function getProductBySlug(
 		return { success: true, product }
 	} catch (error) {
 		console.error('[GET_PRODUCT_BY_SLUG]:', error)
+		return { success: false, message: 'Product not found or it was deleted' }
+	}
+}
+
+export type GetProductByIdReturnProduct = Product & {
+	productsToColors: (ProductToColor & { color: Color })[]
+	images: ProductImage[]
+	category: Category
+}
+
+export type GetProductByIdReturn =
+	| { success: true; product: GetProductByIdReturnProduct }
+	| { success: false; message: string }
+
+export async function getProductById(
+	id: string | number
+): Promise<GetProductByIdReturn> {
+	try {
+		const product = (await db.query.products.findFirst({
+			where: (products, { isNull }) =>
+				and(
+					eq(products.id, Number(id)),
+					isNull(products.deletedAt),
+					eq(products.archived, false)
+				),
+			with: {
+				images: true,
+				productsToColors: {
+					with: { color: true }
+				},
+				category: true
+			}
+		})) as GetProductByIdReturnProduct
+
+		if (!product) throw new Error('Product not found.')
+
+		return { success: true, product }
+	} catch (error) {
+		console.error('[GET_PRODUCT_BY_ID]:', error)
 		return { success: false, message: 'Product not found or it was deleted' }
 	}
 }
@@ -267,13 +297,18 @@ export async function getProducts({
 				discount: true,
 				name: true,
 				priceInCents: true,
-				slug: true
+				slug: true,
+				id: true
 			},
 			with: {
 				images: {
 					columns: { url: true },
 					limit: 1,
 					orderBy: (images, { asc }) => asc(images.id)
+				},
+				reviews: {
+					where: (review, { eq }) => eq(review.approved, true),
+					columns: { rating: true }
 				}
 			},
 			offset: (page - 1) * pageSize,
@@ -311,13 +346,18 @@ export async function getFeaturedProducts({
 				discount: true,
 				name: true,
 				priceInCents: true,
-				slug: true
+				slug: true,
+				id: true
 			},
 			with: {
 				images: {
 					columns: { url: true },
 					limit: 1,
 					orderBy: (images, { asc }) => asc(images.id)
+				},
+				reviews: {
+					where: (review, { eq }) => eq(review.approved, true),
+					columns: { rating: true }
 				}
 			},
 			offset: (page - 1) * pageSize,

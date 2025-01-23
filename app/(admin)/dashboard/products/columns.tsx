@@ -221,7 +221,19 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 				title='Created At'
 			/>
 		),
-		cell: ({ row }) => formatDate(row.original.createdAt!)
+		cell: ({ row }) => {
+			const product = row.original
+
+			return (
+				<time dateTime={product.createdAt?.toISOString()}>
+					{formatDate(product.createdAt!, {
+						month: 'long',
+						day: '2-digit',
+						year: 'numeric'
+					})}
+				</time>
+			)
+		}
 	},
 	{
 		accessorKey: 'actions',

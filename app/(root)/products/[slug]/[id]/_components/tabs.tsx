@@ -19,20 +19,26 @@ const tabs = [
 	}
 ]
 
-export default function ProductPageTabs({ slug }: { slug: string }) {
+export default function ProductPageTabs({
+	slug,
+	id
+}: {
+	slug: string
+	id: string
+}) {
 	const pathname = usePathname()
 
 	return (
-		<div className='flex items-center text-lg py-10 overflow-x-auto'>
+		<div className='container flex items-center text-lg py-10 overflow-x-auto'>
 			{tabs.map(tab => {
-				const href = `/products/${slug}${tab.href}`
+				const href = `/products/${slug}/${id}${tab.href}`
 
 				return (
 					<Link
 						key={tab.title}
 						href={href}
 						className={cn(
-							'flex-1 text-center py-4 px-6 border-b-2 hover:bg-gray-50 transition-colors',
+							'flex-1 text-center py-4 px-6 border-b-2 hover:bg-gray-50 transition-colors whitespace-nowrap',
 							{
 								'border-b-neutral-900 font-medium': href === pathname
 							}
