@@ -11,6 +11,7 @@ import {
 } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
+import { Review } from '@/db/schema/reviews'
 import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
@@ -159,6 +160,7 @@ export type GetProductBySlugReturnProduct = Product & {
 	productsToColors: (ProductToColor & { color: Color })[]
 	images: ProductImage[]
 	category: Category
+	reviews: Pick<Review, 'rating'>[]
 }
 
 export type GetProductBySlugReturn =
@@ -180,6 +182,9 @@ export async function getProductBySlug(
 				images: true,
 				productsToColors: {
 					with: { color: true }
+				},
+				reviews: {
+					columns: { rating: true }
 				},
 				category: true
 			}

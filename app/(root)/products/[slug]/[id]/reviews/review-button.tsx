@@ -106,7 +106,6 @@ function ReviewForm({
 	const form = useForm<ReviewSchema>({
 		resolver: zodResolver(reviewSchema),
 		defaultValues: {
-			comment: '',
 			rating: 0
 		}
 	})

@@ -54,7 +54,7 @@ export default function ProductCard({
 						<Rating rating={averageRating} />
 
 						<span className='text-gray-700 text-sm'>
-							{averageRating}
+							{averageRating.toFixed(1)}
 							<span className='text-gray-400'>/5</span>
 						</span>
 					</div>

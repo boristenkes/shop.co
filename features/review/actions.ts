@@ -81,8 +81,12 @@ export async function getProductReviews(
 ): Promise<GetProductReviewsReturn> {
 	try {
 		const reviews = await db.query.reviews.findMany({
-			where: (reviews, { eq, and }) =>
-				and(eq(reviews.productId, productId), eq(reviews.approved, true)),
+			where: (reviews, { eq, and, isNotNull }) =>
+				and(
+					eq(reviews.productId, productId),
+					eq(reviews.approved, true),
+					isNotNull(reviews.comment)
+				),
 			with: {
 				user: {
 					columns: { name: true }

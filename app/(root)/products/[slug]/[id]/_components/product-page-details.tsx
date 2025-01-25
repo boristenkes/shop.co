@@ -5,7 +5,7 @@ import { TSize } from '@/db/schema/enums'
 import { getProductBySlug } from '@/features/product/actions'
 import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
-import { calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
+import { average, calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
 import Link from 'next/link'
 import ProductPageForm from './form'
 import ImageCarousel from './image-carousel'
@@ -19,6 +19,7 @@ export default async function ProductPageDetails({ slug }: { slug: string }) {
 	if (!response.success) return <ErrorMessage message={response.message} />
 
 	const { product } = response
+	const averageRating = average(product.reviews.map(review => review.rating))
 
 	return (
 		<div className='container py-9 flex items-start justify-center gap-10 flex-col lg:flex-row'>
@@ -41,7 +42,18 @@ export default async function ProductPageDetails({ slug }: { slug: string }) {
 					</h1>
 				</div>
 
-				<Rating rating={4} />
+				{product.reviews.length > 0 ? (
+					<div className='flex items-center space-x-2'>
+						<Rating rating={averageRating} />
+
+						<span className='text-gray-700 text-sm'>
+							{averageRating.toFixed(1)}
+							<span className='text-gray-400'>/5</span>
+						</span>
+					</div>
+				) : (
+					<p>No rating</p>
+				)}
 
 				<div className='text-3xl font-bold'>
 					{!product.discount || product.discount === 0 ? (
@@ -135,14 +147,6 @@ export function ProductPageDetailsSkeleton() {
 						<Skeleton className='w-40 h-12 rounded-full grow' />
 					</div>
 				</div>
-
-				{/* <ProductPageForm
-			colors={product.productsToColors.map(({ color }) => color)}
-			sizes={product.sizes as TSize[]}
-			stock={product.stock as number}
-			currentUserId={currentUserId}
-			productId={product.id}
-		/> */}
 			</div>
 		</div>
 	)

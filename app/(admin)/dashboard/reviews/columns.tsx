@@ -53,7 +53,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 
 			return (
 				<Link
-					href={`/products/${product.slug}/${product.id}`}
+					href={`/products/${product.slug}/${product.id}/reviews`}
 					className='hover:underline underline-offset-4'
 				>
 					{product.name}
@@ -91,7 +91,8 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 		cell: ({ row }) => {
 			const review = row.original
 
-			if (!review.comment) return <p>No comment</p>
+			if (!review.comment)
+				return <p className='italic text-gray-500'>No comment</p>
 
 			return (
 				<Tooltip>
