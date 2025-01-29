@@ -158,7 +158,7 @@ export default function ProductPageForm({
 				<ErrorMessage message={mutation.data.message} />
 			)}
 
-			<div className='flex items-center gap-5 mt-6'>
+			<div className='flex items-center gap-5 mt-6 flex-wrap'>
 				<Label className='sr-only'>Quantity (max {Math.min(stock, 20)})</Label>
 				<NumberInput
 					value={quantity}

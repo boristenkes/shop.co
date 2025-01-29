@@ -29,7 +29,7 @@ export default function ProductPageTabs({
 	const pathname = usePathname()
 
 	return (
-		<div className='container flex items-center text-lg py-10 overflow-x-auto'>
+		<div className='container flex items-center md:text-lg my-10 overflow-x-auto'>
 			{tabs.map(tab => {
 				const href = `/products/${slug}/${id}${tab.href}`
 

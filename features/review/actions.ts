@@ -77,7 +77,7 @@ type GetProductReviewsReturn =
 	| { success: false; message: string }
 
 export async function getProductReviews(
-	productId: number
+	productId: Product['id']
 ): Promise<GetProductReviewsReturn> {
 	try {
 		const reviews = await db.query.reviews.findMany({
@@ -153,7 +153,7 @@ export async function getReviews(): Promise<GetReviewsReturn> {
 }
 
 export async function approveReview(
-	reviewId: number,
+	reviewId: Review['id'],
 	path = '/dashboard/reviews'
 ) {
 	try {
@@ -184,7 +184,7 @@ export type DeleteReviewReturn =
 	| { success: false; message: string }
 
 export async function deleteReview(
-	reviewId: number,
+	reviewId: Review['id'],
 	path = '/dashboard/reviews'
 ): Promise<DeleteReviewReturn> {
 	try {

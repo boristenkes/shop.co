@@ -59,9 +59,9 @@ export default function ReviewButton(props: ButtonProps) {
 					<DialogHeader>
 						<DialogTitle>Write a Review</DialogTitle>
 						<DialogDescription>
-							Your review won't be visible unless you include a comment, but
-							your rating will still contribute to the average. If you do leave
-							a comment, your review will need to be approved by an
+							Your review won&apos;t be visible unless you include a comment,
+							but your rating will still contribute to the average. If you do
+							leave a comment, your review will need to be approved by an
 							administrator before it appears on the page.
 						</DialogDescription>
 					</DialogHeader>

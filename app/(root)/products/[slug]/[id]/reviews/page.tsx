@@ -1,6 +1,6 @@
 import ErrorMessage from '@/components/error-message'
+import { Rating } from '@/components/rating'
 import { Button } from '@/components/ui/button'
-import { RatingInput } from '@/components/ui/rating'
 import { getProductReviews } from '@/features/review/actions'
 import { formatDate } from '@/lib/utils'
 import {
@@ -29,7 +29,10 @@ export default async function ProductPageReviews(props: {
 						<SlidersHorizontalIcon />
 					</Button>
 
-					<Button variant='secondary'>
+					<Button
+						variant='secondary'
+						className='max-md:hidden'
+					>
 						Latest <ChevronDownIcon />
 					</Button>
 
@@ -46,10 +49,7 @@ export default async function ProductPageReviews(props: {
 								className='px-8 py-7 border rounded-2xl'
 							>
 								<div className='flex items-center justify-between gap-2 mb-2'>
-									<RatingInput
-										readOnly
-										value={review.rating}
-									/>
+									<Rating rating={review.rating} />
 									<MoreHorizontalIcon className='text-neutral-600' />
 								</div>
 

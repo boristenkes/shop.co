@@ -54,8 +54,6 @@ export async function createProduct(
 		)
 			throw new Error('Unauthorized')
 
-		console.log(images)
-
 		const validatedImages = imagesSchema.parse(images)
 		const validatedData = newProductSchema.parse(data)
 
@@ -168,7 +166,7 @@ export type GetProductBySlugReturn =
 	| { success: false; message: string }
 
 export async function getProductBySlug(
-	slug: string
+	slug: Product['slug']
 ): Promise<GetProductBySlugReturn> {
 	try {
 		const product = (await db.query.products.findFirst({
@@ -184,6 +182,7 @@ export async function getProductBySlug(
 					with: { color: true }
 				},
 				reviews: {
+					where: (review, { eq }) => eq(review.approved, true),
 					columns: { rating: true }
 				},
 				category: true
@@ -201,6 +200,7 @@ export async function getProductBySlug(
 
 export type GetProductByIdReturnProduct = Product & {
 	productsToColors: (ProductToColor & { color: Color })[]
+	reviews: Pick<Review, 'rating'>[]
 	images: ProductImage[]
 	category: Category
 }
@@ -210,13 +210,13 @@ export type GetProductByIdReturn =
 	| { success: false; message: string }
 
 export async function getProductById(
-	id: string | number
+	id: Product['id']
 ): Promise<GetProductByIdReturn> {
 	try {
 		const product = (await db.query.products.findFirst({
 			where: (products, { isNull }) =>
 				and(
-					eq(products.id, Number(id)),
+					eq(products.id, id),
 					isNull(products.deletedAt),
 					eq(products.archived, false)
 				),
@@ -224,6 +224,10 @@ export async function getProductById(
 				images: true,
 				productsToColors: {
 					with: { color: true }
+				},
+				reviews: {
+					where: (review, { eq }) => eq(review.approved, true),
+					columns: { rating: true }
 				},
 				category: true
 			}
@@ -392,7 +396,7 @@ type UpdateProductReturn =
 	| { success: false; message: string }
 
 export async function updateProduct(
-	productId: number,
+	productId: Product['id'],
 	newData: z.infer<typeof editProductSchema>,
 	images?: NewProductImage[]
 ): Promise<UpdateProductReturn> {
@@ -446,7 +450,10 @@ export async function updateProduct(
 	}
 }
 
-async function handleImages(productId: number, images: NewProductImage[]) {
+async function handleImages(
+	productId: Product['id'],
+	images: NewProductImage[]
+) {
 	if (images.length === 0) throw new Error('No images provided')
 
 	// Validate images

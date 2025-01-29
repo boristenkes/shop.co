@@ -24,7 +24,7 @@ export async function generateMetadata(props: {
 	params: Promise<{ slug: string; id: string }>
 }): Promise<Metadata> {
 	const { slug, id } = await props.params
-	const response = await getProductById(id)
+	const response = await getProductById(Number(id))
 
 	if (!response.success) return {}
 
@@ -105,7 +105,7 @@ export default async function ProductLayout({
 			</div>
 
 			<Suspense fallback={<ProductPageDetailsSkeleton />}>
-				<ProductPageDetails slug={slug} />
+				<ProductPageDetails id={parseInt(id)} />
 			</Suspense>
 
 			<ProductPageTabs

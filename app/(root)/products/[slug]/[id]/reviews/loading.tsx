@@ -25,6 +25,7 @@ export default async function ProductPageReviewsLoading() {
 					<Button
 						variant='secondary'
 						disabled
+						className='max-md:hidden'
 					>
 						Latest <ChevronDownIcon />
 					</Button>

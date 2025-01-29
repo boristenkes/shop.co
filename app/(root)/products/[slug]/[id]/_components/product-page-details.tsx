@@ -2,7 +2,8 @@ import ErrorMessage from '@/components/error-message'
 import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TSize } from '@/db/schema/enums'
-import { getProductBySlug } from '@/features/product/actions'
+import { Product } from '@/db/schema/products'
+import { getProductById } from '@/features/product/actions'
 import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
 import { average, calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
@@ -10,11 +11,15 @@ import Link from 'next/link'
 import ProductPageForm from './form'
 import ImageCarousel from './image-carousel'
 
-export default async function ProductPageDetails({ slug }: { slug: string }) {
+export default async function ProductPageDetails({
+	id
+}: {
+	id: Product['id']
+}) {
 	const session = await auth()
 	const currentUserId = session?.user.id
 
-	const response = await getProductBySlug(slug)
+	const response = await getProductById(id)
 
 	if (!response.success) return <ErrorMessage message={response.message} />
 
