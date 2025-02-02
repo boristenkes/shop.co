@@ -10,6 +10,7 @@ export type NumberInputProps = {
 	min?: number
 	max?: number
 	step?: number
+	size?: 'lg' | 'sm'
 	disabled?: boolean
 }
 
@@ -20,6 +21,7 @@ export default function NumberInput({
 	max = 100,
 	step = 1,
 	disabled,
+	size = 'lg',
 	...props
 }: NumberInputProps) {
 	const [inputValue, setInputValue] = useState<number>(value)
@@ -51,7 +53,8 @@ export default function NumberInput({
 	return (
 		<div
 			className={cn(
-				'flex items-center border rounded-full px-2 py-3 bg-gray-100',
+				'flex items-center border rounded-full bg-gray-100',
+				size === 'sm' ? 'px-1 py-2' : 'px-2 py-3',
 				{
 					'opacity-50': disabled
 				}
@@ -63,13 +66,16 @@ export default function NumberInput({
 				disabled={disabled}
 				className='px-2 text-lg font-bold text-gray-600 hover:text-gray-900'
 			>
-				<MinusIcon />
+				<MinusIcon className={size === 'sm' ? 'size-4' : 'size-6'} />
 			</button>
 			<input
 				type='number'
 				value={inputValue}
 				onChange={handleInputChange}
-				className='pl-4 text-center bg-transparent border-none focus:outline-none'
+				className={cn(
+					'text-center bg-transparent border-none focus:outline-none',
+					size === 'sm' ? 'pr-0 w-8' : 'pl-4'
+				)}
 				min={min}
 				max={max}
 				step={step}
@@ -82,7 +88,7 @@ export default function NumberInput({
 				disabled={disabled}
 				className='px-2 text-lg font-bold text-gray-600 hover:text-gray-900'
 			>
-				<PlusIcon />
+				<PlusIcon className={size === 'sm' ? 'size-4' : 'size-6'} />
 			</button>
 		</div>
 	)

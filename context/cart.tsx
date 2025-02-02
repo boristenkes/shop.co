@@ -1,41 +1,42 @@
 'use client'
 
-import ErrorMessage from '@/components/error-message'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle
-} from '@/components/ui/dialog'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Color } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
-import { saveItemsToCart } from '@/features/cart/actions'
-import { useMutation } from '@tanstack/react-query'
-import { Loader2Icon } from 'lucide-react'
+import { Product } from '@/db/schema/products'
+import { AlertCircleIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import { createContext, useContext, useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
-export type LocalCartItem = {
-	colorId: number
+export type SessionCartProduct = Pick<
+	Product,
+	'id' | 'name' | 'slug' | 'priceInCents' | 'discount' | 'stock'
+> & { image: string }
+
+export type SessionCartItem = {
+	id: string
+	color: Color
 	size: TSize
 	quantity: number
-	productId: number
+	product: SessionCartProduct
 }
 
 type CartContextValue = {
-	localCartItems: LocalCartItem[]
-	addToCart: (item: LocalCartItem) => void
-	removeFromCart: (productId: number, colorId: number, size: TSize) => void
+	sessionCartItems: SessionCartItem[]
+	addToCart: (item: Omit<SessionCartItem, 'id'>) => void
+	editCartItem: (
+		itemId: SessionCartItem['id'],
+		newData: Partial<SessionCartItem>
+	) => void
+	removeFromCart: (itemId: SessionCartItem['id']) => void
 	clearCart: () => void
+	cartOpen: boolean
+	setCartOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
 
-export const LOCAL_STORAGE_CART_KEY = 'cart'
+export const SESSION_STORAGE_CART_KEY = 'cart'
 
 export const useCart = () => {
 	const context = useContext(CartContext)
@@ -46,136 +47,93 @@ export const useCart = () => {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-	const [localCartItems, setLocalCartItems] = useState<LocalCartItem[]>([])
+	const [sessionCartItems, setSessionCartItems] = useState<SessionCartItem[]>(
+		[]
+	)
+	const [cartOpen, setCartOpen] = useState(false)
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return
 
 		try {
-			const stored = localStorage.getItem(LOCAL_STORAGE_CART_KEY)
+			const stored = sessionStorage.getItem(SESSION_STORAGE_CART_KEY)
 
-			setLocalCartItems(JSON.parse(stored ?? '[]'))
+			setSessionCartItems(JSON.parse(stored ?? '[]'))
 		} catch (error) {
-			console.error('Failed to parse cart items from localStorage')
-			localStorage.removeItem(LOCAL_STORAGE_CART_KEY)
+			console.error('Failed to parse cart items from sessionStorage')
+			sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
 		}
 	}, [])
 
-	const syncLocalStorage = (items: LocalCartItem[]) => {
-		setLocalCartItems(items)
-		localStorage.setItem(LOCAL_STORAGE_CART_KEY, JSON.stringify(items))
+	const syncSessionStorage = (items: SessionCartItem[]) => {
+		setSessionCartItems(items)
+
+		sessionStorage.setItem(SESSION_STORAGE_CART_KEY, JSON.stringify(items))
 	}
 
-	const addToCart = (item: LocalCartItem) => {
-		syncLocalStorage([...localCartItems, item])
+	const addToCart = (item: Omit<SessionCartItem, 'id'>) => {
+		syncSessionStorage([
+			...sessionCartItems,
+			{ id: crypto.randomUUID(), ...item }
+		])
 	}
 
-	const removeFromCart = (productId: number, colorId: number, size: TSize) => {
-		syncLocalStorage(
-			localCartItems.filter(
-				cartItem =>
-					!(
-						cartItem.productId === productId &&
-						cartItem.colorId === colorId &&
-						cartItem.size === size
-					)
-			)
+	const editCartItem = (
+		itemId: SessionCartItem['id'],
+		newData: Partial<SessionCartItem>
+	) => {
+		const updatedItems = sessionCartItems.map(item =>
+			item.id === itemId ? { ...item, ...newData } : item
 		)
+
+		syncSessionStorage(updatedItems)
+	}
+
+	const removeFromCart = (itemId: SessionCartItem['id']) => {
+		const filteredItems = sessionCartItems.filter(item => item.id !== itemId)
+
+		syncSessionStorage(filteredItems)
 	}
 
 	const clearCart = () => {
-		setLocalCartItems([])
-		localStorage.removeItem(LOCAL_STORAGE_CART_KEY)
+		setSessionCartItems([])
+		sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
 	}
 
 	return (
 		<CartContext.Provider
 			value={{
-				localCartItems,
+				sessionCartItems,
 				addToCart,
+				editCartItem,
 				removeFromCart,
-				clearCart
+				clearCart,
+				cartOpen,
+				setCartOpen
 			}}
 		>
 			{children}
-
-			<CartSyncAlert />
 		</CartContext.Provider>
 	)
 }
 
-function CartSyncAlert() {
+export function CartSyncAlert(props: React.ComponentProps<'div'>) {
 	const session = useSession()
-	const [showDialog, setShowDialog] = useState(false)
+	const { sessionCartItems } = useCart()
 
-	const { localCartItems, clearCart } = useCart()
-	const mutation = useMutation({
-		mutationKey: ['cart:sync'],
-		mutationFn: () => saveItemsToCart(localCartItems),
-		onSettled(data) {
-			if (data?.success) {
-				toast.success('Cart synced successfully')
-				setShowDialog(false)
-				clearCart()
-			}
-		}
-	})
-
-	useEffect(() => {
-		if (session.status === 'authenticated' && localCartItems.length)
-			setShowDialog(true)
-	}, [session, localCartItems])
-
-	if (!showDialog) return null
+	if (session.status !== 'unauthenticated' || sessionCartItems.length === 0)
+		return null
 
 	return (
-		<Dialog
-			open={showDialog}
-			onOpenChange={setShowDialog}
+		<Alert
+			variant='warning'
+			{...props}
 		>
-			<DialogContent>
-				<DialogHeader>
-					<DialogTitle>Sync Your Cart</DialogTitle>
-					<DialogDescription>
-						We noticed you have stored items in your cart. Would you like to
-						store them in your account?
-					</DialogDescription>
-				</DialogHeader>
-
-				<div className='flex items-center space-x-2'>
-					<Checkbox id='dont-disturb' />
-					<label
-						htmlFor='dont-disturb'
-						className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-					>
-						Don't ask again
-					</label>
-				</div>
-
-				{mutation.data && !mutation.data.success && (
-					<ErrorMessage message={mutation.data.message} />
-				)}
-
-				<DialogFooter className='space-x-2'>
-					<Button
-						variant='secondary'
-						onClick={() => {
-							clearCart()
-							setShowDialog(false)
-						}}
-						disabled={mutation.isPending}
-					>
-						Empty local cart
-					</Button>
-					<Button
-						onClick={() => mutation.mutate()}
-						disabled={mutation.isPending}
-					>
-						{mutation.isPending && <Loader2Icon className='animate-spin' />}
-						{mutation.isPending ? 'Storing' : 'Yes, store in database'}
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+			<AlertCircleIcon className='size-4' />
+			<AlertTitle>Warning - You are not signed in</AlertTitle>
+			<AlertDescription>
+				Cart items will disappear once you leave the browser unless you sign in.
+			</AlertDescription>
+		</Alert>
 	)
 }

@@ -87,6 +87,8 @@ export function calculatePriceWithDiscount(
 	if (priceInCents < 0 || discountPercentage < 0 || discountPercentage > 100)
 		return 0
 
+	if (discountPercentage === 0) return priceInCents
+
 	const discount = (priceInCents * discountPercentage) / 100
 	const discountedPriceInCents = Math.round(priceInCents - discount)
 

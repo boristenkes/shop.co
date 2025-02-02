@@ -8,12 +8,12 @@ export default function SiteNotice() {
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
-			setIsNoticed(!!localStorage.getItem('noticed'))
+			setIsNoticed(!!sessionStorage.getItem('noticed'))
 		}
 	}, [])
 
 	const notice = () => {
-		localStorage.setItem('noticed', 'true')
+		sessionStorage.setItem('noticed', 'true')
 		setIsNoticed(true)
 	}
 

@@ -5,23 +5,22 @@ import NumberInput from '@/components/number-input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { useCart } from '@/context/cart'
+import { SessionCartProduct, useCart } from '@/context/cart'
 import { Color } from '@/db/schema/colors'
-import { Size, TSize } from '@/db/schema/enums'
-import { NewItemData, saveToCart } from '@/features/cart/actions'
+import { TSize } from '@/db/schema/enums'
+import { saveToCart } from '@/features/cart/actions'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2Icon, ShoppingCartIcon } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 type ProductPageFormProps = {
 	colors: Color[]
 	sizes: TSize[]
 	stock: number
 	currentUserId: number | undefined
-	productId: number
+	product: SessionCartProduct
 }
 
 export default function ProductPageForm({
@@ -29,12 +28,12 @@ export default function ProductPageForm({
 	sizes,
 	stock,
 	currentUserId,
-	productId
+	product
 }: ProductPageFormProps) {
 	const params = useSearchParams()
-	const { localCartItems, addToCart } = useCart()
-	const [colorId, setColorId] = useState<number | null>(
-		colors.find(c => c.slug === params.get('color'))?.id ?? null
+	const { sessionCartItems, addToCart } = useCart()
+	const [color, setColor] = useState<Color | null>(
+		colors.find(c => c.slug === params.get('color')) ?? null
 	)
 	const [size, setSize] = useState<TSize | null>(
 		sizes.includes(params.get('size') as TSize)
@@ -44,8 +43,7 @@ export default function ProductPageForm({
 	const [quantity, setQuantity] = useState(1)
 	const mutation = useMutation({
 		mutationKey: ['cart:create'],
-		// TODO: Check if `localCartItems` includes item we want to add. Throw error if it does
-		mutationFn: async (data: NewItemData) => saveToCart(data),
+		mutationFn: async (data: any) => saveToCart(data),
 		onSettled(data) {
 			if (data?.success) {
 				toast.success('Added to cart')
@@ -57,10 +55,10 @@ export default function ProductPageForm({
 		// Persist color and size in URL search params
 		const searchParams = new URLSearchParams(params)
 
-		if (colorId)
+		if (color)
 			searchParams.set(
 				'color',
-				colors.find(c => c.id === colorId)?.slug as string
+				colors.find(c => c.id === color.id)?.slug as string
 			)
 		else searchParams.delete('color')
 
@@ -68,33 +66,22 @@ export default function ProductPageForm({
 		else searchParams.delete('size')
 
 		history.replaceState(null, '', `?${searchParams.toString()}`)
-	}, [colorId, size, colors, params])
+	}, [color, size, colors, params])
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		const productPageFormSchema = z.object({
-			colorId: z.coerce
-				.number()
-				.int()
-				.positive()
-				.finite()
-				.refine(colorId => colors.some(c => c.id === colorId)), // Must be included in `colors`
-			size: z.nativeEnum(Size).refine(size => sizes.includes(size)), // must be included in `sizes`
-			quantity: z.coerce.number().int().positive().lte(Math.min(stock, 100))
-		})
+		if (!color || !size) return
 
 		try {
-			const parsed = productPageFormSchema.parse({ colorId, size, quantity })
-
 			if (currentUserId) {
-				mutation.mutate({ ...parsed, productId })
+				mutation.mutate({ color, size, quantity, productId: product.id })
 			} else {
-				const isAlreadyInCart = localCartItems.some(
+				const isAlreadyInCart = sessionCartItems.some(
 					item =>
-						item.productId === productId &&
-						item.colorId === parsed.colorId &&
-						item.size === parsed.size
+						item.product.id === product.id &&
+						item.color.id === color.id &&
+						item.size === size
 				)
 
 				if (isAlreadyInCart)
@@ -102,7 +89,7 @@ export default function ProductPageForm({
 						'This product with same color and size is already in the cart.'
 					)
 
-				addToCart({ ...parsed, productId }) // Use local cart context
+				addToCart({ product, color, quantity, size }) // Use local cart context
 				toast.success('Product added to the cart')
 			}
 		} catch (error: any) {
@@ -119,8 +106,10 @@ export default function ProductPageForm({
 					</Label>
 					<RadioGroup
 						className='flex items-center gap-2 flex-wrap'
-						onValueChange={value => setColorId(Number(value))}
-						defaultValue={colorId?.toString()}
+						onValueChange={value =>
+							setColor(colors.find(c => c.id === Number(value)) as Color)
+						}
+						defaultValue={color?.id.toString()}
 					>
 						{colors.map(color => (
 							<RadioGroupItem
@@ -172,7 +161,7 @@ export default function ProductPageForm({
 				<Button
 					size='lg'
 					className='grow'
-					disabled={mutation.isPending || !colorId || !size}
+					disabled={mutation.isPending || !color || !size}
 				>
 					{mutation.isPending ? (
 						<Loader2Icon className='animate-spin' />

@@ -11,6 +11,32 @@ body {
 	margin-inline: auto;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-button {
+	@apply bg-transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	@apply bg-neutral-900/50 rounded-lg;
+}
+
+.custom-scrollbar::-webkit-scrollbar-button {
+	display: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+.no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
 @layer base {
 	:root {
 		--radius: 0.5rem;

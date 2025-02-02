@@ -90,7 +90,15 @@ export default async function ProductPageDetails({
 					sizes={product.sizes as TSize[]}
 					stock={product.stock as number}
 					currentUserId={currentUserId}
-					productId={product.id}
+					product={{
+						id: product.id,
+						slug: product.slug,
+						name: product.name,
+						discount: product.discount,
+						image: product.images[0].url,
+						priceInCents: product.priceInCents,
+						stock: product.stock
+					}}
 				/>
 			</div>
 		</div>
