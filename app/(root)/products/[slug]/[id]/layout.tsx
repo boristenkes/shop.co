@@ -19,6 +19,9 @@ import ProductPageDetails, {
 	ProductPageDetailsSkeleton
 } from './_components/product-page-details'
 import ProductPageTabs from './_components/tabs'
+import RelatedProducts, {
+	RelatedProductsSkeleton
+} from './reviews/related-products'
 
 export async function generateMetadata(props: {
 	params: Promise<{ slug: string; id: string }>
@@ -114,6 +117,10 @@ export default async function ProductLayout({
 			/>
 
 			{children}
+
+			<Suspense fallback={<RelatedProductsSkeleton />}>
+				<RelatedProducts productId={parseInt(id)} />
+			</Suspense>
 		</div>
 	)
 }

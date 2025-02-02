@@ -16,7 +16,7 @@ import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify, toCents } from '@/lib/utils'
-import { and, eq, inArray, isNotNull } from 'drizzle-orm'
+import { and, eq, inArray, isNotNull, isNull, ne } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
@@ -380,6 +380,78 @@ export async function getFeaturedProducts({
 			success: false,
 			message:
 				'Something went wrong while getting products. Please try again later.'
+		}
+	}
+}
+
+type GetRelatedProductsProps = GetProductsProps
+
+export async function getRelatedProducts(
+	productId: Product['id'],
+	{ page = 1, pageSize = 4, orderBy = 'desc' }: GetRelatedProductsProps = {}
+): Promise<GetProductsReturn> {
+	try {
+		const targetProduct = await db.query.products.findFirst({
+			where: and(
+				eq(products.id, productId),
+				isNull(products.deletedAt),
+				eq(products.archived, false)
+			),
+			columns: {
+				id: true,
+				priceInCents: true,
+				categoryId: true
+			}
+		})
+
+		if (!targetProduct) {
+			console.error(`Product with ID ${productId} not found`)
+			return { success: false, message: 'Product not found' }
+		}
+
+		// const [minPrice, maxPrice] = [
+		// 	Math.floor(targetProduct.priceInCents * 0.8),
+		// 	Math.ceil(targetProduct.priceInCents * 1.2)
+		// ]
+
+		const results = await db.query.products.findMany({
+			where: and(
+				eq(products.categoryId, targetProduct.categoryId!), // Same category
+				ne(products.id, targetProduct.id), // Exclude the current product
+				// between(products.priceInCents, minPrice, maxPrice), // 80% <= Price <= 120%
+				isNull(products.deletedAt), // Isn't deleted
+				eq(products.archived, false) // Isn't archived
+			),
+			orderBy: (products, { ...conf }) => [conf[orderBy](products.createdAt)],
+			columns: {
+				discount: true,
+				name: true,
+				priceInCents: true,
+				slug: true,
+				id: true
+			},
+			with: {
+				images: {
+					columns: { url: true },
+					limit: 1,
+					orderBy: (images, { asc }) => asc(images.id)
+				},
+				reviews: {
+					where: (review, { eq }) => eq(review.approved, true),
+					columns: { rating: true }
+				}
+			},
+			offset: (page - 1) * pageSize,
+			limit: pageSize
+		})
+
+		return { success: true, products: results }
+	} catch (error) {
+		console.error('[GET_RELATED_PRODUCTS]:', error)
+		return {
+			success: false,
+			message:
+				'Something went wrong while getting related products. Please try again later.'
 		}
 	}
 }

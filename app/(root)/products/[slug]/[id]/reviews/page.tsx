@@ -71,7 +71,7 @@ export default function ProductPageReviews() {
 							onClick={() => query.fetchNextPage()}
 							disabled={query.isFetchingNextPage}
 						>
-							{query.isFetchingNextPage ? 'Loading' : 'Load more'}
+							{query.isFetchingNextPage ? 'Loading' : 'Load More'}
 							{query.isFetchingNextPage && (
 								<Loader2Icon className='animate-spin' />
 							)}

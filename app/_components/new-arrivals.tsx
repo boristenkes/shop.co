@@ -19,7 +19,10 @@ export default async function NewArrivals() {
 			</h2>
 
 			{response.success ? (
-				<ProductCardList products={response.products} />
+				<ProductCardList
+					products={response.products}
+					className='flex-nowrap justify-start max-w-full overflow-x-auto custom-scrollbar'
+				/>
 			) : (
 				<ErrorMessage message={response.message} />
 			)}

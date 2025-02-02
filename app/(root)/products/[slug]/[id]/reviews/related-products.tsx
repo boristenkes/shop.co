@@ -1,21 +1,28 @@
 import ErrorMessage from '@/components/error-message'
-import { Button } from '@/components/ui/button'
-import { getFeaturedProducts } from '@/features/product/actions'
+import { Product } from '@/db/schema/products'
+import { getRelatedProducts } from '@/features/product/actions'
 import ProductCardList, {
 	ProductCardListSkeleton
 } from '@/features/product/components/product-list'
 import { integralCf } from '@/lib/fonts'
-import Link from 'next/link'
 
-export default async function FeaturedProducts() {
-	const response = await getFeaturedProducts()
+type RelatedProductsProps = {
+	productId: Product['id']
+}
+
+export default async function RelatedProducts({
+	productId
+}: RelatedProductsProps) {
+	const response = await getRelatedProducts(productId)
+
+	if (response.success && response.products.length === 0) return
 
 	return (
-		<section className='py-16 border-b container'>
+		<section className='py-16 container'>
 			<h2
 				className={`${integralCf.className} text-neutral-900 uppercase font-bold text-3xl lg:text-4xl xl:text-5xl text-balance text-center`}
 			>
-				Featured Products
+				You might also like
 			</h2>
 
 			{response.success ? (
@@ -26,42 +33,20 @@ export default async function FeaturedProducts() {
 			) : (
 				<ErrorMessage message={response.message} />
 			)}
-
-			<div className='w-full flex justify-center pt-6'>
-				<Button
-					asChild
-					variant='outline'
-					size='lg'
-					className='mx-auto'
-				>
-					<Link href='/products?featured=true'>View All</Link>
-				</Button>
-			</div>
 		</section>
 	)
 }
 
-export function FeaturedProductsSkeleton() {
+export function RelatedProductsSkeleton() {
 	return (
 		<section className='py-16 border-b container'>
 			<h2
 				className={`${integralCf.className} text-neutral-900 uppercase font-bold text-3xl lg:text-4xl xl:text-5xl text-balance text-center`}
 			>
-				Featured Products
+				You might also like
 			</h2>
 
 			<ProductCardListSkeleton itemCount={4} />
-
-			<div className='w-full flex justify-center pt-6'>
-				<Button
-					variant='outline'
-					size='lg'
-					className='mx-auto'
-					disabled
-				>
-					View All
-				</Button>
-			</div>
 		</section>
 	)
 }
