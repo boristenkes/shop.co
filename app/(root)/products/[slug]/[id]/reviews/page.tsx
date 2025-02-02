@@ -1,20 +1,35 @@
+'use client'
+
 import ErrorMessage from '@/components/error-message'
-import { Rating } from '@/components/rating'
 import { Button } from '@/components/ui/button'
 import { getProductReviews } from '@/features/review/actions'
-import { formatDate } from '@/lib/utils'
+import ReviewList, {
+	ReviewCardListSkeleton
+} from '@/features/review/components/review-list'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import {
 	ChevronDownIcon,
-	MoreHorizontalIcon,
+	Loader2Icon,
 	SlidersHorizontalIcon
 } from 'lucide-react'
+import { useParams } from 'next/navigation'
 import ReviewButton from './review-button'
 
-export default async function ProductPageReviews(props: {
-	params: Promise<{ id: string }>
-}) {
-	const { id } = await props.params
-	const response = await getProductReviews(Number(id))
+export default function ProductPageReviews() {
+	const params = useParams()
+
+	const query = useInfiniteQuery({
+		queryKey: ['reviews:get', params.id],
+		queryFn: ({ pageParam = 1 }) =>
+			getProductReviews(Number(params.id), { page: pageParam }),
+		initialPageParam: 1,
+		getNextPageParam: (lastPage, allPages) =>
+			lastPage.hasMore ? allPages.length + 1 : undefined
+	})
+
+	const reviews = query.data?.pages.flatMap(page => page.reviews) ?? []
+	const hasMore =
+		query.data?.pages?.[query.data.pages.length - 1]?.hasMore ?? false
 
 	return (
 		<div className='container'>
@@ -40,57 +55,33 @@ export default async function ProductPageReviews(props: {
 				</div>
 			</div>
 
-			{response.success ? (
-				response.reviews.length > 0 ? (
-					<div>
-						<ul className='grid grid-cols-1 md:grid-cols-2 gap-5'>
-							{response.reviews.map(review => (
-								<li
-									key={review.id}
-									className='px-8 py-7 border rounded-2xl flex flex-col'
-								>
-									<div className='flex items-center justify-between gap-2 mb-2'>
-										<Rating rating={review.rating} />
-										<MoreHorizontalIcon className='text-neutral-600' />
-									</div>
+			{query.isLoading ? (
+				<ReviewCardListSkeleton />
+			) : query.isError ? (
+				<ErrorMessage message='Something went wrong' />
+			) : reviews.length > 0 ? (
+				<div>
+					<ReviewList reviews={reviews} />
 
-									<h3 className='font-bold text-xl mb-2'>{review.user.name}</h3>
-
-									<p className='text-gray-600 text-base mb-6 flex-grow'>
-										<q>{review.comment}</q>
-									</p>
-
-									<p className='font-medium text-neutral-600'>
-										Posted on{' '}
-										<time dateTime={review.createdAt?.toISOString()}>
-											{formatDate(review.createdAt!, {
-												month: 'long',
-												day: '2-digit',
-												year: 'numeric'
-											})}
-										</time>
-									</p>
-								</li>
-							))}
-						</ul>
-
-						{response.hasMore && (
-							<Button
-								variant='outline'
-								size='lg'
-								className='mx-auto block mt-9'
-							>
-								Load more
-							</Button>
-						)}
-					</div>
-				) : (
-					<p className='p-16 text-center'>
-						This product doesn&apos;t have any reviews
-					</p>
-				)
+					{hasMore && (
+						<Button
+							variant='outline'
+							size='lg'
+							className='mx-auto mt-9 flex items-center gap-2'
+							onClick={() => query.fetchNextPage()}
+							disabled={query.isFetchingNextPage}
+						>
+							{query.isFetchingNextPage ? 'Loading' : 'Load more'}
+							{query.isFetchingNextPage && (
+								<Loader2Icon className='animate-spin' />
+							)}
+						</Button>
+					)}
+				</div>
 			) : (
-				<ErrorMessage message={response.message} />
+				<p className='p-16 text-center'>
+					This product doesn&apos;t have any reviews
+				</p>
 			)}
 		</div>
 	)

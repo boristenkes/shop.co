@@ -64,16 +64,17 @@ export async function createReview(
 	}
 }
 
-type GetProductReviewsReview = Pick<
+export type GetProductReviewsReview = Pick<
 	Review,
 	'comment' | 'createdAt' | 'rating' | 'id'
 > & { user: Pick<User, 'name'> }
 
-type GetProductReviewsReturn =
-	| { success: true; reviews: GetProductReviewsReview[]; hasMore: boolean }
-	| { success: false; message: string }
+export type GetProductReviewsReturn = {
+	reviews: GetProductReviewsReview[]
+	hasMore: boolean
+}
 
-type GetProductReviewOptions = {
+export type GetProductReviewOptions = {
 	page?: number
 	pageSize?: number
 }
@@ -82,45 +83,40 @@ export async function getProductReviews(
 	productId: Product['id'],
 	{ page = 1, pageSize = 6 }: GetProductReviewOptions = {}
 ): Promise<GetProductReviewsReturn> {
-	try {
-		const reviews = await db.query.reviews.findMany({
-			where: (reviews, { eq, and, isNotNull }) =>
-				and(
-					eq(reviews.productId, productId),
-					eq(reviews.approved, true),
-					isNotNull(reviews.comment)
-				),
-			with: {
-				user: {
-					columns: { name: true }
-				}
-			},
-			columns: {
-				comment: true,
-				createdAt: true,
-				rating: true,
-				id: true
-			},
-			orderBy: (review, { desc }) => desc(review.rating),
-			limit: pageSize + 1, // +1 to determine if we've reached the end or not
-			offset: (page - 1) * pageSize
-		})
+	const reviews = await db.query.reviews.findMany({
+		where: (reviews, { eq, and, isNotNull }) =>
+			and(
+				eq(reviews.productId, productId),
+				eq(reviews.approved, true),
+				isNotNull(reviews.comment)
+			),
+		with: {
+			user: {
+				columns: { name: true }
+			}
+		},
+		columns: {
+			comment: true,
+			createdAt: true,
+			rating: true,
+			id: true
+		},
+		orderBy: (review, { desc }) => desc(review.rating),
+		limit: pageSize + 1, // +1 to determine if we've reached the end or not
+		offset: (page - 1) * pageSize
+	})
 
-		if (!reviews)
-			throw new Error(`Failed to fetch reviews for product: ${productId}`)
+	if (!reviews)
+		throw new Error(`Failed to fetch reviews for product: ${productId}`)
 
-		let hasMore = false
+	let hasMore = false
 
-		if (reviews.length > pageSize) {
-			reviews.pop() // Remove extra record
-			hasMore = true
-		}
-
-		return { success: true, reviews, hasMore }
-	} catch (error) {
-		console.error('[GET_PRODUCT_REVIEWS]:', error)
-		return { success: false, message: 'Something went wrong' }
+	if (reviews.length > pageSize) {
+		reviews.pop() // Remove extra record
+		hasMore = true
 	}
+
+	return { reviews, hasMore }
 }
 
 export type GetReviewsReturnReview = Review & {
