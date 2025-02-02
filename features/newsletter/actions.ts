@@ -11,9 +11,12 @@ export async function subcribeToNewsletter(email: string) {
 	try {
 		const validatedEmail = emailSchema.parse(email)
 
-		const existingEmail = await db.query.subscribers.findFirst({
-			where: eq(subscribers.email, validatedEmail)
-		})
+		const existingEmail = await db.query.subscribers
+			.findFirst({
+				where: eq(subscribers.email, validatedEmail),
+				columns: { id: true }
+			})
+			.then(Boolean)
 
 		if (existingEmail)
 			return { success: false, message: 'This email is already subscribed.' }
@@ -25,7 +28,7 @@ export async function subcribeToNewsletter(email: string) {
 		if (!newSubcriber)
 			throw new Error('Failed to subscribe. Please try again later.')
 
-		return { success: true, message: 'Subscribed successfully' }
+		return { success: true, message: 'Thanks for subscribing!' }
 	} catch (error: any) {
 		console.error('[SUBSCRIBE_NEWSLETTER]:', error)
 		return {

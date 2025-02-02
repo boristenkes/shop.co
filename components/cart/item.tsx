@@ -25,13 +25,14 @@ export default function CartItem({ item }: { item: SessionCartItem }) {
 		<li className='flex gap-3.5 [&:not(:last-child)]:border-b-2 [&:not(:last-child)]:pb-3.5'>
 			<Link
 				href={href}
-				className='bg-stone-100 rounded-lg'
+				className='bg-stone-100 rounded-lg aspect-square w-[100px]'
 			>
 				<Image
 					src={item.product.image}
 					alt={item.product.name}
 					width={100}
 					height={100}
+					className='size-full object-contain'
 				/>
 			</Link>
 

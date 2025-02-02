@@ -70,14 +70,17 @@ type GetProductReviewsReview = Pick<
 > & { user: Pick<User, 'name'> }
 
 type GetProductReviewsReturn =
-	| {
-			success: true
-			reviews: GetProductReviewsReview[]
-	  }
+	| { success: true; reviews: GetProductReviewsReview[]; hasMore: boolean }
 	| { success: false; message: string }
 
+type GetProductReviewOptions = {
+	page?: number
+	pageSize?: number
+}
+
 export async function getProductReviews(
-	productId: Product['id']
+	productId: Product['id'],
+	{ page = 1, pageSize = 6 }: GetProductReviewOptions = {}
 ): Promise<GetProductReviewsReturn> {
 	try {
 		const reviews = await db.query.reviews.findMany({
@@ -98,13 +101,22 @@ export async function getProductReviews(
 				rating: true,
 				id: true
 			},
-			orderBy: (review, { desc }) => desc(review.rating)
+			orderBy: (review, { desc }) => desc(review.rating),
+			limit: pageSize + 1, // +1 to determine if we've reached the end or not
+			offset: (page - 1) * pageSize
 		})
 
 		if (!reviews)
 			throw new Error(`Failed to fetch reviews for product: ${productId}`)
 
-		return { success: true, reviews }
+		let hasMore = false
+
+		if (reviews.length > pageSize) {
+			reviews.pop() // Remove extra record
+			hasMore = true
+		}
+
+		return { success: true, reviews, hasMore }
 	} catch (error) {
 		console.error('[GET_PRODUCT_REVIEWS]:', error)
 		return { success: false, message: 'Something went wrong' }
