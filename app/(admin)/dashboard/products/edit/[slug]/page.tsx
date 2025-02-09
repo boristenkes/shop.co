@@ -22,7 +22,7 @@ export default async function EditProductPage(props: {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role!, 'products', ['update']))
+	if (!currentUser || !hasPermission(currentUser.role, 'products', ['update']))
 		notFound()
 
 	const slug = (await props.params).slug

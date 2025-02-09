@@ -11,7 +11,7 @@ export default async function ColorsPage() {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role!, 'colors', ['read']))
+	if (!currentUser || !hasPermission(currentUser.role, 'colors', ['read']))
 		notFound()
 
 	const response = await getColors()
@@ -22,7 +22,7 @@ export default async function ColorsPage() {
 				<h1 className='text-3xl font-bold flex items-center gap-2'>
 					Colors Management
 				</h1>
-				{hasPermission(currentUser.role!, 'colors', ['create']) && (
+				{hasPermission(currentUser.role, 'colors', ['create']) && (
 					<NewColorButton>Add Color</NewColorButton>
 				)}
 			</div>

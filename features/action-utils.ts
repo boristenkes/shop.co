@@ -11,7 +11,7 @@ export async function requirePermission(entity: Entity, actions: Action[]) {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role!, entity, actions))
+	if (!currentUser || !hasPermission(currentUser.role, entity, actions))
 		throw new Error('Unauthorized')
 }
 
@@ -31,7 +31,7 @@ export async function getStatistics(): Promise<GetStatisticsReturn> {
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (!currentUser || !['admin', 'moderator'].includes(currentUser.role!))
+		if (!currentUser || !['admin', 'moderator'].includes(currentUser.role))
 			throw new Error('Unauthorized')
 
 		const countProducts = db

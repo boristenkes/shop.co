@@ -13,7 +13,7 @@ export default async function DeletedProductsPage() {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role!, 'products', ['delete']))
+	if (!currentUser || !hasPermission(currentUser.role, 'products', ['delete']))
 		notFound()
 
 	const response = await getDeletedProducts()

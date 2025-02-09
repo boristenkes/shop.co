@@ -22,7 +22,7 @@ export async function getUsers({
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (!currentUser || !hasPermission(currentUser.role!, 'users', ['read']))
+		if (!currentUser || !hasPermission(currentUser.role, 'users', ['read']))
 			throw new Error('Unauthorized')
 
 		const results = await db.query.users.findMany({
@@ -82,11 +82,11 @@ export async function deleteUser(
 
 		if (
 			currentUser.id === targetUserId &&
-			!hasPermission(currentUser.role!, 'users', ['delete:own'])
+			!hasPermission(currentUser.role, 'users', ['delete:own'])
 		)
 			throw new Error('Unauthorized')
 
-		if (!hasPermission(currentUser.role!, 'users', ['delete']))
+		if (!hasPermission(currentUser.role, 'users', ['delete']))
 			throw new Error('Unauthorized')
 
 		const response = await db.delete(users).where(eq(users.id, targetUserId))

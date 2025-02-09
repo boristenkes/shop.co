@@ -13,7 +13,7 @@ export default async function UsersPage(props: {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role!, 'users', ['read']))
+	if (!currentUser || !hasPermission(currentUser.role, 'users', ['read']))
 		notFound()
 
 	const searchParams = await props.searchParams

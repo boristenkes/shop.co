@@ -5,7 +5,7 @@ import {
 	serial,
 	smallint,
 	timestamp,
-	uniqueIndex
+	unique
 } from 'drizzle-orm/pg-core'
 import { colors } from './colors'
 import { sizeEnum } from './enums'
@@ -58,9 +58,7 @@ export const cartItems = pgTable(
 			.defaultNow()
 			.$onUpdate(() => new Date())
 	},
-	t => [
-		uniqueIndex('cart_item_unique').on(t.cartId, t.productId, t.size, t.colorId)
-	]
+	t => [unique('cart_item_unique').on(t.cartId, t.productId, t.size, t.colorId)]
 )
 
 export const cartItemsRelations = relations(cartItems, ({ one }) => ({

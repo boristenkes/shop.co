@@ -22,7 +22,7 @@ export async function createCategory(
 
 		if (
 			!currentUser ||
-			!hasPermission(currentUser.role!, 'categories', ['create'])
+			!hasPermission(currentUser.role, 'categories', ['create'])
 		)
 			throw new Error('Unauthorized')
 
@@ -82,7 +82,7 @@ export async function getCategories({
 
 		if (
 			!currentUser ||
-			!hasPermission(currentUser.role!, 'categories', ['read'])
+			!hasPermission(currentUser.role, 'categories', ['read'])
 		)
 			throw new Error('Unauthorized')
 
@@ -177,7 +177,7 @@ export async function deleteCategory(
 
 		if (
 			!currentUser ||
-			!hasPermission(currentUser.role!, 'categories', ['delete'])
+			!hasPermission(currentUser.role, 'categories', ['delete'])
 		)
 			throw new Error('Unauthorized')
 

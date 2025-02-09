@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { SessionCartProduct, useCart } from '@/context/cart'
 import { Color } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
-import { saveToCart } from '@/features/cart/actions'
+import { NewItemData, saveToCart } from '@/features/cart/actions'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2Icon, ShoppingCartIcon } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
@@ -43,7 +43,7 @@ export default function ProductPageForm({
 	const [quantity, setQuantity] = useState(1)
 	const mutation = useMutation({
 		mutationKey: ['cart:create'],
-		mutationFn: async (data: any) => saveToCart(data),
+		mutationFn: async (data: NewItemData) => saveToCart(data),
 		onSettled(data) {
 			if (data?.success) {
 				toast.success('Added to cart')
@@ -75,7 +75,12 @@ export default function ProductPageForm({
 
 		try {
 			if (currentUserId) {
-				mutation.mutate({ color, size, quantity, productId: product.id })
+				mutation.mutate({
+					size,
+					quantity,
+					colorId: color.id,
+					productId: product.id
+				})
 			} else {
 				const isAlreadyInCart = sessionCartItems.some(
 					item =>

@@ -18,7 +18,7 @@ export default async function NewProductPage() {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role!, 'products', ['create']))
+	if (!currentUser || !hasPermission(currentUser.role, 'products', ['create']))
 		notFound()
 
 	const [categoriesResponse, colorsResponse] = await Promise.all([

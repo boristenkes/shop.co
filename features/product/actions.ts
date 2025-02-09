@@ -50,7 +50,7 @@ export async function createProduct(
 
 		if (
 			!currentUser ||
-			!hasPermission(currentUser.role!, 'products', ['create'])
+			!hasPermission(currentUser.role, 'products', ['create'])
 		)
 			throw new Error('Unauthorized')
 
