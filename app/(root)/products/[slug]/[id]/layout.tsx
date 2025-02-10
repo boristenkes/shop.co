@@ -99,7 +99,7 @@ export default async function ProductLayout({
 						variant='secondary'
 						asChild
 					>
-						<Link href={`/dashboard/products/edit/${slug}`}>
+						<Link href={`/dashboard/products/edit/${id}`}>
 							Edit product
 							<EditIcon />
 						</Link>

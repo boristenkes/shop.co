@@ -27,7 +27,7 @@ export default async function FeaturedProducts() {
 				<ErrorMessage message={response.message} />
 			)}
 
-			<div className='w-full flex justify-center pt-6'>
+			<div className='w-full flex justify-center pt-10'>
 				<Button
 					asChild
 					variant='outline'

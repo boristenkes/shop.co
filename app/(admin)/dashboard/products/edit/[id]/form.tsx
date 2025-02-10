@@ -38,7 +38,6 @@ import { useUploadThing } from '@/lib/uploadthing'
 import { cn, getUploadthingKey } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon, PlusIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -76,7 +75,6 @@ export function EditProductForm({
 		product.images.map(image => image.url)
 	)
 	const { isUploading, startUpload } = useUploadThing('imageUploader')
-	const router = useRouter()
 	const { errors, isSubmitting, isDirty } = form.formState
 
 	const onSubmit = useCallback(
@@ -113,15 +111,12 @@ export function EditProductForm({
 				if (!response.success) throw new Error(response.message)
 
 				toast.success('Product edited successfully')
-
-				if (product.slug !== response.slug)
-					router.replace(`/dashboard/products/edit/${response.slug}`)
 			} catch (error: any) {
 				form.setError('root', { message: error.message })
 				window.scrollTo({ top: 0, behavior: 'smooth' })
 			}
 		},
-		[files, form, product, router, startUpload]
+		[files, form, product, startUpload]
 	)
 
 	return (

@@ -1,4 +1,5 @@
 import ErrorMessage from '@/components/error-message'
+import { Button } from '@/components/ui/button'
 import {
 	Card,
 	CardContent,
@@ -9,15 +10,16 @@ import {
 import { BackButton } from '@/components/utils/back-button'
 import { getCategories } from '@/features/category/actions'
 import { getColors } from '@/features/color/actions'
-import { getProductBySlug } from '@/features/product/actions'
+import { getProductById } from '@/features/product/actions'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { EditProductForm } from './form'
 
 export default async function EditProductPage(props: {
-	params: Promise<{ slug: string }>
+	params: Promise<{ id: string }>
 }) {
 	const session = await auth()
 	const currentUser = session?.user
@@ -25,9 +27,13 @@ export default async function EditProductPage(props: {
 	if (!currentUser || !hasPermission(currentUser.role!, 'products', ['update']))
 		notFound()
 
-	const slug = (await props.params).slug
+	const id = (await props.params).id
 	const [productResponse, getCategoriesResponse, getColorsResponse] =
-		await Promise.all([getProductBySlug(slug), getCategories(), getColors()])
+		await Promise.all([
+			getProductById(parseInt(id)),
+			getCategories(),
+			getColors()
+		])
 
 	return (
 		<div
@@ -41,7 +47,19 @@ export default async function EditProductPage(props: {
 				>
 					<ArrowLeft /> Back
 				</BackButton>
-				<h1 className='text-3xl font-bold'>Edit Product</h1>
+				<div className='flex items-center justify-between'>
+					<h1 className='text-3xl font-bold'>Edit Product</h1>
+					{productResponse.success && (
+						<Button
+							variant='outline'
+							asChild
+						>
+							<Link href={`/products/${productResponse.product.slug}/${id}`}>
+								Go to Product Page
+							</Link>
+						</Button>
+					)}
+				</div>
 			</div>
 
 			<Card>

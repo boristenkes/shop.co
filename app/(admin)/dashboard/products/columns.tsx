@@ -272,7 +272,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
 
 							<DropdownMenuItem>
-								<Link href={`/dashboard/products/edit/${product.slug}`}>
+								<Link href={`/dashboard/products/edit/${product.id}`}>
 									Edit product
 								</Link>
 							</DropdownMenuItem>
