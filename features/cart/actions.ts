@@ -3,7 +3,10 @@
 import { SessionCartItem } from '@/context/cart'
 import { db } from '@/db'
 import { cartItems, carts } from '@/db/schema'
+import { CartItem } from '@/db/schema/carts'
+import { Color } from '@/db/schema/colors'
 import { Size, TSize } from '@/db/schema/enums'
+import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { eq } from 'drizzle-orm'
@@ -13,7 +16,6 @@ export type NewItemData = {
 	colorId: number
 	size: TSize
 	quantity: number
-	currentUserId?: number
 	productId: number
 }
 
@@ -35,7 +37,7 @@ export async function saveToCart(data: NewItemData): Promise<AddToCartReturn> {
 
 		if (
 			!currentUser ||
-			!hasPermission(currentUser.role!, 'carts', ['create', 'update:own'])
+			!hasPermission(currentUser.role, 'carts', ['create', 'update:own'])
 		)
 			throw new Error('Unauthorized')
 
@@ -84,7 +86,7 @@ export async function saveItemsToCart(
 
 		if (
 			!currentUser ||
-			!hasPermission(currentUser.role!, 'carts', ['create', 'create'])
+			!hasPermission(currentUser.role, 'carts', ['create', 'create'])
 		)
 			throw new Error('Unauthorized')
 
@@ -123,5 +125,109 @@ export async function saveItemsToCart(
 	} catch (error) {
 		console.error('[SAVE_ITEMS_TO_CART]', error)
 		return { success: false, message: 'Something went wrong.' }
+	}
+}
+
+export type GetUserCartItemsReturn =
+	| { success: true; items: (CartItem & { color: Color })[] }
+	| { success: false; message: string }
+
+export async function getUserCartItems(
+	userId: User['id']
+): Promise<GetUserCartItemsReturn> {
+	try {
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (!currentUser || !hasPermission(currentUser.role, 'carts', ['read:own']))
+			throw new Error('Unauthorized')
+
+		const cart = await db.query.carts.findFirst({
+			where: eq(carts.userId, userId),
+			with: {
+				cartItems: {
+					with: { color: true }
+				}
+			}
+		})
+
+		const items = cart ? cart.cartItems : []
+
+		return { success: true, items }
+	} catch (error) {
+		console.error('[GET_USER_CART_ITEMS]:', error)
+		return { success: false, message: 'Something went wrong.' }
+	}
+}
+
+export async function updateCartItem(
+	itemId: CartItem['id'],
+	newData: Partial<NewItemData>
+) {
+	try {
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (
+			!currentUser ||
+			!hasPermission(currentUser.role, 'carts', ['update:own'])
+		)
+			throw new Error('Unauthorized')
+
+		const parsed = productPageFormSchema.parse(newData)
+
+		const targetCartItem = await db.query.cartItems.findFirst({
+			where: eq(cartItems.id, itemId),
+			with: {
+				cart: {
+					columns: { userId: true }
+				}
+			},
+			columns: {}
+		})
+
+		if (targetCartItem?.cart.userId !== currentUser.id)
+			throw new Error('Unauthorized')
+
+		await db.update(cartItems).set(parsed).where(eq(cartItems.id, itemId))
+
+		return { success: true }
+	} catch (error) {
+		console.error('[UPATE_CART_ITEM]:', error)
+		return { success: false }
+	}
+}
+
+export async function deleteCartItem(itemId: CartItem['id']) {
+	try {
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (!currentUser) throw new Error('Unauthorized')
+
+		if (!hasPermission(currentUser.role, 'carts', ['delete'])) {
+			const targetCartItem = await db.query.cartItems.findFirst({
+				where: eq(cartItems.id, itemId),
+				with: {
+					cart: {
+						columns: { userId: true }
+					}
+				},
+				columns: {}
+			})
+
+			if (targetCartItem?.cart.userId !== currentUser.id)
+				throw new Error('Unauthorized')
+
+			if (!hasPermission(currentUser.role, 'carts', ['delete:own']))
+				throw new Error('Unauthorized')
+		}
+
+		await db.delete(cartItems).where(eq(cartItems.id, itemId))
+
+		return { success: true, itemId }
+	} catch (error) {
+		console.error('[DELETE_CART_ITEM]:', error)
+		return { success: false }
 	}
 }

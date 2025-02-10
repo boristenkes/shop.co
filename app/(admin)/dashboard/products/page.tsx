@@ -13,7 +13,7 @@ export default async function ProductsPage() {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role!, 'products', ['read']))
+	if (!currentUser || !hasPermission(currentUser.role, 'products', ['read']))
 		notFound()
 
 	const response = await getProductsForAdmin()
@@ -32,7 +32,7 @@ export default async function ProductsPage() {
 							Trash
 						</Link>
 					</Button>
-					{hasPermission(currentUser.role!, 'products', ['create']) && (
+					{hasPermission(currentUser.role, 'products', ['create']) && (
 						<Button asChild>
 							<Link href='/dashboard/products/new'>Add Product</Link>
 						</Button>

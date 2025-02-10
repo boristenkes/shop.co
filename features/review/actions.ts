@@ -21,10 +21,7 @@ export async function createReview(
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (
-			!currentUser ||
-			!hasPermission(currentUser.role!, 'reviews', ['create'])
-		)
+		if (!currentUser || !hasPermission(currentUser.role, 'reviews', ['create']))
 			throw new Error('Unauthorized')
 
 		const alredyLeftReview = await db.query.reviews

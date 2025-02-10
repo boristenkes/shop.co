@@ -47,7 +47,7 @@ export default async function UserButton({ ...props }) {
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>Profile</DropdownMenuItem>
-				{['admin', 'moderator'].includes(currentUser.role!) && (
+				{['admin', 'moderator'].includes(currentUser.role) && (
 					<DropdownMenuItem>
 						<Link href='/dashboard'>Dashboard</Link>
 					</DropdownMenuItem>

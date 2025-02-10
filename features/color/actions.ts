@@ -22,7 +22,7 @@ export async function createColor(
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (!currentUser || !hasPermission(currentUser.role!, 'colors', ['create']))
+		if (!currentUser || !hasPermission(currentUser.role, 'colors', ['create']))
 			throw new Error('Unauthorized')
 
 		const parsed = newColorSchema.parse(data)
@@ -54,7 +54,7 @@ export async function getColors(): Promise<GetColorsReturn> {
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (!currentUser || !hasPermission(currentUser.role!, 'colors', ['read']))
+		if (!currentUser || !hasPermission(currentUser.role, 'colors', ['read']))
 			throw new Error('Unauthorized')
 
 		const results = await db.query.colors.findMany()
@@ -82,7 +82,7 @@ export async function deleteColor(
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (!currentUser || !hasPermission(currentUser.role!, 'colors', ['delete']))
+		if (!currentUser || !hasPermission(currentUser.role, 'colors', ['delete']))
 			throw new Error('Unauthorized')
 
 		const colorId =

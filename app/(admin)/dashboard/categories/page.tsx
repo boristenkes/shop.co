@@ -11,7 +11,7 @@ export default async function CategoriesPage() {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role!, 'categories', ['read']))
+	if (!currentUser || !hasPermission(currentUser.role, 'categories', ['read']))
 		notFound()
 
 	const response = await getCategories()
@@ -20,7 +20,7 @@ export default async function CategoriesPage() {
 		<div className='space-y-8 container'>
 			<div className='flex justify-between items-center'>
 				<h1 className='text-3xl font-bold'>Categories Management</h1>
-				{hasPermission(currentUser.role!, 'categories', ['create']) && (
+				{hasPermission(currentUser.role, 'categories', ['create']) && (
 					<NewCategoryButton>Add category</NewCategoryButton>
 				)}
 			</div>
