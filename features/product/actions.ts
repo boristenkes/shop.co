@@ -3,7 +3,8 @@
 import { db } from '@/db'
 import { products, productsToColors } from '@/db/schema'
 import { Category } from '@/db/schema/categories'
-import { Color } from '@/db/schema/colors'
+import { Color, colors } from '@/db/schema/colors'
+import { TSize } from '@/db/schema/enums'
 import {
 	NewProductImage,
 	ProductImage,
@@ -11,12 +12,23 @@ import {
 } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
-import { Review } from '@/db/schema/reviews'
+import { Review, reviews } from '@/db/schema/reviews'
 import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { slugify, toCents } from '@/lib/utils'
-import { and, eq, inArray, isNotNull, isNull, ne } from 'drizzle-orm'
+import {
+	and,
+	arrayOverlaps,
+	eq,
+	exists,
+	gte,
+	inArray,
+	isNotNull,
+	isNull,
+	lte,
+	ne
+} from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
@@ -461,6 +473,80 @@ export async function searchProducts(query: string) {
 
 	// TODO: Implement search feature
 	return db.query.products.findMany()
+}
+
+export type ProductFilters = {
+	min: number
+	max: number
+	color: Color['slug'][]
+	size: TSize[]
+}
+
+export type FetchProductsOptions = {
+	page?: number
+	pageSize?: number
+}
+
+export async function filterProducts(
+	filters: Partial<ProductFilters>,
+	{ page = 1, pageSize = 9 }: FetchProductsOptions = {}
+): Promise<ProductCard[]> {
+	const conditions = []
+
+	// Price filtering
+	if (filters.min)
+		conditions.push(gte(products.priceInCents, toCents(filters.min)))
+	if (filters.max)
+		conditions.push(lte(products.priceInCents, toCents(filters.max)))
+
+	// Size filtering
+	if (filters.size?.length)
+		conditions.push(arrayOverlaps(products.sizes, filters.size))
+
+	if (filters.color?.length) {
+		conditions.push(
+			exists(
+				db
+					.select()
+					.from(productsToColors)
+					.innerJoin(colors, eq(productsToColors.colorId, colors.id))
+					.where(
+						and(
+							eq(productsToColors.productId, products.id),
+							inArray(colors.slug, filters.color)
+						)
+					)
+			)
+		)
+	}
+
+	// Fetch filtered products
+	return db.query.products.findMany({
+		where: and(
+			isNull(products.deletedAt),
+			eq(products.archived, false),
+			...conditions
+		),
+		columns: {
+			id: true,
+			slug: true,
+			discount: true,
+			name: true,
+			priceInCents: true
+		},
+		with: {
+			images: {
+				columns: { url: true },
+				limit: 1
+			},
+			reviews: {
+				where: eq(reviews.approved, true),
+				columns: { rating: true }
+			}
+		},
+		offset: ((page ?? 1) - 1) * pageSize,
+		limit: pageSize ?? 9
+	})
 }
 
 type UpdateProductReturn =

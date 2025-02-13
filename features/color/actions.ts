@@ -51,12 +51,6 @@ export type GetColorsReturn =
 
 export async function getColors(): Promise<GetColorsReturn> {
 	try {
-		const session = await auth()
-		const currentUser = session?.user
-
-		if (!currentUser || !hasPermission(currentUser.role, 'colors', ['read']))
-			throw new Error('Unauthorized')
-
 		const results = await db.query.colors.findMany()
 
 		return { success: true, colors: results }
@@ -67,6 +61,10 @@ export async function getColors(): Promise<GetColorsReturn> {
 			message: 'Failed to get colors. Please try again later.'
 		}
 	}
+}
+
+export async function getColorsForCustomer() {
+	return db.query.colors.findMany()
 }
 
 type DeleteColoReturn =

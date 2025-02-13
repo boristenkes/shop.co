@@ -142,6 +142,20 @@ export function formatFileSize(sizeInBytes: number) {
 	return `${formattedSize} ${units[i]}`
 }
 
+export function darkenHex(hex: string, amount: number = 20) {
+	let r = parseInt(hex.slice(1, 3), 16) - amount
+	let g = parseInt(hex.slice(3, 5), 16) - amount
+	let b = parseInt(hex.slice(5, 7), 16) - amount
+
+	r = Math.max(r, 0)
+	g = Math.max(g, 0)
+	b = Math.max(b, 0)
+
+	return `#${r.toString(16).padStart(2, '0')}${g
+		.toString(16)
+		.padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+}
+
 export function getRoleBadgeVariant(role: TRole) {
 	switch (role) {
 		case Role.ADMIN:

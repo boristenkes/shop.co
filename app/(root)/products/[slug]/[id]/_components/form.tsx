@@ -9,6 +9,7 @@ import { SessionCartProduct, useCart } from '@/context/cart'
 import { Color } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
 import { NewItemData, saveToCart } from '@/features/cart/actions'
+import { darkenHex } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2Icon, ShoppingCartIcon } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
@@ -120,8 +121,11 @@ export default function ProductPageForm({
 							<RadioGroupItem
 								key={color.slug}
 								value={color.id.toString()}
-								className='size-8'
-								style={{ backgroundColor: color.hexCode }}
+								className='size-8 border-2'
+								style={{
+									backgroundColor: color.hexCode,
+									borderColor: darkenHex(color.hexCode)
+								}}
 								disabled={mutation.isPending}
 							/>
 						))}

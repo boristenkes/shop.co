@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { type Color } from '@/db/schema/colors'
 import { deleteColor } from '@/features/color/actions'
+import { darkenHex } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -46,8 +47,11 @@ export const columns: ColumnDef<Color>[] = [
 		header: 'Preview',
 		cell: ({ row }) => (
 			<div
-				style={{ backgroundColor: row.original.hexCode }}
-				className='size-8 rounded-sm'
+				style={{
+					backgroundColor: row.original.hexCode,
+					borderColor: darkenHex(row.original.hexCode)
+				}}
+				className='size-8 rounded-sm border-2'
 			/>
 		)
 	},
