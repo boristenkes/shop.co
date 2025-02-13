@@ -16,15 +16,15 @@ export default function SizeFilter() {
 		<div className='space-y-4'>
 			<h3 className='text-lg font-bold'>Sizes</h3>
 
-			<ul className='grid grid-cols-4 gap-2'>
+			<ul className='flex flex-wrap gap-2'>
 				{allSizes.map(size => (
 					<label
 						key={size}
 						className={cn(
-							'border p-2 rounded-full text-center cursor-pointer transition-colors font-medium',
-							{
-								'bg-neutral-900 text-neutral-100': sizes.includes(size)
-							}
+							'border py-2 px-4 rounded-full text-center cursor-pointer transition-colors font-medium',
+							sizes.includes(size)
+								? 'bg-neutral-900 text-neutral-100'
+								: 'hover:bg-neutral-100'
 						)}
 						aria-label={size}
 					>

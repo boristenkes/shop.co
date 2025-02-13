@@ -29,9 +29,19 @@ export default function ProductCardList({
 	)
 }
 
-export function ProductCardListSkeleton({ itemCount }: { itemCount: number }) {
+export function ProductCardListSkeleton({
+	itemCount,
+	className,
+	...props
+}: React.ComponentProps<'div'> & { itemCount: number }) {
 	return (
-		<div className='flex flex-wrap justify-center mx-auto w-fit gap-8 mt-16'>
+		<div
+			className={cn(
+				'flex flex-wrap justify-center mx-auto w-fit gap-8 mt-16',
+				className
+			)}
+			{...props}
+		>
 			{Array.from({ length: itemCount }).map((_, i) => (
 				<ProductCardSkeleton key={i} />
 			))}

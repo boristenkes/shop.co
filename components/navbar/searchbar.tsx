@@ -5,7 +5,10 @@ import Link from 'next/link'
 
 export default function Searchbar() {
 	return (
-		<Link href='/search'>
+		<Link
+			href='/search'
+			aria-label='Search'
+		>
 			<SearchIcon />
 		</Link>
 	)

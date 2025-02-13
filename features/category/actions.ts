@@ -77,15 +77,6 @@ export async function getCategories({
 	throwOnError = false
 }: GetCategoriesConfig = {}): Promise<GetCategoriesReturn> {
 	try {
-		const session = await auth()
-		const currentUser = session?.user
-
-		if (
-			!currentUser ||
-			!hasPermission(currentUser.role, 'categories', ['read'])
-		)
-			throw new Error('Unauthorized')
-
 		const results = await db
 			.select({
 				id: categories.id,

@@ -9,7 +9,9 @@ import {
 } from '@/components/ui/breadcrumb'
 import { filterProducts } from '@/features/product/actions'
 import PaginatedProductList from '@/features/product/components/paginated-product-list'
+import { ProductCardListSkeleton } from '@/features/product/components/product-list'
 import { SearchParams } from '@/lib/types'
+import { Suspense } from 'react'
 
 export default async function ProductsPage(props: {
 	searchParams: Promise<SearchParams>
@@ -34,13 +36,24 @@ export default async function ProductsPage(props: {
 					</BreadcrumbItem>
 				</BreadcrumbList>
 			</Breadcrumb>
+
 			<div className='flex gap-5'>
 				<FilterBox />
+
 				<main className='grow'>
-					<div className='flex items-center justify-between gap-4'>
+					<div className='flex items-center justify-between'>
 						<h1 className='text-3xl font-bold'>Products</h1>
 					</div>
-					<PaginatedProductList initialData={filteredProducts} />
+					<Suspense
+						fallback={
+							<ProductCardListSkeleton
+								itemCount={9}
+								className='mt-8 grid grid-cols-[repeat(auto-fit,minmax(270px,1fr))] w-full gap-4 justify-start'
+							/>
+						}
+					>
+						<PaginatedProductList initialData={filteredProducts} />
+					</Suspense>
 				</main>
 			</div>
 		</div>

@@ -2,7 +2,7 @@
 
 import { db } from '@/db'
 import { products, productsToColors } from '@/db/schema'
-import { Category } from '@/db/schema/categories'
+import { categories, Category } from '@/db/schema/categories'
 import { Color, colors } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
 import {
@@ -16,7 +16,7 @@ import { Review, reviews } from '@/db/schema/reviews'
 import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
-import { slugify, toCents } from '@/lib/utils'
+import { isArray, slugify, toCents } from '@/lib/utils'
 import {
 	and,
 	arrayOverlaps,
@@ -27,6 +27,8 @@ import {
 	isNotNull,
 	isNull,
 	lte,
+	max,
+	min,
 	ne
 } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
@@ -480,6 +482,7 @@ export type ProductFilters = {
 	max: number
 	color: Color['slug'][]
 	size: TSize[]
+	category: Category['slug'][]
 }
 
 export type FetchProductsOptions = {
@@ -501,8 +504,14 @@ export async function filterProducts(
 
 	// Size filtering
 	if (filters.size?.length)
-		conditions.push(arrayOverlaps(products.sizes, filters.size))
+		conditions.push(
+			arrayOverlaps(
+				products.sizes,
+				isArray(filters.size) ? filters.size : [filters.size]
+			)
+		)
 
+	// Color filtering
 	if (filters.color?.length) {
 		conditions.push(
 			exists(
@@ -513,9 +522,30 @@ export async function filterProducts(
 					.where(
 						and(
 							eq(productsToColors.productId, products.id),
-							inArray(colors.slug, filters.color)
+							isArray(filters.color)
+								? inArray(colors.slug, filters.color)
+								: eq(colors.slug, filters.color)
 						)
 					)
+					.limit(1)
+			)
+		)
+	}
+
+	// Category filtering
+	if (filters.category?.length) {
+		conditions.push(
+			exists(
+				db
+					.select({ id: products.id })
+					.from(products)
+					.innerJoin(categories, eq(products.categoryId, categories.id))
+					.where(
+						isArray(filters.category)
+							? inArray(categories.slug, filters.category)
+							: eq(categories.slug, filters.category)
+					)
+					.limit(1)
 			)
 		)
 	}
@@ -544,9 +574,29 @@ export async function filterProducts(
 				columns: { rating: true }
 			}
 		},
-		offset: ((page ?? 1) - 1) * pageSize,
-		limit: pageSize ?? 9
+		offset: (page - 1) * pageSize,
+		limit: pageSize
 	})
+}
+
+type GetProductPriceMinMaxReturn =
+	| { success: true; minmax: { min: number; max: number } }
+	| { success: false }
+
+export async function getProductPriceMinMax(): Promise<GetProductPriceMinMaxReturn> {
+	try {
+		const [minmax] = (await db
+			.select({
+				min: min(products.priceInCents),
+				max: max(products.priceInCents)
+			})
+			.from(products)) as { min: number; max: number }[]
+
+		return { success: true, minmax }
+	} catch (error) {
+		console.error('[GET_PRODUCT_PRICE_MINMAX]:', error)
+		return { success: false }
+	}
 }
 
 type UpdateProductReturn =

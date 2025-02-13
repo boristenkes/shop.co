@@ -3,8 +3,12 @@
 import * as Slider from '@radix-ui/react-slider'
 import { useState } from 'react'
 
-export default function PriceRangeSlider() {
-	const [value, setValue] = useState([500, 4500])
+export default function PriceRangeSlider({
+	priceRange
+}: {
+	priceRange: number[]
+}) {
+	const [value, setValue] = useState(priceRange)
 
 	return (
 		<div className='space-y-4'>
@@ -18,8 +22,8 @@ export default function PriceRangeSlider() {
 				</output>
 			</div>
 			<Slider.Root
-				min={10}
-				max={5000}
+				min={priceRange[0]}
+				max={priceRange[1]}
 				value={value}
 				onValueChange={setValue}
 				className='relative flex w-full touch-none select-none items-center'

@@ -15,12 +15,15 @@ import Searchbar from './searchbar'
 
 export default function Navbar() {
 	return (
-		<header className='sticky top-0 px-4 py-5 z-50 w-full bg-white/80 backdrop-blur-sm shadow-sm'>
+		<header className='fixed top-0 inset-x-0 px-4 py-5 z-50 w-full bg-white/80 backdrop-blur-sm shadow-sm'>
 			<div className='container flex items-center justify-between'>
 				<div className='flex items-center gap-12'>
 					<div className='flex items-center gap-4'>
 						<Sheet>
-							<SheetTrigger className='lg:hidden'>
+							<SheetTrigger
+								className='lg:hidden'
+								aria-label='Open navigation bar'
+							>
 								<MenuIcon />
 							</SheetTrigger>
 							<SheetContent side='left'>

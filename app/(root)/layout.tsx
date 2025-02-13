@@ -8,7 +8,7 @@ export default function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<div>
+		<div className='pt-20'>
 			<SiteNotice />
 			<Navbar />
 			{children}

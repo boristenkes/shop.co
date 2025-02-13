@@ -4,14 +4,13 @@ import ErrorMessage from '@/components/error-message'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { TSize } from '@/db/schema/enums'
+import { filterProducts } from '@/features/product/actions'
+import { ProductCard } from '@/features/product/types'
 import useUpdateEffect from '@/hooks/use-update-effect'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { Loader2Icon } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import { filterProducts } from '../actions'
-import { ProductCard } from '../types'
-import ProductCardList from './product-list'
+import ProductCardList, { ProductCardListSkeleton } from './product-list'
 
 type PaginatedProductListProps = {
 	initialData: ProductCard[]
@@ -25,6 +24,7 @@ export default function PaginatedProductList({
 	const filters = {
 		color: searchParams.getAll('color'),
 		size: searchParams.getAll('size') as TSize[],
+		category: searchParams.getAll('category'),
 		min: parseInt(searchParams.get('min')!),
 		max: parseInt(searchParams.get('max')!)
 	}
@@ -43,13 +43,19 @@ export default function PaginatedProductList({
 
 	const updatePage = (newPage: number) => {
 		setPage(newPage)
+
 		const updated = new URLSearchParams(searchParams)
 		updated.set('page', newPage.toString())
 		history.replaceState(null, '', `?${updated}`)
 	}
 
 	if (query.isLoading || query.isFetching)
-		return <Loader2Icon className='animate-spin mx-auto m-16' />
+		return (
+			<ProductCardListSkeleton
+				itemCount={9}
+				className='mt-8 flex flex-wrap w-full gap-6 justify-start'
+			/>
+		)
 
 	if (query.isError)
 		return (
@@ -66,7 +72,7 @@ export default function PaginatedProductList({
 		<div>
 			<ProductCardList
 				products={query.data}
-				className='mt-8 grid grid-cols-3 justify-start mx-0'
+				className='mt-8 flex flex-wrap w-full gap-6 justify-start'
 			/>
 			<Separator className='my-8' />
 			<div className='flex items-center gap-4'>

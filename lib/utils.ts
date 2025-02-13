@@ -12,6 +12,8 @@ export const delay = (ms: number) =>
 
 export const prettyJson = (json: unknown) => JSON.stringify(json, null, 2)
 
+export const { isArray } = Array
+
 export const slugify = (str: string) =>
 	slugifyOriginal(str, {
 		lower: true,

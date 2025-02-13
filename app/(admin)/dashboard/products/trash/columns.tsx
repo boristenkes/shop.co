@@ -85,10 +85,19 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 				title='Deleted At'
 			/>
 		),
-		cell: ({ row }) =>
-			`${formatDate(row.original.deletedAt!)} (${getTimeDistanceFromNow(
-				row.original.deletedAt!
-			)})`
+		cell: ({ row }) => {
+			const product = row.original
+
+			return (
+				<time
+					dateTime={product.deletedAt?.toISOString()}
+					suppressHydrationWarning
+				>
+					{formatDate(product.deletedAt!)} (
+					{getTimeDistanceFromNow(product.deletedAt!)})
+				</time>
+			)
+		}
 	},
 	{
 		accessorKey: 'actions',

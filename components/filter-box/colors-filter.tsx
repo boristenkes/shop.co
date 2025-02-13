@@ -10,9 +10,9 @@ export default async function ColorsFilter() {
 			<h3 className='text-lg font-bold'>Colors</h3>
 
 			{response.success ? (
-				<ul className='grid grid-cols-4 gap-2'>
+				<ul className='flex flex-wrap gap-2'>
 					{response.colors.map(color => (
-						<li key={color.id}>
+						<li key={color.slug}>
 							<ColorCheckbox color={color} />
 						</li>
 					))}
