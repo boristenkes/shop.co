@@ -1,4 +1,4 @@
-import FilterBox from '@/components/filter-box'
+import FilterBox, { FilterBoxSkeleton } from '@/components/filter-box'
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -38,7 +38,9 @@ export default async function ProductsPage(props: {
 			</Breadcrumb>
 
 			<div className='flex gap-5'>
-				<FilterBox />
+				<Suspense fallback={<FilterBoxSkeleton />}>
+					<FilterBox />
+				</Suspense>
 
 				<main className='grow'>
 					<div className='flex items-center justify-between'>
@@ -48,7 +50,7 @@ export default async function ProductsPage(props: {
 						fallback={
 							<ProductCardListSkeleton
 								itemCount={9}
-								className='mt-8 grid grid-cols-[repeat(auto-fit,minmax(270px,1fr))] w-full gap-4 justify-start'
+								className='mt-8 flex flex-wrap w-full gap-6 justify-start'
 							/>
 						}
 					>

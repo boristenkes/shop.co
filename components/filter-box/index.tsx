@@ -4,6 +4,7 @@ import { getProductPriceMinMax } from '@/features/product/actions'
 import { cn } from '@/lib/utils'
 import { SlidersHorizontalIcon } from 'lucide-react'
 import Form from 'next/form'
+import { Skeleton } from '../ui/skeleton'
 import CategoryFilter from './category-filter'
 import ColorsFilter from './colors-filter'
 import PriceRangeSlider from './price-range'
@@ -48,6 +49,76 @@ export default async function FilterBox({
 					Apply Filters
 				</Button>
 			</Form>
+		</aside>
+	)
+}
+
+export function FilterBoxSkeleton() {
+	return (
+		<aside className='p-6 rounded-3xl border w-72 h-fit'>
+			<div className='flex items-center justify-between gap-4'>
+				<Skeleton className='w-14 h-6' />
+				<Skeleton className='size-4 rounded-sm' />
+			</div>
+			<Separator className='my-6' />
+			<div>
+				<div className='space-y-4'>
+					<div className='flex items-center justify-between gap-2'>
+						<Skeleton className='w-24 h-5' />
+						<Skeleton className='w-20 h-5' />
+					</div>
+					<Skeleton className='w-full h-2' />
+				</div>
+
+				<Separator className='my-6' />
+
+				<div className='space-y-4'>
+					<Skeleton className='w-14 h-6' />
+
+					<ul className='flex flex-wrap gap-2'>
+						{Array.from({ length: 10 }).map((_, idx) => (
+							<li key={idx}>
+								<Skeleton className='size-9 rounded-full' />
+							</li>
+						))}
+					</ul>
+				</div>
+
+				<Separator className='my-6' />
+
+				<div className='space-y-4'>
+					<Skeleton className='w-12 h-6' />
+
+					<ul className='flex flex-wrap gap-2'>
+						{Array.from({ length: 7 }).map((_, idx) => (
+							<li key={idx}>
+								<Skeleton className='w-14 h-10 rounded-full' />
+							</li>
+						))}
+					</ul>
+				</div>
+
+				<Separator className='my-6' />
+
+				<div className='space-y-4'>
+					<Skeleton className='w-24 h-6' />
+
+					<ul className='flex flex-wrap gap-y-2'>
+						{Array.from({ length: 6 }).map((_, idx) => (
+							<li key={idx}>
+								<Skeleton
+									className='h-[38px] rounded-full'
+									style={{
+										width: Math.floor(Math.random() * 100) + 60 + 'px'
+									}}
+								/>
+							</li>
+						))}
+					</ul>
+				</div>
+
+				<Skeleton className='w-full h-10 rounded-full mt-8' />
+			</div>
 		</aside>
 	)
 }
