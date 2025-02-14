@@ -15,8 +15,8 @@ export const users = pgTable(
 	'users',
 	{
 		id: serial().primaryKey(),
-		name: text(),
-		email: text().unique(),
+		name: text().notNull(),
+		email: text().unique().notNull(),
 		emailVerified: timestamp({ mode: 'date' }),
 		hashedPassword: text(),
 		role: roleEnum().default('customer').notNull(),
@@ -30,7 +30,7 @@ export const users = pgTable(
 	t => [uniqueIndex().on(t.email)]
 )
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
 	products: many(products),
 	reviews: many(reviews),
 	orders: many(orders)

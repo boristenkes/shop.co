@@ -1,11 +1,14 @@
 'use server'
 
 import { db } from '@/db'
+import { Role } from '@/db/schema/enums'
 import { User, users } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { notFound } from 'next/navigation'
+import { requirePermission } from '../action-utils'
 
 export type GetUsersConfig = {
 	throwOnError?: boolean
@@ -49,6 +52,58 @@ export async function getUsers({
 			message:
 				'Something went wrong while trying to later users. Please try again later'
 		}
+	}
+}
+
+export type GetUserByIdUser = Omit<
+	User,
+	'emailVerified' | 'hashedPassword' | 'updatedAt'
+>
+
+export type GetUserByIdReturn =
+	| { success: true; user: GetUserByIdUser }
+	| { success: false }
+
+export async function getUserById(
+	userId: User['id']
+): Promise<GetUserByIdReturn> {
+	try {
+		await requirePermission('users', ['read'])
+
+		const user = await db.query.users.findFirst({
+			where: eq(users.id, userId),
+			columns: {
+				emailVerified: false,
+				hashedPassword: false,
+				updatedAt: false
+			}
+		})
+
+		if (!user) notFound()
+
+		return { success: true, user }
+	} catch (error) {
+		console.error('[GET_USER_BY_ID]:', error)
+		return { success: false }
+	}
+}
+
+export async function updateUser(userId: User['id'], newData: Partial<User>) {
+	try {
+		await requirePermission('users', ['update'])
+
+		if (newData.role) {
+			const session = await auth()
+
+			if (session?.user.role !== Role.ADMIN) throw new Error('Unauthorized')
+		}
+
+		await db.update(users).set(newData).where(eq(users.id, userId))
+
+		return { success: true }
+	} catch (error) {
+		console.error('[UPDATE_USER]:', error)
+		return { success: false }
 	}
 }
 

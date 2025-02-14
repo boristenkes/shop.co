@@ -1,6 +1,7 @@
-import { relations } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import {
 	boolean,
+	check,
 	integer,
 	pgTable,
 	serial,
@@ -32,7 +33,10 @@ export const reviews = pgTable(
 			.defaultNow()
 			.$onUpdate(() => new Date())
 	},
-	t => [uniqueIndex().on(t.userId, t.productId)]
+	t => [
+		uniqueIndex().on(t.userId, t.productId),
+		check('review_rating_check', sql`${t.rating} between 1 and 5`)
+	]
 )
 
 export const reviewsRelations = relations(reviews, ({ one }) => ({

@@ -2,7 +2,6 @@
 
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import ErrorMessage from '@/components/error-message'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,9 +21,10 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import Avatar from '@/components/utils/avatar'
 import { User } from '@/db/schema/users'
 import { deleteUser } from '@/features/user/actions'
-import { formatDate, getInitials, getRoleBadgeVariant } from '@/lib/utils'
+import { formatDate, getRoleBadgeVariant } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { ColumnDef } from '@tanstack/react-table'
 import { Loader2Icon, MoreHorizontal } from 'lucide-react'
@@ -43,16 +43,13 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 		header: 'Image',
 		cell: ({ row }) => {
 			return (
-				<Avatar>
-					<AvatarImage
-						src={row.original.image!}
-						alt={row.original.name!}
-						width={40}
-						height={40}
-						className='rounded-sm'
-					/>
-					<AvatarFallback>{getInitials(row.original.name)}</AvatarFallback>
-				</Avatar>
+				<Avatar
+					src={row.original.image!}
+					alt={row.original.name}
+					width={40}
+					height={40}
+					className='size-10'
+				/>
 			)
 		}
 	},
@@ -89,7 +86,11 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 				title='Created At'
 			/>
 		),
-		cell: ({ row }) => formatDate(row.original.createdAt!)
+		cell: ({ row }) => (
+			<time dateTime={row.original.createdAt?.toISOString()}>
+				{formatDate(row.original.createdAt!)}
+			</time>
+		)
 	},
 	{
 		id: 'actions',
@@ -126,9 +127,8 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align='end'>
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuItem>Copy payment ID</DropdownMenuItem>
 							<DropdownMenuItem>
-								<Link href={`/dashboard/users/${user.id}`}>View customer</Link>
+								<Link href={`/dashboard/users/${user.id}`}>View user</Link>
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem>

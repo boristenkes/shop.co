@@ -1,6 +1,7 @@
 'use server'
 
 import { db } from '@/db'
+import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { NewReview, Review, reviews } from '@/db/schema/reviews'
 import { User } from '@/db/schema/users'
@@ -117,7 +118,7 @@ export async function getProductReviews(
 }
 
 export type GetReviewsReturnReview = Review & {
-	user: Pick<User, 'id' | 'name' | 'image'>
+	user: Pick<User, 'id' | 'name' | 'email' | 'image'>
 	product: Pick<Product, 'id' | 'name' | 'slug'>
 }
 
@@ -135,6 +136,7 @@ export async function getReviews(): Promise<GetReviewsReturn> {
 					columns: {
 						id: true,
 						name: true,
+						email: true,
 						image: true
 					}
 				},
@@ -154,6 +156,57 @@ export async function getReviews(): Promise<GetReviewsReturn> {
 	} catch (error) {
 		console.error('[GET_REVIEWS]:', error)
 		return { success: false, message: 'Something went wrong' }
+	}
+}
+
+export type GetUserReviewsReview = Pick<
+	Review,
+	'id' | 'approved' | 'comment' | 'rating'
+> & {
+	product: Pick<Product, 'id' | 'name' | 'slug'> & {
+		images: { url: ProductImage['url'] }[]
+	}
+}
+
+export type GetUserReviewsReturn =
+	| { success: true; reviews: GetUserReviewsReview[] }
+	| { success: false }
+
+export async function getUserReviews(
+	userId: User['id']
+): Promise<GetUserReviewsReturn> {
+	try {
+		await requirePermission('reviews', ['read'])
+
+		const reviews = await db.query.reviews.findMany({
+			where: (review, { eq }) => eq(review.userId, userId),
+			columns: {
+				id: true,
+				approved: true,
+				comment: true,
+				rating: true
+			},
+			with: {
+				product: {
+					columns: {
+						id: true,
+						name: true,
+						slug: true
+					},
+					with: {
+						images: {
+							columns: { url: true },
+							limit: 1
+						}
+					}
+				}
+			}
+		})
+
+		return { success: true, reviews }
+	} catch (error) {
+		console.error('[GET_USER_REVIEWS]:', error)
+		return { success: false }
 	}
 }
 

@@ -2,7 +2,6 @@
 
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import ErrorMessage from '@/components/error-message'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -12,12 +11,13 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog'
+import Avatar from '@/components/utils/avatar'
 import {
 	deleteProduct,
 	ProductsReturn,
 	restoreProduct
 } from '@/features/product/actions'
-import { formatDate, getInitials, getTimeDistanceFromNow } from '@/lib/utils'
+import { formatDate, getTimeDistanceFromNow } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -65,13 +65,13 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 
 			return (
 				<div className='flex items-center gap-4'>
-					<Avatar>
-						<AvatarImage
-							src={user.image!}
-							alt={user.name!}
-						/>
-						<AvatarFallback>{getInitials(user.name!)}</AvatarFallback>
-					</Avatar>
+					<Avatar
+						src={user.image!}
+						alt={user.name}
+						width={40}
+						height={40}
+						className='size-10'
+					/>
 					<p>{user.name}</p>
 				</div>
 			)

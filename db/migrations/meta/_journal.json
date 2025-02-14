@@ -36,6 +36,20 @@
       "when": 1739137761842,
       "tag": "0004_noisy_cammi",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1739550255281,
+      "tag": "0005_lame_jack_murdock",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1739550321515,
+      "tag": "0006_foamy_radioactive_man",
+      "breakpoints": true
     }
   ]
 }

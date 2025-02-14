@@ -1,9 +1,7 @@
 import { User } from '@/db/schema/users'
 import { auth, signIn, signOut } from '@/lib/auth'
-import { getInitials } from '@/lib/utils'
 import Link from 'next/link'
 import SubmitButton from './submit-button'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -12,6 +10,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from './ui/dropdown-menu'
+import Avatar from './utils/avatar'
 
 export default async function UserButton({ ...props }) {
 	const session = await auth()
@@ -35,13 +34,13 @@ export default async function UserButton({ ...props }) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger {...props}>
-				<Avatar>
-					<AvatarImage
-						src={currentUser.image!}
-						alt={currentUser.name!}
-					/>
-					<AvatarFallback>{getInitials(currentUser.name!)}</AvatarFallback>
-				</Avatar>
+				<Avatar
+					src={currentUser.image!}
+					alt={currentUser.name}
+					width={40}
+					height={40}
+					className='size-10'
+				/>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>

@@ -2,7 +2,6 @@
 
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import ErrorMessage from '@/components/error-message'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,8 +24,9 @@ import {
 	HoverCardContent,
 	HoverCardTrigger
 } from '@/components/ui/hover-card'
+import Avatar from '@/components/utils/avatar'
 import { ProductsReturn, softDeleteProduct } from '@/features/product/actions'
-import { formatDate, formatPrice, getInitials } from '@/lib/utils'
+import { formatDate, formatPrice } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -81,32 +81,25 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 				>
 					<HoverCardTrigger asChild>
 						<Link href={`/dashboard/users/${user.id}`}>
-							<Avatar>
-								<AvatarImage
-									src={user.image!}
-									alt={user.name!}
-									width={40}
-									height={40}
-									className='rounded-sm'
-								/>
-								<AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-							</Avatar>
+							<Avatar
+								src={user.image!}
+								alt={user.name}
+								width={40}
+								height={40}
+								className='size-10'
+							/>
 						</Link>
 					</HoverCardTrigger>
-					<HoverCardContent className=''>
+					<HoverCardContent>
 						<div className='flex gap-2'>
 							<Link href={`/dashboard/users/${user.id}`}>
-								{' '}
-								<Avatar>
-									<AvatarImage
-										src={user.image!}
-										alt={user.name!}
-										width={40}
-										height={40}
-										className='rounded-sm'
-									/>
-									<AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-								</Avatar>
+								<Avatar
+									src={user.image!}
+									alt={user.name}
+									width={40}
+									height={40}
+									className='size-10'
+								/>
 							</Link>
 							<div>
 								<h4 className='font-semibold'>

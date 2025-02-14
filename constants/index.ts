@@ -161,3 +161,5 @@ export const footerLinkGroups = [
 		]
 	}
 ]
+
+export const AVATAR_DEFAULT = '/assets/images/default.jpg'

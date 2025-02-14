@@ -2,7 +2,6 @@
 
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import ErrorMessage from '@/components/error-message'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -19,18 +18,24 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger
+} from '@/components/ui/hover-card'
 import { RatingInput } from '@/components/ui/rating'
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger
 } from '@/components/ui/tooltip'
+import Avatar from '@/components/utils/avatar'
 import {
 	approveReview,
 	deleteReview,
 	GetReviewsReturnReview
 } from '@/features/review/actions'
-import { formatDate, getInitials } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -68,20 +73,41 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 			const user = row.original.user
 
 			return (
-				<Link
-					href={`/dashboard/users/${user.id}`}
-					className='flex items-center gap-2'
+				<HoverCard
+					openDelay={100}
+					closeDelay={100}
 				>
-					<Avatar>
-						<AvatarImage
-							src={user.image!}
-							alt={user.name!}
-						/>
-						<AvatarFallback>{getInitials(user.name!)}</AvatarFallback>
-					</Avatar>
-
-					<p>{user.name}</p>
-				</Link>
+					<HoverCardTrigger asChild>
+						<Link href={`/dashboard/users/${user.id}`}>
+							<Avatar
+								src={user.image!}
+								alt={user.name}
+								width={40}
+								height={40}
+								className='size-10'
+							/>
+						</Link>
+					</HoverCardTrigger>
+					<HoverCardContent>
+						<div className='flex gap-2'>
+							<Link href={`/dashboard/users/${user.id}`}>
+								<Avatar
+									src={user.image!}
+									alt={user.name}
+									width={40}
+									height={40}
+									className='size-10'
+								/>
+							</Link>
+							<div>
+								<h4 className='font-semibold'>
+									<Link href={`/dashboard/users/${user.id}`}>{user.name}</Link>
+								</h4>
+								<p className='text-sm text-gray-600'>{user.email}</p>
+							</div>
+						</div>
+					</HoverCardContent>
+				</HoverCard>
 			)
 		}
 	},
