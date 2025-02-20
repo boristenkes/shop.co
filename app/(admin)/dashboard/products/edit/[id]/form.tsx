@@ -27,7 +27,7 @@ import { Size, TSize } from '@/db/schema/enums'
 import { GetCategoriesReturn } from '@/features/category/actions'
 import { GetColorsReturn } from '@/features/color/actions'
 import {
-	GetProductBySlugReturnProduct,
+	GetProductByIdReturnProduct,
 	updateProduct
 } from '@/features/product/actions'
 import {
@@ -46,7 +46,7 @@ import NewCategoryButton from '../../../categories/components'
 import NewColorButton from '../../../colors/components'
 
 type EditProductFormProps = {
-	product: GetProductBySlugReturnProduct
+	product: GetProductByIdReturnProduct
 	getCategoriesResponse: GetCategoriesReturn
 	getColorsResponse: GetColorsReturn
 }

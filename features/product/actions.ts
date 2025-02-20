@@ -12,7 +12,6 @@ import {
 } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
-import { Review } from '@/db/schema/reviews'
 import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
@@ -166,46 +165,6 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 			message:
 				'Something went wrong while trying to get products. Please try again later'
 		}
-	}
-}
-
-export type GetProductBySlugReturnProduct = Product & {
-	productsToColors: (ProductToColor & { color: Color })[]
-	images: ProductImage[]
-	category: Category
-	reviews: Pick<Review, 'rating'>[]
-}
-
-export type GetProductBySlugReturn =
-	| { success: true; product: GetProductBySlugReturnProduct }
-	| { success: false; message: string }
-
-export async function getProductBySlug(
-	slug: Product['slug']
-): Promise<GetProductBySlugReturn> {
-	try {
-		const product = (await db.query.products.findFirst({
-			where: (products, { isNull }) =>
-				and(
-					eq(products.slug, slug),
-					isNull(products.deletedAt),
-					eq(products.archived, false)
-				),
-			with: {
-				images: true,
-				productsToColors: {
-					with: { color: true }
-				},
-				category: true
-			}
-		})) as GetProductBySlugReturnProduct
-
-		if (!product) throw new Error('Product not found.')
-
-		return { success: true, product }
-	} catch (error) {
-		console.error('[GET_PRODUCT_BY_SLUG]:', error)
-		return { success: false, message: 'Product not found or it was deleted' }
 	}
 }
 
