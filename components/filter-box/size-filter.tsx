@@ -33,10 +33,10 @@ export default function SizeFilter() {
 							value={size}
 							name='size'
 							onChange={e =>
-								setSizes(
+								setSizes(prev =>
 									e.target.checked
-										? [...sizes, size]
-										: sizes.filter(s => s !== size)
+										? [...prev, size]
+										: prev.filter(s => s !== size)
 								)
 							}
 							checked={sizes.includes(size)}

@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { getProductPriceMinMax } from '@/features/product/actions'
 import { cn } from '@/lib/utils'
 import { SlidersHorizontalIcon } from 'lucide-react'
 import Form from 'next/form'
+import SubmitButton from '../submit-button'
 import { Skeleton } from '../ui/skeleton'
 import CategoryFilter from './category-filter'
 import ColorsFilter from './colors-filter'
@@ -42,12 +42,13 @@ export default async function FilterBox({
 				<SizeFilter />
 				<Separator className='my-6' />
 				<CategoryFilter />
-				<Button
+				<SubmitButton
 					size='lg'
 					className='w-full mt-8'
+					pendingText='Filtering...'
 				>
 					Apply Filters
-				</Button>
+				</SubmitButton>
 			</Form>
 		</aside>
 	)

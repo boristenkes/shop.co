@@ -7,7 +7,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { filterProducts } from '@/features/product/actions'
+import { countProducts, filterProducts } from '@/features/product/actions'
 import PaginatedProductList from '@/features/product/components/paginated-product-list'
 import { ProductCardListSkeleton } from '@/features/product/components/product-list'
 import { SearchParams } from '@/lib/types'
@@ -17,11 +17,15 @@ export default async function ProductsPage(props: {
 	searchParams: Promise<SearchParams>
 }) {
 	const searchParams = await props.searchParams
-	const { page, pageSize, ...filters } = searchParams
-	const filteredProducts = await filterProducts(filters, {
-		page: parseInt(page as string),
-		pageSize: parseInt(pageSize as string)
-	})
+	const { page, pageSize = 9, ...filters } = searchParams
+	const [filteredProducts, totalProducts] = await Promise.all([
+		filterProducts(filters, {
+			page: parseInt(page as string),
+			pageSize: parseInt(pageSize as string)
+		}),
+		countProducts()
+	])
+	const totalPages = Math.ceil(totalProducts / parseInt(pageSize as string))
 
 	return (
 		<div className='container'>
@@ -54,7 +58,10 @@ export default async function ProductsPage(props: {
 							/>
 						}
 					>
-						<PaginatedProductList initialData={filteredProducts} />
+						<PaginatedProductList
+							initialData={filteredProducts}
+							totalPages={totalPages}
+						/>
 					</Suspense>
 				</main>
 			</div>

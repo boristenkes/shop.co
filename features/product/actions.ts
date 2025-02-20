@@ -579,6 +579,10 @@ export async function filterProducts(
 	})
 }
 
+export async function countProducts() {
+	return db.$count(products)
+}
+
 type GetProductPriceMinMaxReturn =
 	| { success: true; minmax: { min: number; max: number } }
 	| { success: false }

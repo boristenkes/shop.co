@@ -17,7 +17,7 @@ export default async function Dashboard() {
 
 	if (!response.success) return <ErrorMessage message={response.message} />
 
-	const [productCount, userCount, reviewCount, totalRevenue] = response.results
+	const { results } = response
 
 	return (
 		<div className='space-y-8 container'>
@@ -32,7 +32,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatInt(productCount.count)}
+							{formatInt(results.productCount)}
 						</div>
 					</CardContent>
 				</Card>
@@ -43,7 +43,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatInt(userCount.count)}
+							{formatInt(results.userCount)}
 						</div>
 					</CardContent>
 				</Card>
@@ -54,7 +54,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatInt(reviewCount.count)}
+							{formatInt(results.reviewCount)}
 						</div>
 					</CardContent>
 				</Card>
@@ -65,7 +65,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatPrice(totalRevenue.total ?? 0)}
+							{formatPrice(results.totalRevenue ?? 0)}
 						</div>
 					</CardContent>
 				</Card>

@@ -5,7 +5,7 @@ import { orders, products, reviews, users } from '@/db/schema'
 import { OrderStatus, Role } from '@/db/schema/enums'
 import { auth } from '@/lib/auth'
 import { Action, Entity, hasPermission } from '@/lib/permissions'
-import { count, eq, isNull, sum } from 'drizzle-orm'
+import { eq, isNull, sum } from 'drizzle-orm'
 
 export async function requirePermission(entity: Entity, actions: Action[]) {
 	const session = await auth()
@@ -15,12 +15,12 @@ export async function requirePermission(entity: Entity, actions: Action[]) {
 		throw new Error('Unauthorized')
 }
 
-type StatisticsResults = [
-	{ count: number },
-	{ count: number },
-	{ count: number },
-	{ total: string | null }
-]
+type StatisticsResults = {
+	productCount: number
+	userCount: number
+	reviewCount: number
+	totalRevenue: number
+}
 
 type GetStatisticsReturn =
 	| { success: true; results: StatisticsResults }
@@ -34,34 +34,35 @@ export async function getStatistics(): Promise<GetStatisticsReturn> {
 		if (!currentUser || !['admin', 'moderator'].includes(currentUser.role))
 			throw new Error('Unauthorized')
 
-		const countProducts = db
-			.select({ count: count() })
-			.from(products)
-			.where(isNull(products.deletedAt))
-
-		const countUsers = db
-			.select({ count: count() })
-			.from(users)
-			.where(eq(users.role, Role.CUSTOMER))
-
-		const countReviews = db
-			.select({ count: count() })
-			.from(reviews)
-			.where(eq(reviews.approved, true))
+		const countProducts = db.$count(products, isNull(products.deletedAt))
+		const countUsers = db.$count(users, eq(users.role, Role.CUSTOMER))
+		const countReviews = db.$count(reviews, eq(reviews.approved, true))
 
 		const getTotalRevenueInCents = db
 			.select({ total: sum(orders.totalPriceInCents) })
 			.from(orders)
 			.where(eq(orders.status, OrderStatus.DELIVERED))
+			.then(res => res[0].total)
 
-		const results = (await Promise.all([
+		const responses = await Promise.all([
 			countProducts,
 			countUsers,
 			countReviews,
 			getTotalRevenueInCents
-		]).then(res => res.flat())) as StatisticsResults
+		]).then(res => res.flat())
 
-		return { success: true, results }
+		const [productCount, userCount, reviewCount, totalRevenue] = responses
+		const results = {
+			productCount,
+			userCount,
+			reviewCount,
+			totalRevenue
+		} as StatisticsResults
+
+		return {
+			success: true,
+			results
+		}
 	} catch (error) {
 		console.error('[GET_STATISTICS]:', error)
 		return {

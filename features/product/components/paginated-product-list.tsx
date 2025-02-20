@@ -1,7 +1,7 @@
 'use client'
 
+import DynamicPagination from '@/components/dynamic-pagination'
 import ErrorMessage from '@/components/error-message'
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { TSize } from '@/db/schema/enums'
 import { filterProducts } from '@/features/product/actions'
@@ -14,10 +14,12 @@ import ProductCardList, { ProductCardListSkeleton } from './product-list'
 
 type PaginatedProductListProps = {
 	initialData: ProductCard[]
+	totalPages: number
 }
 
 export default function PaginatedProductList({
-	initialData
+	initialData,
+	totalPages
 }: PaginatedProductListProps) {
 	const searchParams = useSearchParams()
 	const [page, setPage] = useState(parseInt(searchParams.get('page') ?? '1'))
@@ -32,24 +34,16 @@ export default function PaginatedProductList({
 		queryKey: ['products:get', page],
 		queryFn: () => filterProducts(filters, { page }),
 		initialData,
-		placeholderData: keepPreviousData,
-		refetchOnMount: false,
-		refetchOnWindowFocus: false
+		placeholderData: keepPreviousData
 	})
 
 	useUpdateEffect(() => {
-		query.refetch()
+		const newPage = parseInt(searchParams.get('page')!)
+
+		setPage(newPage)
 	}, [searchParams])
 
-	const updatePage = (newPage: number) => {
-		setPage(newPage)
-
-		const updated = new URLSearchParams(searchParams)
-		updated.set('page', newPage.toString())
-		history.replaceState(null, '', `?${updated}`)
-	}
-
-	if (query.isLoading || query.isFetching)
+	if (query.isLoading)
 		return (
 			<ProductCardListSkeleton
 				itemCount={9}
@@ -74,21 +68,13 @@ export default function PaginatedProductList({
 				products={query.data}
 				className='mt-8 flex flex-wrap w-full gap-6 justify-start'
 			/>
-			<Separator className='my-8' />
-			<div className='flex items-center gap-4'>
-				<Button
-					variant='outline'
-					onClick={() => updatePage(Math.max(page - 1, 1))}
-				>
-					Previous
-				</Button>
-				<Button
-					variant='outline'
-					onClick={() => updatePage(Math.min(page + 1, 10))}
-				>
-					Next
-				</Button>
-			</div>
+
+			{totalPages > 1 && (
+				<>
+					<Separator className='my-8' />
+					<DynamicPagination totalPages={totalPages} />
+				</>
+			)}
 		</div>
 	)
 }
