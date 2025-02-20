@@ -48,7 +48,7 @@ export default function Navbar() {
 							href='/'
 							aria-label='Home'
 						>
-							<Logo />
+							<Logo className='w-32' />
 						</Link>
 					</div>
 
@@ -65,9 +65,7 @@ export default function Navbar() {
 
 				<div className='flex items-center gap-4'>
 					<Searchbar />
-
 					<CartButton />
-
 					<UserButton />
 				</div>
 			</div>

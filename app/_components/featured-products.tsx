@@ -11,9 +11,13 @@ export default async function FeaturedProducts() {
 	const response = await getFeaturedProducts()
 
 	return (
-		<section className='py-16 border-b container'>
+		<section
+			className='py-16 border-b container'
+			aria-labelledby='featured'
+		>
 			<h2
 				className={`${integralCf.className} text-neutral-900 uppercase font-bold text-3xl lg:text-4xl xl:text-5xl text-balance text-center`}
+				id='featured'
 			>
 				Featured Products
 			</h2>

@@ -2,12 +2,7 @@ import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ProductImage } from '@/db/schema/product-images'
 import { type ProductCard } from '@/features/product/types'
-import {
-	average,
-	calculatePriceWithDiscount,
-	cn,
-	formatPrice
-} from '@/lib/utils'
+import { calculatePriceWithDiscount, cn, formatPrice } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ComponentProps } from 'react'
@@ -21,8 +16,6 @@ export default function ProductCard({
 	className,
 	...props
 }: ProductCardProps) {
-	const averageRating = average(product.reviews.map(review => review.rating))
-
 	return (
 		<article
 			className={cn('flex flex-col gap-4 group', className)}
@@ -44,17 +37,17 @@ export default function ProductCard({
 			<div className='grid gap-2'>
 				<Link
 					href={`/products/${product.slug}`}
-					className='text-xl font-bold'
+					className='text-xl font-bold line-clamp-1'
 				>
 					{product.name}
 				</Link>
 
-				{product.reviews.length > 0 ? (
+				{product.averageRating > 0 ? (
 					<div className='flex items-center space-x-2'>
-						<Rating rating={averageRating} />
+						<Rating rating={product.averageRating} />
 
 						<span className='text-gray-700 text-sm'>
-							{averageRating.toFixed(1)}
+							{product.averageRating.toFixed(1)}
 							<span className='text-gray-400'>/5</span>
 						</span>
 					</div>
@@ -79,7 +72,7 @@ export default function ProductCard({
 								{formatPrice(product.priceInCents)}
 							</s>
 							<small className='text-sm py-1.5 px-3 rounded-full bg-red-500/10 text-red-500'>
-								-{product.discount}%
+								&minus;{product.discount}%
 							</small>
 						</div>
 					)}

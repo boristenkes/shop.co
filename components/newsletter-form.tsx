@@ -66,10 +66,10 @@ export default function NewsletterForm({
 						id='subscriber-email'
 						type='email'
 						placeholder='Enter your email address'
-						className={cn('rounded-full pl-11 h-12 max-w-80 w-full border-2', {
-							'border-zinc-200': !errors.email,
-							'border-red-500': errors.email
-						})}
+						className={cn(
+							'rounded-full pl-11 h-12 max-w-80 w-full border-2',
+							errors.email ? 'border-red-500' : 'border-zinc-200'
+						)}
 						disabled={isSubmitting}
 						{...form.register('email')}
 					/>

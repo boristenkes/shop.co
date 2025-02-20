@@ -6,10 +6,10 @@ export default function Footer() {
 	return (
 		<footer className='mt-40 bg-gray-100 pb-12'>
 			<div className='mx-4 -translate-y-1/2'>
-				<NewsletterForm className='' />
+				<NewsletterForm />
 			</div>
 
-			<div className='container px-4 flex flex-wrap justify-between gap-4 border-b-2 border-b-gray-200 pb-12'>
+			<div className='container px-4 flex flex-wrap justify-between gap-12 border-b-2 border-b-gray-200 pb-12'>
 				<div>
 					<Logo />
 					<p className='text-balance text-gray-600 max-w-[30rem] mt-6 mb-9'>
@@ -34,30 +34,35 @@ export default function Footer() {
 					</ul>
 				</div>
 
-				<div className='flex justify-between flex-1 flex-wrap gap-4'>
-					{footerLinkGroups.map(group => (
-						<div key={group.title}>
-							<h3 className='text-lg font-semibold text-neutral-900 uppercase mb-6 tracking-[3px]'>
-								{group.title}
-							</h3>
-							<ul className='mt-2 space-y-3'>
-								{group.links.map(link => (
-									<li key={link.title}>
-										<a
-											href={link.href}
-											className='text-gray-600 hover:text-neutral-900 transition-colors hover:underline'
-										>
-											{link.title}
-										</a>
-									</li>
-								))}
-							</ul>
-						</div>
-					))}
-				</div>
+				<nav
+					aria-label='Footer links'
+					className='grow'
+				>
+					<ul className='flex justify-between flex-wrap gap-8'>
+						{footerLinkGroups.map(group => (
+							<li key={group.title}>
+								<h3 className='text-lg font-semibold text-neutral-900 uppercase mb-6 tracking-[3px]'>
+									{group.title}
+								</h3>
+								<ul className='mt-2 space-y-3'>
+									{group.links.map(link => (
+										<li key={link.title}>
+											<a
+												href={link.href}
+												className='text-gray-600 hover:text-neutral-900 transition-colors hover:underline'
+											>
+												{link.title}
+											</a>
+										</li>
+									))}
+								</ul>
+							</li>
+						))}
+					</ul>
+				</nav>
 			</div>
 
-			<div className='container px-4 mt-8 text-gray-600 flex items-center justify-between'>
+			<div className='container mt-8 text-gray-600 flex items-center justify-between max-sm:flex-col max-sm:text-center'>
 				<p>&copy; 2000-{new Date().getFullYear()}, All rights reserved</p>
 
 				<p className='text-sm'>

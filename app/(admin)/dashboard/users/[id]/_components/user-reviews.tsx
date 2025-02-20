@@ -46,12 +46,14 @@ export default async function UserReviews({
 								<div className='flex items-start gap-4'>
 									<Link
 										href={`/products/${review.product.slug}/${review.product.id}/reviews`}
+										className='bg-stone-100 rounded-sm'
 									>
 										<Image
 											src={review.product.images[0].url}
 											alt={review.product.name}
 											width={80}
 											height={80}
+											className='size-20 object-contain'
 										/>
 									</Link>
 									<div className='space-y-2'>

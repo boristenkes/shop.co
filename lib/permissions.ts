@@ -29,7 +29,7 @@ const permissions: Permissions = {
 		products: ['read'],
 		orders: ['create', 'read:own'],
 		carts: ['create', 'read:own', 'update:own', 'delete:own'],
-		reviews: ['create', 'delete:own', 'update:own'],
+		reviews: ['create', 'read:own', 'delete:own', 'update:own'],
 		users: [],
 		categories: [],
 		colors: []

@@ -12,7 +12,7 @@ import {
 } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
-import { Review, reviews } from '@/db/schema/reviews'
+import { Review } from '@/db/schema/reviews'
 import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
@@ -29,7 +29,8 @@ import {
 	lte,
 	max,
 	min,
-	ne
+	ne,
+	sql
 } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'
@@ -195,10 +196,6 @@ export async function getProductBySlug(
 				productsToColors: {
 					with: { color: true }
 				},
-				reviews: {
-					where: (review, { eq }) => eq(review.approved, true),
-					columns: { rating: true }
-				},
 				category: true
 			}
 		})) as GetProductBySlugReturnProduct
@@ -214,7 +211,7 @@ export async function getProductBySlug(
 
 export type GetProductByIdReturnProduct = Product & {
 	productsToColors: (ProductToColor & { color: Color })[]
-	reviews: Pick<Review, 'rating'>[]
+	averageRating: number
 	images: ProductImage[]
 	category: Category
 }
@@ -235,15 +232,19 @@ export async function getProductById(
 					eq(products.archived, false)
 				),
 			with: {
-				images: true,
+				images: { columns: { id: true, url: true } },
 				productsToColors: {
-					with: { color: true }
-				},
-				reviews: {
-					where: (review, { eq }) => eq(review.approved, true),
-					columns: { rating: true }
+					with: { color: true },
+					columns: {}
 				},
 				category: true
+			},
+			extras: {
+				averageRating: sql<number>`(
+          SELECT COALESCE(AVG(r.rating), 0) ::float
+          FROM reviews r
+          WHERE r.product_id = ${id}
+        )`.as('average_rating')
 			}
 		})) as GetProductByIdReturnProduct
 
@@ -328,11 +329,14 @@ export async function getProducts({
 					columns: { url: true },
 					limit: 1,
 					orderBy: (images, { asc }) => asc(images.id)
-				},
-				reviews: {
-					where: (review, { eq }) => eq(review.approved, true),
-					columns: { rating: true }
 				}
+			},
+			extras: {
+				averageRating: sql<number>`(
+          SELECT COALESCE(AVG(r.rating), 0) ::float
+          FROM reviews r
+          WHERE r.product_id = ${products.id}
+        )`.as('average_rating')
 			},
 			offset: (page - 1) * pageSize,
 			limit: pageSize
@@ -377,11 +381,14 @@ export async function getFeaturedProducts({
 					columns: { url: true },
 					limit: 1,
 					orderBy: (images, { asc }) => asc(images.id)
-				},
-				reviews: {
-					where: (review, { eq }) => eq(review.approved, true),
-					columns: { rating: true }
 				}
+			},
+			extras: {
+				averageRating: sql<number>`(
+          SELECT COALESCE(AVG(r.rating), 0) ::float
+          FROM reviews r
+          WHERE r.product_id = ${products.id}
+        )`.as('average_rating')
 			},
 			offset: (page - 1) * pageSize,
 			limit: pageSize
@@ -449,11 +456,14 @@ export async function getRelatedProducts(
 					columns: { url: true },
 					limit: 1,
 					orderBy: (images, { asc }) => asc(images.id)
-				},
-				reviews: {
-					where: (review, { eq }) => eq(review.approved, true),
-					columns: { rating: true }
 				}
+			},
+			extras: {
+				averageRating: sql<number>`(
+          SELECT COALESCE(AVG(r.rating), 0) ::float
+          FROM reviews r
+          WHERE r.product_id = ${products.id}
+        )`.as('average_rating')
 			},
 			offset: (page - 1) * pageSize,
 			limit: pageSize
@@ -568,11 +578,14 @@ export async function filterProducts(
 			images: {
 				columns: { url: true },
 				limit: 1
-			},
-			reviews: {
-				where: eq(reviews.approved, true),
-				columns: { rating: true }
 			}
+		},
+		extras: {
+			averageRating: sql<number>`(
+				SELECT COALESCE(AVG(r.rating), 0) ::float
+				FROM reviews r
+				WHERE r.product_id = ${products.id}
+			)`.as('average_rating')
 		},
 		offset: (page - 1) * pageSize,
 		limit: pageSize

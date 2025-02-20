@@ -1,5 +1,6 @@
 import { User } from '@/db/schema/users'
 import { auth, signIn, signOut } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
 import Link from 'next/link'
 import SubmitButton from './submit-button'
 import {
@@ -46,13 +47,21 @@ export default async function UserButton({ ...props }) {
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>Profile</DropdownMenuItem>
+				{hasPermission(currentUser.role, 'orders', ['read:own']) && (
+					<DropdownMenuItem>
+						<Link href='/orders'>My Orders</Link>
+					</DropdownMenuItem>
+				)}
+				{hasPermission(currentUser.role, 'reviews', ['read:own']) && (
+					<DropdownMenuItem>
+						<Link href='/reviews'>My Reviews</Link>
+					</DropdownMenuItem>
+				)}
 				{['admin', 'moderator'].includes(currentUser.role) && (
 					<DropdownMenuItem>
 						<Link href='/dashboard'>Dashboard</Link>
 					</DropdownMenuItem>
 				)}
-				<DropdownMenuItem>Team</DropdownMenuItem>
-				<DropdownMenuItem>Subscription</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>
 					<form

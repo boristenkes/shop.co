@@ -6,7 +6,7 @@ import { Product } from '@/db/schema/products'
 import { getProductById } from '@/features/product/actions'
 import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
-import { average, calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
+import { calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
 import Link from 'next/link'
 import ProductPageForm from './form'
 import ImageCarousel from './image-carousel'
@@ -21,10 +21,16 @@ export default async function ProductPageDetails({
 
 	const response = await getProductById(id)
 
-	if (!response.success) return <ErrorMessage message={response.message} />
+	if (!response.success)
+		return (
+			<ErrorMessage
+				message={response.message}
+				className='container my-8'
+			/>
+		)
 
 	const { product } = response
-	const averageRating = average(product.reviews.map(review => review.rating))
+	// const averageRating = average(product.reviews.map(review => review.rating))
 
 	return (
 		<div className='container py-9 flex items-start justify-center gap-10 flex-col lg:flex-row'>
@@ -47,12 +53,12 @@ export default async function ProductPageDetails({
 					</h1>
 				</div>
 
-				{product.reviews.length > 0 ? (
+				{product.averageRating > 0 ? (
 					<div className='flex items-center space-x-2'>
-						<Rating rating={averageRating} />
+						<Rating rating={product.averageRating} />
 
 						<span className='text-gray-700 text-sm'>
-							{averageRating.toFixed(1)}
+							{product.averageRating.toFixed(1)}
 							<span className='text-gray-400'>/5</span>
 						</span>
 					</div>
@@ -77,7 +83,7 @@ export default async function ProductPageDetails({
 								{formatPrice(product.priceInCents)}
 							</s>
 							<small className='text-lg py-1.5 px-3 rounded-full bg-red-500/10 text-red-500'>
-								-{product.discount}%
+								&minus;{product.discount}%
 							</small>
 						</p>
 					)}

@@ -23,7 +23,7 @@ export default function ImageCarousel({ images }: { images: ProductImage[] }) {
 				<CarouselMainContainer className='h-[30rem]'>
 					{images.map((image, idx) => (
 						<SliderMainItem
-							key={image.key}
+							key={image.id}
 							className='border border-muted flex items-center justify-center h-full rounded-md'
 						>
 							<Image
@@ -41,7 +41,7 @@ export default function ImageCarousel({ images }: { images: ProductImage[] }) {
 			<CarouselThumbsContainer className='lg:h-80 basis-1/4 rounded-md'>
 				{images.map((image, idx) => (
 					<SliderThumbItem
-						key={image.key}
+						key={image.id}
 						index={idx}
 						className='bg-transparent size-24 aspect-square bg-stone-100 cursor-pointer'
 					>

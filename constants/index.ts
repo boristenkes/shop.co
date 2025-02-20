@@ -15,12 +15,8 @@ export const navLinks = [
 		title: 'Products'
 	},
 	{
-		href: '/brands',
-		title: 'Brands'
-	},
-	{
-		href: '/dashboard',
-		title: 'Dashboard'
+		href: '/about',
+		title: 'About Us'
 	}
 ]
 
