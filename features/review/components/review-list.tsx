@@ -1,13 +1,21 @@
+import { cn } from '@/lib/utils'
 import { GetProductReviewsReview } from '../actions'
 import ReviewCard, { ReviewCardSkeleton } from './review-card'
 
-export default function ReviewList({
-	reviews
-}: {
+type ReviewListProps = React.ComponentProps<'ul'> & {
 	reviews: GetProductReviewsReview[]
-}) {
+}
+
+export default function ReviewList({
+	reviews,
+	className,
+	...props
+}: ReviewListProps) {
 	return (
-		<ul className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+		<ul
+			className={cn('grid grid-cols-1 md:grid-cols-2 gap-5', className)}
+			{...props}
+		>
 			{reviews.map(review => (
 				<li key={review.id}>
 					<ReviewCard review={review} />
@@ -17,9 +25,20 @@ export default function ReviewList({
 	)
 }
 
-export function ReviewCardListSkeleton({ length = 6 }: { length?: number }) {
+type ReviewCardListSkeleton = Omit<ReviewListProps, 'reviews'> & {
+	length?: number
+}
+
+export function ReviewCardListSkeleton({
+	length = 6,
+	className,
+	...props
+}: ReviewCardListSkeleton) {
 	return (
-		<ul className='grid grid-cols-1 md:grid-cols-2  gap-5'>
+		<ul
+			className={cn('grid grid-cols-1 md:grid-cols-2  gap-5', className)}
+			{...props}
+		>
 			{Array.from({ length }).map((_, idx) => (
 				<li
 					key={idx}

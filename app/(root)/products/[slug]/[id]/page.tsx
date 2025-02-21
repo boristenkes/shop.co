@@ -1,4 +1,5 @@
 import { db } from '@/db'
+import { delay } from '@/lib/utils'
 
 export async function generateStaticParams() {
 	const products = await db.query.products.findMany({
@@ -18,6 +19,8 @@ export async function generateStaticParams() {
 export default async function ProductPage(props: {
 	params: Promise<{ slug: string; id: string }>
 }) {
+	await delay(2000)
+
 	return (
 		<div className='container'>
 			<p className='p-16 text-center'>

@@ -7,11 +7,7 @@ import ReviewList, {
 	ReviewCardListSkeleton
 } from '@/features/review/components/review-list'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import {
-	ChevronDownIcon,
-	Loader2Icon,
-	SlidersHorizontalIcon
-} from 'lucide-react'
+import { ChevronDownIcon, Loader2Icon } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import ReviewButton from './review-button'
 
@@ -38,13 +34,6 @@ export default function ProductPageReviews() {
 
 				<div className='flex items-center gap-2.5'>
 					<Button
-						size='icon'
-						variant='secondary'
-					>
-						<SlidersHorizontalIcon />
-					</Button>
-
-					<Button
 						variant='secondary'
 						className='max-md:hidden'
 					>
@@ -55,12 +44,12 @@ export default function ProductPageReviews() {
 				</div>
 			</div>
 
-			{query.isLoading ? (
-				<ReviewCardListSkeleton />
-			) : query.isError ? (
-				<ErrorMessage message='Something went wrong' />
-			) : reviews.length > 0 ? (
-				<div>
+			{query.isLoading && <ReviewCardListSkeleton />}
+
+			{query.isError && <ErrorMessage message='Something went wrong' />}
+
+			{query.isSuccess && reviews.length > 0 ? (
+				<>
 					<ReviewList reviews={reviews} />
 
 					{hasMore && (
@@ -77,7 +66,7 @@ export default function ProductPageReviews() {
 							)}
 						</Button>
 					)}
-				</div>
+				</>
 			) : (
 				<p className='p-16 text-center'>
 					This product doesn&apos;t have any reviews

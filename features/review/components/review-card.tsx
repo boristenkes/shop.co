@@ -1,20 +1,29 @@
 import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
-import { formatDate } from '@/lib/utils'
-import { MoreHorizontalIcon } from 'lucide-react'
+import { cn, formatDate } from '@/lib/utils'
 import { GetProductReviewsReview } from '../actions'
 
-export default function ReviewCard({
-	review
-}: {
+type ReviewCardProps = React.ComponentProps<'article'> & {
 	review: GetProductReviewsReview
-}) {
+}
+
+export default function ReviewCard({
+	review,
+	className,
+	...props
+}: ReviewCardProps) {
 	return (
-		<article className='px-8 py-7 border rounded-2xl flex flex-col h-full'>
-			<div className='flex items-center justify-between gap-2 mb-2'>
-				<Rating rating={review.rating} />
-				<MoreHorizontalIcon className='text-neutral-600' />
-			</div>
+		<article
+			className={cn(
+				'px-8 py-7 border rounded-2xl flex flex-col h-full',
+				className
+			)}
+			{...props}
+		>
+			<Rating
+				rating={review.rating}
+				className='mb-3'
+			/>
 
 			<h3 className='font-bold text-xl mb-2'>{review.user.name}</h3>
 

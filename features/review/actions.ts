@@ -65,7 +65,7 @@ export async function createReview(
 export type GetProductReviewsReview = Pick<
 	Review,
 	'comment' | 'createdAt' | 'rating' | 'id'
-> & { user: Pick<User, 'name'> }
+> & { user: Pick<User, 'id' | 'name'> }
 
 export type GetProductReviewsReturn = {
 	reviews: GetProductReviewsReview[]
@@ -90,7 +90,7 @@ export async function getProductReviews(
 			),
 		with: {
 			user: {
-				columns: { name: true }
+				columns: { id: true, name: true }
 			}
 		},
 		columns: {
@@ -161,7 +161,7 @@ export async function getReviews(): Promise<GetReviewsReturn> {
 
 export type GetUserReviewsReview = Pick<
 	Review,
-	'id' | 'approved' | 'comment' | 'rating'
+	'id' | 'approved' | 'comment' | 'rating' | 'createdAt'
 > & {
 	product: Pick<Product, 'id' | 'name' | 'slug'> & {
 		images: { url: ProductImage['url'] }[]
@@ -176,7 +176,16 @@ export async function getUserReviews(
 	userId: User['id']
 ): Promise<GetUserReviewsReturn> {
 	try {
-		await requirePermission('reviews', ['read'])
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (
+			!currentUser ||
+			!hasPermission(currentUser.role, 'reviews', [
+				currentUser.id !== userId ? 'read' : 'read:own'
+			])
+		)
+			throw new Error('Unauthorized')
 
 		const reviews = await db.query.reviews.findMany({
 			where: (review, { eq }) => eq(review.userId, userId),
@@ -184,7 +193,8 @@ export async function getUserReviews(
 				id: true,
 				approved: true,
 				comment: true,
-				rating: true
+				rating: true,
+				createdAt: true
 			},
 			with: {
 				product: {
@@ -200,7 +210,8 @@ export async function getUserReviews(
 						}
 					}
 				}
-			}
+			},
+			orderBy: (review, { desc }) => desc(review.createdAt)
 		})
 
 		return { success: true, reviews }
@@ -246,7 +257,28 @@ export async function deleteReview(
 	path = '/dashboard/reviews'
 ): Promise<DeleteReviewReturn> {
 	try {
-		await requirePermission('reviews', ['delete'])
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (!currentUser) throw new Error('Unauthorized')
+
+		if (!hasPermission(currentUser.role, 'reviews', ['delete'])) {
+			const targetReview = await db.query.reviews.findFirst({
+				where: eq(reviews.id, reviewId),
+				columns: {},
+				with: {
+					user: {
+						columns: { id: true }
+					}
+				}
+			})
+
+			if (
+				targetReview?.user.id === currentUser.id &&
+				!hasPermission(currentUser.role, 'reviews', ['delete:own'])
+			)
+				throw new Error('Unauthorized')
+		}
 
 		await db.delete(reviews).where(eq(reviews.id, reviewId))
 
