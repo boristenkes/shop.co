@@ -105,9 +105,7 @@ function ReviewForm({
 	const params = useParams()
 	const form = useForm<ReviewSchema>({
 		resolver: zodResolver(reviewSchema),
-		defaultValues: {
-			rating: 0
-		}
+		defaultValues: { rating: 0 }
 	})
 
 	const { isSubmitting, errors } = form.formState

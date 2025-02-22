@@ -2,18 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { Heart, Star, ThumbsUp } from 'lucide-react'
-import * as React from 'react'
-
-export interface RatingProps {
-	value: number
-	onChange?: (value: number) => void
-	max?: number
-	icon?: 'star' | 'heart' | 'thumbsUp'
-	size?: 'sm' | 'md' | 'lg'
-	readOnly?: boolean
-	className?: string
-	style?: React.CSSProperties
-}
+import { forwardRef, useState } from 'react'
 
 const iconMap = {
 	star: Star,
@@ -27,7 +16,18 @@ const sizeMap = {
 	lg: 'w-8 h-8'
 }
 
-export const RatingInput = React.forwardRef<HTMLDivElement, RatingProps>(
+export type RatingProps = {
+	value: number
+	onChange?: (value: number) => void
+	max?: number
+	icon?: keyof typeof iconMap
+	size?: keyof typeof sizeMap
+	readOnly?: boolean
+	className?: string
+	style?: React.CSSProperties
+}
+
+export const RatingInput = forwardRef<HTMLDivElement, RatingProps>(
 	(
 		{
 			value,
@@ -41,7 +41,7 @@ export const RatingInput = React.forwardRef<HTMLDivElement, RatingProps>(
 		},
 		ref
 	) => {
-		const [hoverValue, setHoverValue] = React.useState<number | null>(null)
+		const [hoverValue, setHoverValue] = useState<number | null>(null)
 		const Icon = iconMap[icon]
 
 		const handleMouseEnter = (index: number) => {

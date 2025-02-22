@@ -27,7 +27,7 @@ type DataTableProps<TData, TValue> = {
 	data: TData[]
 }
 
-const defaultHiddenColumns = ['id', 'sizes', 'colors']
+const defaultHiddenColumns = ['id', 'sizes', 'colors', 'featured', 'archived']
 
 export function ProductsTable<TData, TValue>({
 	columns,
@@ -46,9 +46,7 @@ export function ProductsTable<TData, TValue>({
 		getPaginationRowModel: getPaginationRowModel(),
 		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
-		state: {
-			sorting
-		}
+		state: { sorting }
 	})
 
 	return (

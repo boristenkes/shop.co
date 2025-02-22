@@ -8,7 +8,7 @@ import { useState } from 'react'
 export default function CategoryCheckbox({
 	category
 }: {
-	category: Category & { productCount: string }
+	category: Category & { productCount: number }
 }) {
 	const searchParams = useSearchParams()
 	const defaultChecked = searchParams.getAll('category').includes(category.slug)

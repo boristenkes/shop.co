@@ -6,8 +6,8 @@ import Image from 'next/image'
 export default function Hero() {
 	return (
 		<main className='bg-gray-100 grow flex items-end max-xl:flex-col min-h-[calc(100dvh-80px)]'>
-			<header className='container relative flex max-xl:flex-col items-end justify-around gap-8'>
-				<div className='space-y-8 xl:-translate-y-16 px-4 max-xl:mt-16'>
+			<header className='container relative flex max-xl:flex-col justify-around gap-8 h-full'>
+				<div className='space-y-8 xl:-translate-y-16 px-4 max-xl:mt-16 h-full'>
 					<h1
 						className={`${integralCf.className} text-neutral-900 uppercase font-bold text-4xl lg:text-5xl xl:text-7xl text-balance`}
 					>

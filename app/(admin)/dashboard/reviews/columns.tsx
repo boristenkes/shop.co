@@ -2,6 +2,7 @@
 
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import ErrorMessage from '@/components/error-message'
+import { Rating } from '@/components/rating'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -23,7 +24,6 @@ import {
 	HoverCardContent,
 	HoverCardTrigger
 } from '@/components/ui/hover-card'
-import { RatingInput } from '@/components/ui/rating'
 import {
 	Tooltip,
 	TooltipContent,
@@ -40,6 +40,7 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
 import { CheckIcon, Loader2Icon, MoreHorizontal, XIcon } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -61,7 +62,13 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 					href={`/products/${product.slug}/${product.id}/reviews`}
 					className='hover:underline underline-offset-4'
 				>
-					{product.name}
+					<Image
+						src={product.images[0].url}
+						alt={product.name}
+						width={64}
+						height={64}
+						className='size-16 rounded-lg object-contain bg-stone-100 p-px'
+					/>
 				</Link>
 			)
 		}
@@ -123,7 +130,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 			return (
 				<Tooltip>
 					<TooltipTrigger>
-						<p className='line-clamp-2 overflow-hidden text-ellipsis max-w-96'>
+						<p className='line-clamp-2 text-left overflow-hidden text-ellipsis max-w-96'>
 							<q>{review.comment}</q>
 						</p>
 					</TooltipTrigger>
@@ -163,12 +170,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 				title='Rating'
 			/>
 		),
-		cell: ({ row }) => (
-			<RatingInput
-				readOnly
-				value={row.original.rating}
-			/>
-		)
+		cell: ({ row }) => <Rating rating={row.original.rating} />
 	},
 	{
 		accessorKey: 'createdAt',
@@ -251,7 +253,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 							cannot be undone. Proceed with caution.
 						</DialogDescription>
 
-						{mutation.data?.success === false && (
+						{mutation.data && !mutation.data.success && (
 							<ErrorMessage message={mutation.data?.message!} />
 						)}
 

@@ -144,7 +144,7 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 							&apos;s data. This cannot be undone. Proceed with caution.
 						</DialogDescription>
 
-						{mutation.data?.success === false && (
+						{mutation.data && !mutation.data.success && (
 							<ErrorMessage message={mutation.data.message} />
 						)}
 						<DialogFooter>

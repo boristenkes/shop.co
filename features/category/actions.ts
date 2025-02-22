@@ -8,8 +8,6 @@ import { hasPermission } from '@/lib/permissions'
 import { slugify } from '@/lib/utils'
 import { asc, eq, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
-import { requirePermission } from '../action-utils'
 
 export async function createCategory(
 	prev: any,
@@ -69,7 +67,7 @@ export type GetCategoriesConfig = {
 export type GetCategoriesReturn =
 	| {
 			success: true
-			categories: (Category & { productCount: string })[]
+			categories: (Category & { productCount: number })[]
 	  }
 	| { success: false; message: string }
 
@@ -82,7 +80,7 @@ export async function getCategories({
 				id: categories.id,
 				name: categories.name,
 				slug: categories.slug,
-				productCount: sql<string>`COUNT(${products.id})` // Count products per category
+				productCount: sql<number>`COUNT(${products.id}) ::integer` // Count products per category
 			})
 			.from(categories)
 			.leftJoin(products, eq(products.categoryId, categories.id))
@@ -95,55 +93,14 @@ export async function getCategories({
 		}
 	} catch (error: any) {
 		console.error('[GET_CATEGORIES]:', error)
+		const errorMessage =
+			'Something went wrong while getting categories. Please try again later.'
 
-		if (throwOnError)
-			throw new Error(
-				'Something went wrong while getting categories. Please try again later.'
-			)
+		if (throwOnError) throw new Error(errorMessage)
 
 		return {
 			success: false,
-			message:
-				'Something went wrong while getting categories. Please try again later.'
-		}
-	}
-}
-
-export type UpdateCategoryProps = {
-	categoryId: number
-	newName: string
-}
-
-export type UpdateCategoryReturn =
-	| { success: true; newName: string }
-	| { success: false; message: string }
-
-const newNameSchema = z
-	.string()
-	.trim()
-	.min(1, 'Too short')
-	.max(20, 'Too long. Max 20')
-
-export async function updateCategory({
-	categoryId,
-	newName
-}: UpdateCategoryProps): Promise<UpdateCategoryReturn> {
-	try {
-		await requirePermission('categories', ['update'])
-
-		const validatedName = newNameSchema.parse(newName)
-
-		await db
-			.update(categories)
-			.set({ name: validatedName, slug: slugify(validatedName) })
-			.where(eq(categories.id, categoryId))
-
-		return { success: true, newName: validatedName }
-	} catch (error) {
-		console.error('[UPDATE_CATEGORY]:', error)
-		return {
-			success: false,
-			message: 'Something went wrong. Please try again later'
+			message: errorMessage
 		}
 	}
 }
@@ -161,16 +118,16 @@ export async function deleteCategory(
 		const session = await auth()
 		const currentUser = session?.user
 
-		const categoryId =
-			typeof prev === 'number'
-				? prev
-				: parseInt(formData?.get('categoryId') as string)
-
 		if (
 			!currentUser ||
 			!hasPermission(currentUser.role, 'categories', ['delete'])
 		)
 			throw new Error('Unauthorized')
+
+		const categoryId =
+			typeof prev === 'number'
+				? prev
+				: parseInt(formData?.get('categoryId') as string)
 
 		const response = await db
 			.delete(categories)

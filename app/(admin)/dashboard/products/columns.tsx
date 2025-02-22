@@ -54,7 +54,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 					alt={image.url}
 					width={64}
 					height={64}
-					className='size-16 rounded-sm object-cover'
+					className='size-16 rounded-lg object-contain bg-stone-100 p-px'
 				/>
 			)
 		}
@@ -288,7 +288,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 							undone. Proceed with caution.
 						</DialogDescription>
 
-						{mutation.data?.success === false && (
+						{mutation.data && !mutation.data.success && (
 							<ErrorMessage message={mutation.data?.message!} />
 						)}
 

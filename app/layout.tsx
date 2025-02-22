@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${satoshi.className} antialiased`}>
+			<body className={`${satoshi.className} antialiased scroll-smooth`}>
 				<Providers>{children}</Providers>
 			</body>
 		</html>

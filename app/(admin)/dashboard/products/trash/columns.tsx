@@ -157,7 +157,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 								undone. Proceed with caution.
 							</DialogDescription>
 
-							{deleteMutation.data?.success === false && (
+							{deleteMutation.data && !deleteMutation.data.success && (
 								<ErrorMessage message={deleteMutation.data.message} />
 							)}
 

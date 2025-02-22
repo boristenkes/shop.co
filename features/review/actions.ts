@@ -30,7 +30,8 @@ export async function createReview(
 				where: and(
 					eq(reviews.userId, currentUser.id),
 					eq(reviews.productId, data.productId)
-				)
+				),
+				columns: {}
 			})
 			.then(Boolean)
 
@@ -119,7 +120,9 @@ export async function getProductReviews(
 
 export type GetReviewsReturnReview = Review & {
 	user: Pick<User, 'id' | 'name' | 'email' | 'image'>
-	product: Pick<Product, 'id' | 'name' | 'slug'>
+	product: Pick<Product, 'id' | 'name' | 'slug'> & {
+		images: Pick<ProductImage, 'url'>[]
+	}
 }
 
 export type GetReviewsReturn =
@@ -145,6 +148,12 @@ export async function getReviews(): Promise<GetReviewsReturn> {
 						id: true,
 						name: true,
 						slug: true
+					},
+					with: {
+						images: {
+							columns: { url: true },
+							limit: 1
+						}
 					}
 				}
 			}

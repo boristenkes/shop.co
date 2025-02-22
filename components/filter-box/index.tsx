@@ -1,6 +1,6 @@
 import { Separator } from '@/components/ui/separator'
 import { getProductPriceMinMax } from '@/features/product/actions'
-import { cn, delay } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { SlidersHorizontalIcon } from 'lucide-react'
 import Form from 'next/form'
 import SubmitButton from '../submit-button'
@@ -16,9 +16,7 @@ export default async function FilterBox({
 	className,
 	...props
 }: FilterBoxProps) {
-	await delay(2000)
 	const response = await getProductPriceMinMax()
-	console.log(props.title)
 	const priceRange = response.success
 		? [
 				Math.floor(response.minmax.min / 100),

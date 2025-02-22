@@ -52,7 +52,7 @@ export default async function ProductsPage(props: {
 			<div className='flex gap-5'>
 				<div className='max-md:hidden'>
 					<Suspense fallback={<FilterBoxSkeleton />}>
-						<FilterBox title='desktop' />
+						<FilterBox />
 					</Suspense>
 				</div>
 
@@ -81,10 +81,7 @@ export default async function ProductsPage(props: {
 											<FilterBoxSkeleton className='w-full overflow-y-auto border-none' />
 										}
 									>
-										<FilterBox
-											title='mobile'
-											className='w-full overflow-y-auto border-none'
-										/>
+										<FilterBox className='w-full overflow-y-auto border-none' />
 									</Suspense>
 								</DrawerContent>
 							</Drawer>

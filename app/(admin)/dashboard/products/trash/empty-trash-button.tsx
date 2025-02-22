@@ -53,7 +53,7 @@ export default function EmptyTrashButton(props: ButtonProps) {
 					</DialogDescription>
 				</DialogHeader>
 
-				{mutation.data?.success === false && (
+				{mutation.data && !mutation.data.success && (
 					<ErrorMessage message={mutation.data.message} />
 				)}
 

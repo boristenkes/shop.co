@@ -11,19 +11,12 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
 import { Category } from '@/db/schema/categories'
 import { deleteCategory } from '@/features/category/actions'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
-import { Loader2Icon, MoreHorizontal } from 'lucide-react'
+import { Loader2Icon, TrashIcon } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -73,29 +66,15 @@ export const columns: ColumnDef<Category>[] = [
 					open={open}
 					onOpenChange={setOpen}
 				>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant='ghost'
-								size='icon'
-								className='size-8 rounded-sm'
-							>
-								<span className='sr-only'>Open menu</span>
-								<MoreHorizontal className='size-4' />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align='end'>
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-							<DropdownMenuItem>
-								<DialogTrigger>Edit category</DialogTrigger>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<DialogTrigger>Delete category</DialogTrigger>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-
+					<DialogTrigger asChild>
+						<Button
+							size='icon'
+							variant='ghost'
+							className='rounded-lg text-red-500 hover:text-red-600'
+						>
+							<TrashIcon />
+						</Button>
+					</DialogTrigger>
 					<DialogContent>
 						<DialogTitle>Are you sure?</DialogTitle>
 						<DialogDescription>
@@ -104,7 +83,7 @@ export const columns: ColumnDef<Category>[] = [
 							undone. Proceed with caution.
 						</DialogDescription>
 
-						{mutation.data?.success === false && (
+						{mutation.data && !mutation.data.success && (
 							<ErrorMessage message={mutation.data.message} />
 						)}
 
