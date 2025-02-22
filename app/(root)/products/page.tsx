@@ -7,10 +7,18 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import { Button } from '@/components/ui/button'
+import {
+	DialogDescription,
+	DialogHeader,
+	DialogTitle
+} from '@/components/ui/dialog'
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
 import { countProducts, filterProducts } from '@/features/product/actions'
 import PaginatedProductList from '@/features/product/components/paginated-product-list'
 import { ProductCardListSkeleton } from '@/features/product/components/product-list'
 import { SearchParams } from '@/lib/types'
+import { SlidersHorizontalIcon } from 'lucide-react'
 import { Suspense } from 'react'
 
 export default async function ProductsPage(props: {
@@ -42,13 +50,45 @@ export default async function ProductsPage(props: {
 			</Breadcrumb>
 
 			<div className='flex gap-5'>
-				<Suspense fallback={<FilterBoxSkeleton />}>
-					<FilterBox />
-				</Suspense>
+				<div className='max-md:hidden'>
+					<Suspense fallback={<FilterBoxSkeleton />}>
+						<FilterBox title='desktop' />
+					</Suspense>
+				</div>
 
 				<main className='grow'>
 					<div className='flex items-center justify-between'>
 						<h1 className='text-3xl font-bold'>Products</h1>
+						<div className='md:hidden'>
+							<Drawer>
+								<DrawerTrigger asChild>
+									<Button
+										size='icon'
+										variant='secondary'
+									>
+										<SlidersHorizontalIcon />
+									</Button>
+								</DrawerTrigger>
+								<DrawerContent className='h-full'>
+									<DialogHeader className='sr-only'>
+										<DialogTitle>Filters</DialogTitle>
+										<DialogDescription>
+											Apply filters as you like.
+										</DialogDescription>
+									</DialogHeader>
+									<Suspense
+										fallback={
+											<FilterBoxSkeleton className='w-full overflow-y-auto border-none' />
+										}
+									>
+										<FilterBox
+											title='mobile'
+											className='w-full overflow-y-auto border-none'
+										/>
+									</Suspense>
+								</DrawerContent>
+							</Drawer>
+						</div>
 					</div>
 					<Suspense
 						fallback={

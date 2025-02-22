@@ -26,7 +26,7 @@ export default function ProductsPageLoading() {
 			</Breadcrumb>
 
 			<div className='flex gap-5'>
-				<FilterBoxSkeleton />
+				<FilterBoxSkeleton className='max-md:hidden' />
 
 				<main className='grow'>
 					<div className='flex items-center justify-between'>

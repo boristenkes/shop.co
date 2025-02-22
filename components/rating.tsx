@@ -15,7 +15,7 @@ export function Rating({ rating, className, ...props }: RatingProps) {
 	return (
 		<div
 			className={cn('flex space-x-1', className)}
-			aria-label={`Rating: ${rating}/5`}
+			aria-label={`Rating: ${rating.toFixed(1)}/5`}
 			{...props}
 		>
 			{/* Full stars */}

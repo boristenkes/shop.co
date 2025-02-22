@@ -27,7 +27,10 @@ export default async function UserReviewsPage() {
 
 	return (
 		<main className='container py-16'>
-			<h1 className='text-4xl font-semibold mb-12'>Your Reviews</h1>
+			<h1 className='text-4xl font-semibold'>Your Reviews</h1>
+			<p className='text-gray-500 mt-1 mb-12'>
+				This is where you will find all reviews you left on our products.
+			</p>
 
 			{hasReviews ? (
 				<ul className='grid grid-cols-1 md:grid-cols-2 gap-5'>
@@ -103,7 +106,7 @@ export default async function UserReviewsPage() {
 					))}
 				</ul>
 			) : (
-				<p className='text-center py-16'>No reviews</p>
+				<p className='text-center py-16'>You didn&apos;t leave any reviews</p>
 			)}
 		</main>
 	)

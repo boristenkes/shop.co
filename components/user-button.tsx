@@ -1,4 +1,3 @@
-import { User } from '@/db/schema/users'
 import { auth, signIn, signOut } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import Link from 'next/link'
@@ -30,7 +29,7 @@ export default async function UserButton({ ...props }) {
 		)
 	}
 
-	const currentUser = session.user as User
+	const currentUser = session.user
 
 	return (
 		<DropdownMenu>

@@ -30,7 +30,6 @@ export default async function ProductPageDetails({
 		)
 
 	const { product } = response
-	// const averageRating = average(product.reviews.map(review => review.rating))
 
 	return (
 		<div className='container py-9 flex items-start justify-center gap-10 flex-col lg:flex-row'>

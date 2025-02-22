@@ -36,7 +36,7 @@ export default function ProductCard({
 
 			<div className='grid gap-2'>
 				<Link
-					href={`/products/${product.slug}`}
+					href={`/products/${product.slug}/${product.id}`}
 					className='text-xl font-bold line-clamp-1'
 				>
 					{product.name}

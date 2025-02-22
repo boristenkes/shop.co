@@ -45,8 +45,8 @@ export default function DeleteReviewButton({
 			<DialogContent>
 				<DialogTitle>Are you sure?</DialogTitle>
 				<DialogDescription>
-					You are about to permamently remove review from database. This cannot
-					be undone. Proceed with caution.
+					You are about to permamently delete this review. This cannot be
+					undone. Proceed with caution.
 				</DialogDescription>
 
 				{mutation.data && !mutation.data.success && (
