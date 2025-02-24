@@ -28,7 +28,8 @@ export default function PaginatedProductList({
 		size: searchParams.getAll('size') as TSize[],
 		category: searchParams.getAll('category'),
 		min: parseInt(searchParams.get('min')!),
-		max: parseInt(searchParams.get('max')!)
+		max: parseInt(searchParams.get('max')!),
+		sortby: searchParams.get('sortby')!
 	}
 	const query = useQuery({
 		queryKey: ['products:get', page],
@@ -41,6 +42,7 @@ export default function PaginatedProductList({
 		const newPage = parseInt(searchParams.get('page')!)
 
 		setPage(newPage)
+		query.refetch()
 	}, [searchParams])
 
 	if (query.isLoading)

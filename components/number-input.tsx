@@ -12,6 +12,7 @@ export type NumberInputProps = {
 	step?: number
 	size?: 'lg' | 'sm'
 	disabled?: boolean
+	id?: string
 }
 
 export default function NumberInput({
@@ -65,6 +66,7 @@ export default function NumberInput({
 				onClick={handleDecrement}
 				disabled={disabled}
 				className='px-2 text-lg font-bold text-gray-600 hover:text-gray-900'
+				aria-label='decrement'
 			>
 				<MinusIcon className={size === 'sm' ? 'size-4' : 'size-6'} />
 			</button>
@@ -87,6 +89,7 @@ export default function NumberInput({
 				onClick={handleIncrement}
 				disabled={disabled}
 				className='px-2 text-lg font-bold text-gray-600 hover:text-gray-900'
+				aria-label='increment'
 			>
 				<PlusIcon className={size === 'sm' ? 'size-4' : 'size-6'} />
 			</button>

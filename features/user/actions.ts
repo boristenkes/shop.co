@@ -92,6 +92,7 @@ export async function updateUser(userId: User['id'], newData: Partial<User>) {
 	try {
 		await requirePermission('users', ['update'])
 
+		// Ensure only admin can assign role
 		if (newData.role) {
 			const session = await auth()
 

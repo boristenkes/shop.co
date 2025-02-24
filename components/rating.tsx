@@ -15,7 +15,6 @@ export function Rating({ rating, className, ...props }: RatingProps) {
 	return (
 		<div
 			className={cn('flex space-x-1', className)}
-			aria-label={`Rating: ${rating.toFixed(1)}/5`}
 			{...props}
 		>
 			{/* Full stars */}
@@ -36,6 +35,7 @@ export function Rating({ rating, className, ...props }: RatingProps) {
 					className='text-yellow-500'
 				/>
 			))}
+			<span className='sr-only'>Rating: {rating.toFixed(1)} out of 5</span>
 		</div>
 	)
 }

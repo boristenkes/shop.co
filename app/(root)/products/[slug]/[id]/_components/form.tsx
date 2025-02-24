@@ -126,6 +126,7 @@ export default function ProductPageForm({
 									backgroundColor: color.hexCode,
 									borderColor: darkenHex(color.hexCode)
 								}}
+								aria-label={color.name}
 								disabled={mutation.isPending}
 							/>
 						))}
@@ -157,7 +158,12 @@ export default function ProductPageForm({
 			)}
 
 			<div className='flex items-center gap-5 mt-6 flex-wrap'>
-				<Label className='sr-only'>Quantity (max {Math.min(stock, 20)})</Label>
+				<Label
+					className='sr-only'
+					htmlFor={`numberinput:${product.id}`}
+				>
+					Quantity (max {Math.min(stock, 20)})
+				</Label>
 				<NumberInput
 					value={quantity}
 					onChange={setQuantity}
@@ -165,6 +171,7 @@ export default function ProductPageForm({
 					max={Math.min(stock, 20)}
 					step={1}
 					disabled={mutation.isPending}
+					id={`numberinput:${product.id}`}
 				/>
 
 				<Button

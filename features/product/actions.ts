@@ -19,6 +19,8 @@ import { isArray, slugify, toCents } from '@/lib/utils'
 import {
 	and,
 	arrayOverlaps,
+	asc,
+	desc,
 	eq,
 	exists,
 	gte,
@@ -254,10 +256,7 @@ export async function getDeletedProducts(): Promise<GetProductsForAdminReturn> {
 }
 
 export type GetProductsReturn =
-	| {
-			success: true
-			products: ProductCard[]
-	  }
+	| { success: true; products: ProductCard[] }
 	| { success: false; message: string }
 
 export type GetProductsProps = {
@@ -452,6 +451,7 @@ export type ProductFilters = {
 	color: Color['slug'][]
 	size: TSize[]
 	category: Category['slug'][]
+	sortby: string
 }
 
 export type FetchProductsOptions = {
@@ -519,6 +519,34 @@ export async function filterProducts(
 		)
 	}
 
+	// Sorting
+	const productSortOptions = {
+		price: products.priceInCents,
+		date: products.createdAt,
+		rating: sql<number>`(
+			SELECT COALESCE(AVG(r.rating), 0) ::float
+			FROM reviews r
+			WHERE r.product_id = ${products.id}
+		)`
+	} as const
+
+	let orderBy = desc(products.createdAt)
+
+	if (filters.sortby) {
+		const [column, order] = filters.sortby.split('-') as [
+			keyof typeof productSortOptions,
+			'asc' | 'desc'
+		]
+
+		// Validate column and order
+		if (column in productSortOptions && (order === 'asc' || order === 'desc')) {
+			orderBy =
+				order === 'asc'
+					? asc(productSortOptions[column])
+					: desc(productSortOptions[column])
+		}
+	}
+
 	// Fetch filtered products
 	return db.query.products.findMany({
 		where: and(
@@ -546,6 +574,7 @@ export async function filterProducts(
 				WHERE r.product_id = ${products.id}
 			)`.as('average_rating')
 		},
+		orderBy,
 		offset: (page - 1) * pageSize,
 		limit: pageSize
 	})

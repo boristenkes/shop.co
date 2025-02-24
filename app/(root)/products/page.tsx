@@ -1,4 +1,5 @@
 import FilterBox, { FilterBoxSkeleton } from '@/components/filter-box'
+import SortSelect, { SortSelectItem } from '@/components/sort-select'
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -20,6 +21,21 @@ import { ProductCardListSkeleton } from '@/features/product/components/product-l
 import { SearchParams } from '@/lib/types'
 import { SlidersHorizontalIcon } from 'lucide-react'
 import { Suspense } from 'react'
+
+const sortItems: SortSelectItem[] = [
+	{
+		label: 'Date',
+		value: 'date'
+	},
+	{
+		label: 'Price',
+		value: 'price'
+	},
+	{
+		label: 'Rating',
+		value: 'rating'
+	}
+]
 
 export default async function ProductsPage(props: {
 	searchParams: Promise<SearchParams>
@@ -59,32 +75,36 @@ export default async function ProductsPage(props: {
 				<main className='grow'>
 					<div className='flex items-center justify-between'>
 						<h1 className='text-3xl font-bold'>Products</h1>
-						<div className='md:hidden'>
-							<Drawer>
-								<DrawerTrigger asChild>
-									<Button
-										size='icon'
-										variant='secondary'
-									>
-										<SlidersHorizontalIcon />
-									</Button>
-								</DrawerTrigger>
-								<DrawerContent className='h-full'>
-									<DialogHeader className='sr-only'>
-										<DialogTitle>Filters</DialogTitle>
-										<DialogDescription>
-											Apply filters as you like.
-										</DialogDescription>
-									</DialogHeader>
-									<Suspense
-										fallback={
-											<FilterBoxSkeleton className='w-full overflow-y-auto border-none' />
-										}
-									>
-										<FilterBox className='w-full overflow-y-auto border-none' />
-									</Suspense>
-								</DrawerContent>
-							</Drawer>
+						<div className='flex items-center gap-4'>
+							<SortSelect items={sortItems} />
+
+							<div className='md:hidden'>
+								<Drawer>
+									<DrawerTrigger asChild>
+										<Button
+											size='icon'
+											variant='secondary'
+										>
+											<SlidersHorizontalIcon />
+										</Button>
+									</DrawerTrigger>
+									<DrawerContent className='h-full'>
+										<DialogHeader className='sr-only'>
+											<DialogTitle>Filters</DialogTitle>
+											<DialogDescription>
+												Apply filters as you like.
+											</DialogDescription>
+										</DialogHeader>
+										<Suspense
+											fallback={
+												<FilterBoxSkeleton className='w-full overflow-y-auto border-none' />
+											}
+										>
+											<FilterBox className='w-full overflow-y-auto border-none' />
+										</Suspense>
+									</DrawerContent>
+								</Drawer>
+							</div>
 						</div>
 					</div>
 					<Suspense
