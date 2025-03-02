@@ -47,7 +47,6 @@ export default async function ProductsPage(props: {
 		page: parseInt(page as string),
 		pageSize: parseInt(pageSize as string)
 	})
-	const totalPages = Math.ceil(response.total / parseInt(pageSize as string))
 
 	return (
 		<div className='container'>
@@ -116,10 +115,7 @@ export default async function ProductsPage(props: {
 							/>
 						}
 					>
-						<PaginatedProductList
-							initialData={response}
-							totalPages={totalPages}
-						/>
+						<PaginatedProductList initialData={response} />
 					</Suspense>
 				</main>
 			</div>

@@ -16,12 +16,10 @@ import ProductCardList, { ProductCardListSkeleton } from './product-list'
 
 type PaginatedProductListProps = {
 	initialData: FilterProductsReturn
-	totalPages: number
 }
 
 export default function PaginatedProductList({
-	initialData,
-	totalPages
+	initialData
 }: PaginatedProductListProps) {
 	const searchParams = useSearchParams()
 	const [page, setPage] = useState(parseInt(searchParams.get('page') ?? '1'))
@@ -39,12 +37,18 @@ export default function PaginatedProductList({
 		initialData,
 		placeholderData: keepPreviousData
 	})
+	const totalPages = Math.ceil(
+		query.data.total / parseInt(searchParams.get('pageSize') ?? '9')
+	)
 
 	useUpdateEffect(() => {
 		const newPage = parseInt(searchParams.get('page')!)
 
-		setPage(newPage)
-		query.refetch()
+		if (!isNaN(newPage) && newPage !== page) {
+			setPage(newPage)
+		} else {
+			query.refetch()
+		}
 
 		scrollTo({ top: 0, behavior: 'instant' })
 	}, [searchParams])
