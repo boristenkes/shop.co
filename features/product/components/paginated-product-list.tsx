@@ -4,8 +4,10 @@ import DynamicPagination from '@/components/dynamic-pagination'
 import ErrorMessage from '@/components/error-message'
 import { Separator } from '@/components/ui/separator'
 import { TSize } from '@/db/schema/enums'
-import { filterProducts } from '@/features/product/actions'
-import { ProductCard } from '@/features/product/types'
+import {
+	filterProducts,
+	FilterProductsReturn
+} from '@/features/product/actions'
 import useUpdateEffect from '@/hooks/use-update-effect'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
@@ -13,7 +15,7 @@ import { useState } from 'react'
 import ProductCardList, { ProductCardListSkeleton } from './product-list'
 
 type PaginatedProductListProps = {
-	initialData: ProductCard[]
+	initialData: FilterProductsReturn
 	totalPages: number
 }
 
@@ -63,13 +65,13 @@ export default function PaginatedProductList({
 			/>
 		)
 
-	if (query.data.length === 0)
+	if (query.data.products.length === 0)
 		return <p className='py-16 text-center'>No results</p>
 
 	return (
 		<div>
 			<ProductCardList
-				products={query.data}
+				products={query.data.products}
 				className='mt-8 flex flex-wrap w-full gap-6 justify-start'
 			/>
 

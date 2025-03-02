@@ -1,3 +1,4 @@
+import ActiveFilters from '@/components/active-filters'
 import FilterBox, { FilterBoxSkeleton } from '@/components/filter-box'
 import SortSelect, { SortSelectItem } from '@/components/sort-select'
 import {
@@ -15,7 +16,7 @@ import {
 	DialogTitle
 } from '@/components/ui/dialog'
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
-import { countProducts, filterProducts } from '@/features/product/actions'
+import { filterProducts } from '@/features/product/actions'
 import PaginatedProductList from '@/features/product/components/paginated-product-list'
 import { ProductCardListSkeleton } from '@/features/product/components/product-list'
 import { SearchParams } from '@/lib/types'
@@ -42,14 +43,11 @@ export default async function ProductsPage(props: {
 }) {
 	const searchParams = await props.searchParams
 	const { page, pageSize = 9, ...filters } = searchParams
-	const [filteredProducts, totalProducts] = await Promise.all([
-		filterProducts(filters, {
-			page: parseInt(page as string),
-			pageSize: parseInt(pageSize as string)
-		}),
-		countProducts()
-	])
-	const totalPages = Math.ceil(totalProducts / parseInt(pageSize as string))
+	const response = await filterProducts(filters, {
+		page: parseInt(page as string),
+		pageSize: parseInt(pageSize as string)
+	})
+	const totalPages = Math.ceil(response.total / parseInt(pageSize as string))
 
 	return (
 		<div className='container'>
@@ -73,7 +71,7 @@ export default async function ProductsPage(props: {
 				</div>
 
 				<main className='grow'>
-					<div className='flex items-center justify-between'>
+					<div className='flex items-center justify-between mb-4'>
 						<h1 className='text-3xl font-bold'>Products</h1>
 						<div className='flex items-center gap-4'>
 							<SortSelect items={sortItems} />
@@ -107,6 +105,9 @@ export default async function ProductsPage(props: {
 							</div>
 						</div>
 					</div>
+
+					<ActiveFilters />
+
 					<Suspense
 						fallback={
 							<ProductCardListSkeleton
@@ -116,7 +117,7 @@ export default async function ProductsPage(props: {
 						}
 					>
 						<PaginatedProductList
-							initialData={filteredProducts}
+							initialData={response}
 							totalPages={totalPages}
 						/>
 					</Suspense>

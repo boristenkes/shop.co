@@ -459,10 +459,15 @@ export type FetchProductsOptions = {
 	pageSize?: number
 }
 
+export type FilterProductsReturn = {
+	products: ProductCard[]
+	total: number
+}
+
 export async function filterProducts(
 	filters: Partial<ProductFilters>,
 	{ page = 1, pageSize = 9 }: FetchProductsOptions = {}
-): Promise<ProductCard[]> {
+): Promise<FilterProductsReturn> {
 	const conditions = []
 
 	// Price filtering
@@ -485,7 +490,7 @@ export async function filterProducts(
 		conditions.push(
 			exists(
 				db
-					.select()
+					.select({})
 					.from(productsToColors)
 					.innerJoin(colors, eq(productsToColors.colorId, colors.id))
 					.where(
@@ -550,7 +555,7 @@ export async function filterProducts(
 	}
 
 	// Fetch filtered products
-	return db.query.products.findMany({
+	const results = await db.query.products.findMany({
 		where: and(
 			isNull(products.deletedAt),
 			eq(products.archived, false),
@@ -574,16 +579,22 @@ export async function filterProducts(
 				SELECT COALESCE(AVG(r.rating), 0) ::float
 				FROM reviews r
 				WHERE r.product_id = ${products.id}
-			)`.as('average_rating')
+			)`.as('average_rating'),
+			totalCount: sql<number>`(COUNT(*) OVER() ::integer)`.as('total_count')
 		},
 		orderBy,
 		offset: (page - 1) * pageSize,
 		limit: pageSize
 	})
-}
 
-export async function countProducts() {
-	return db.$count(products)
+	const total = results.length > 0 ? results[0].totalCount : 0
+
+	results.forEach(product => {
+		// @ts-expect-error
+		delete product.totalCount
+	})
+
+	return { products: results, total }
 }
 
 type GetProductPriceMinMaxReturn =
