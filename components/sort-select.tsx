@@ -42,10 +42,7 @@ export default function SortSelect({
 			onValueChange={handleSelect}
 		>
 			<SelectTrigger className='w-[180px]'>
-				<SelectValue
-					placeholder='Select sorting method'
-					// defaultValue={searchParams.get('sortby') ?? defaultValue}
-				/>
+				<SelectValue placeholder='Select sorting method' />
 			</SelectTrigger>
 			<SelectContent>
 				{items.map(item => (

@@ -504,9 +504,10 @@ export async function filterProducts(
 	// Category filtering
 	if (filters.category?.length) {
 		conditions.push(
-			exists(
+			inArray(
+				products.categoryId,
 				db
-					.select({ id: products.id })
+					.select({ cid: categories.id })
 					.from(products)
 					.innerJoin(categories, eq(products.categoryId, categories.id))
 					.where(
@@ -514,14 +515,15 @@ export async function filterProducts(
 							? inArray(categories.slug, filters.category)
 							: eq(categories.slug, filters.category)
 					)
-					.limit(1)
 			)
 		)
 	}
 
 	// Sorting
 	const productSortOptions = {
-		price: products.priceInCents,
+		price: sql<number>`(
+			round(${products.priceInCents} - (${products.priceInCents} * ${products.discount}) / 100)
+		)`,
 		date: products.createdAt,
 		rating: sql<number>`(
 			SELECT COALESCE(AVG(r.rating), 0) ::float

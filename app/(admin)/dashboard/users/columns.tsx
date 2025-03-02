@@ -43,13 +43,15 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 		header: 'Image',
 		cell: ({ row }) => {
 			return (
-				<Avatar
-					src={row.original.image!}
-					alt={row.original.name}
-					width={40}
-					height={40}
-					className='size-10'
-				/>
+				<Link href={`/dashboard/users/${row.original.id}`}>
+					<Avatar
+						src={row.original.image!}
+						alt={row.original.name}
+						width={40}
+						height={40}
+						className='size-10'
+					/>
+				</Link>
 			)
 		}
 	},

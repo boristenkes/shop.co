@@ -43,6 +43,8 @@ export default function PaginatedProductList({
 
 		setPage(newPage)
 		query.refetch()
+
+		scrollTo({ top: 0, behavior: 'instant' })
 	}, [searchParams])
 
 	if (query.isLoading)
