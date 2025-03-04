@@ -1,5 +1,5 @@
+import { GetProductReviewsReview } from '@/features/review/actions/read'
 import { cn } from '@/lib/utils'
-import { GetProductReviewsReview } from '../actions'
 import ReviewCard, { ReviewCardSkeleton } from './review-card'
 
 type ReviewListProps = React.ComponentProps<'ul'> & {

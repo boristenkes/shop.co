@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/form'
 import { RatingInput } from '@/components/ui/rating'
 import { Textarea } from '@/components/ui/textarea'
-import { createReview } from '@/features/review/actions'
+import { createReview } from '@/features/review/actions/create'
 import { reviewSchema, ReviewSchema } from '@/features/review/zod'
 import useMediaQuery from '@/hooks/use-media-query'
 import { zodResolver } from '@hookform/resolvers/zod'

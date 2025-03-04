@@ -22,7 +22,7 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { createColor } from '@/features/color/actions'
+import { createColor } from '@/features/color/actions/create'
 import { newColorSchema } from '@/features/color/zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon } from 'lucide-react'

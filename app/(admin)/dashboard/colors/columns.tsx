@@ -11,7 +11,7 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog'
 import { type Color } from '@/db/schema/colors'
-import { deleteColor } from '@/features/color/actions'
+import { deleteColor } from '@/features/color/actions/delete'
 import { darkenHex } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'

@@ -1,4 +1,4 @@
-import { getCategories } from '@/features/category/actions'
+import { getCategories } from '@/features/category/actions/read'
 import ErrorMessage from '../error-message'
 import CategoryCheckbox from './category-checkbox'
 

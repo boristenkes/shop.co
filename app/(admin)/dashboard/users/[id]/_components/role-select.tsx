@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select'
 import { Role, TRole } from '@/db/schema/enums'
 import { User } from '@/db/schema/users'
-import { updateUser } from '@/features/user/actions'
+import { updateUser } from '@/features/user/actions/update'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'

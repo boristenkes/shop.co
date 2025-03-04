@@ -12,7 +12,7 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog'
-import { purgeSoftDeletedProducts } from '@/features/product/actions'
+import { purgeSoftDeletedProducts } from '@/features/product/actions/delete'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2Icon } from 'lucide-react'
 import { useState } from 'react'

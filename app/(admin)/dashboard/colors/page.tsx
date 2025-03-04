@@ -1,5 +1,5 @@
 import ErrorMessage from '@/components/error-message'
-import { getColors } from '@/features/color/actions'
+import { getColors } from '@/features/color/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { notFound } from 'next/navigation'

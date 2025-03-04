@@ -2,7 +2,7 @@
 
 import ErrorMessage from '@/components/error-message'
 import { Button } from '@/components/ui/button'
-import { getProductReviews } from '@/features/review/actions'
+import { getProductReviews } from '@/features/review/actions/read'
 import ReviewList, {
 	ReviewCardListSkeleton
 } from '@/features/review/components/review-list'

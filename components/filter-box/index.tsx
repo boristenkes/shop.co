@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator'
-import { getProductPriceMinMax } from '@/features/product/actions'
+import { getProductPriceMinMax } from '@/features/product/actions/read'
 import { cn } from '@/lib/utils'
 import { SlidersHorizontalIcon } from 'lucide-react'
 import Form from 'next/form'

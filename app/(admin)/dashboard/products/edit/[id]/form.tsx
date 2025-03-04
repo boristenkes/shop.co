@@ -4,7 +4,6 @@ import ErrorMessage from '@/components/error-message'
 import { ImageDropzone } from '@/components/image-dropzone'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-
 import {
 	Form,
 	FormControl,
@@ -24,12 +23,10 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Size, TSize } from '@/db/schema/enums'
-import { GetCategoriesReturn } from '@/features/category/actions'
-import { GetColorsReturn } from '@/features/color/actions'
-import {
-	GetProductByIdReturnProduct,
-	updateProduct
-} from '@/features/product/actions'
+import { GetCategoriesReturn } from '@/features/category/actions/read'
+import { GetColorsReturn } from '@/features/color/actions/read'
+import { GetProductByIdReturnProduct } from '@/features/product/actions/read'
+import { updateProduct } from '@/features/product/actions/update'
 import {
 	type EditProductSchema,
 	editProductSchema

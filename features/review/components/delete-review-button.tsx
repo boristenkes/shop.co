@@ -12,10 +12,10 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog'
 import { Review } from '@/db/schema/reviews'
+import { deleteReview } from '@/features/review/actions/delete'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2Icon } from 'lucide-react'
 import { toast } from 'sonner'
-import { deleteReview } from '../actions'
 
 type DeleteReviewButtonProps = ButtonProps & {
 	reviewId: Review['id']

@@ -6,8 +6,8 @@ import {
 	CardTitle
 } from '@/components/ui/card'
 import { BackButton } from '@/components/utils/back-button'
-import { getCategories } from '@/features/category/actions'
-import { getColors } from '@/features/color/actions'
+import { getCategories } from '@/features/category/actions/read'
+import { getColors } from '@/features/color/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { ArrowLeft } from 'lucide-react'

@@ -22,7 +22,7 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { createCategory } from '@/features/category/actions'
+import { createCategory } from '@/features/category/actions/create'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon } from 'lucide-react'
 import { useState } from 'react'

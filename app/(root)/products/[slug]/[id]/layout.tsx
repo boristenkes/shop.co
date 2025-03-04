@@ -7,7 +7,7 @@ import {
 	BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
-import { getProductById } from '@/features/product/actions'
+import { getProductById } from '@/features/product/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { absoluteUrl, limitTextLength, unslugify } from '@/lib/utils'

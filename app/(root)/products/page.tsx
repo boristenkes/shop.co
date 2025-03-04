@@ -16,7 +16,7 @@ import {
 	DialogTitle
 } from '@/components/ui/dialog'
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
-import { filterProducts } from '@/features/product/actions'
+import { filterProducts } from '@/features/product/actions/filter'
 import PaginatedProductList from '@/features/product/components/paginated-product-list'
 import { ProductCardListSkeleton } from '@/features/product/components/product-list'
 import { SearchParams } from '@/lib/types'
@@ -73,7 +73,10 @@ export default async function ProductsPage(props: {
 					<div className='flex items-center justify-between mb-4'>
 						<h1 className='text-3xl font-bold'>Products</h1>
 						<div className='flex items-center gap-4'>
-							<SortSelect items={sortItems} />
+							<div className='flex items-center gap-2'>
+								Sort by:
+								<SortSelect items={sortItems} />
+							</div>
 
 							<div className='md:hidden'>
 								<Drawer>

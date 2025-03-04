@@ -12,7 +12,7 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog'
 import { Category } from '@/db/schema/categories'
-import { deleteCategory } from '@/features/category/actions'
+import { deleteCategory } from '@/features/category/actions/delete'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'

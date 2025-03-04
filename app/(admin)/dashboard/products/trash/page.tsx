@@ -1,6 +1,6 @@
 import ErrorMessage from '@/components/error-message'
 import { BackButton } from '@/components/utils/back-button'
-import { getDeletedProducts } from '@/features/product/actions'
+import { getDeletedProducts } from '@/features/product/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { ArrowLeft } from 'lucide-react'

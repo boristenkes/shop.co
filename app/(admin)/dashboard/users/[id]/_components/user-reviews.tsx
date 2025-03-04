@@ -9,7 +9,7 @@ import {
 	CardTitle
 } from '@/components/ui/card'
 import { User } from '@/db/schema/users'
-import { getUserReviews } from '@/features/review/actions'
+import { getUserReviews } from '@/features/review/actions/read'
 import { CheckIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'

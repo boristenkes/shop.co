@@ -14,9 +14,9 @@ import {
 import Avatar from '@/components/utils/avatar'
 import {
 	deleteProduct,
-	ProductsReturn,
 	restoreProduct
-} from '@/features/product/actions'
+} from '@/features/product/actions/delete'
+import { ProductsReturn } from '@/features/product/actions/read'
 import { formatDate, getTimeDistanceFromNow } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'

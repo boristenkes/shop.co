@@ -1,4 +1,4 @@
-import { getColors } from '@/features/color/actions'
+import { getColors } from '@/features/color/actions/read'
 import ErrorMessage from '../error-message'
 import ColorCheckbox from './color-checkbox'
 

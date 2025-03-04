@@ -1,7 +1,7 @@
 import ErrorMessage from '@/components/error-message'
 import { Rating } from '@/components/rating'
 import { Button } from '@/components/ui/button'
-import { getUserReviews } from '@/features/review/actions'
+import { getUserReviews } from '@/features/review/actions/read'
 import DeleteReviewButton from '@/features/review/components/delete-review-button'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'

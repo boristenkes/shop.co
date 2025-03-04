@@ -1,6 +1,6 @@
 import ErrorMessage from '@/components/error-message'
 import { Button } from '@/components/ui/button'
-import { getProductsForAdmin } from '@/features/product/actions'
+import { getProductsForAdmin } from '@/features/product/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { Trash2Icon } from 'lucide-react'

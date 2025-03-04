@@ -1,5 +1,5 @@
 import ErrorMessage from '@/components/error-message'
-import { getReviews } from '@/features/review/actions'
+import { getReviews } from '@/features/review/actions/read'
 import { columns } from './columns'
 import { ReviewsTable } from './table'
 

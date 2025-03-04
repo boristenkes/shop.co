@@ -25,7 +25,8 @@ import {
 	HoverCardTrigger
 } from '@/components/ui/hover-card'
 import Avatar from '@/components/utils/avatar'
-import { ProductsReturn, softDeleteProduct } from '@/features/product/actions'
+import { softDeleteProduct } from '@/features/product/actions/delete'
+import { ProductsReturn } from '@/features/product/actions/read'
 import { formatDate, formatPrice } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
@@ -46,16 +47,19 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 		accessorKey: 'images',
 		header: 'Image',
 		cell: ({ row }) => {
-			const image = row.original.images[0]
+			const product = row.original
+			const image = product.images[0]
 
 			return (
-				<Image
-					src={image.url}
-					alt={image.url}
-					width={64}
-					height={64}
-					className='size-16 rounded-lg object-contain bg-stone-100 p-px'
-				/>
+				<Link href={`/products/${product.slug}/${product.id}`}>
+					<Image
+						src={image.url}
+						alt={image.url}
+						width={64}
+						height={64}
+						className='size-16 rounded-lg object-contain bg-stone-100 p-px'
+					/>
+				</Link>
 			)
 		}
 	},
@@ -115,25 +119,18 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 	},
 	{
 		accessorKey: 'priceInCents',
-		header: 'Price',
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				column={column}
+				title='Price'
+			/>
+		),
 		cell: ({ row }) => formatPrice(row.original.priceInCents)
 	},
 	{
 		accessorKey: 'sizes',
 		header: 'Sizes',
 		cell: ({ row }) => row.original.sizes?.join(', ')
-		// cell: ({ row }) => (
-		// 	<div className='flex flex-wrap gap-1'>
-		// 		{row.original.sizes?.map(size => (
-		// 			<Badge
-		// 				key={size}
-		// 				variant='outline'
-		// 			>
-		// 				{size}
-		// 			</Badge>
-		// 		))}
-		// 	</div>
-		// )
 	},
 	{
 		accessorKey: 'colors',

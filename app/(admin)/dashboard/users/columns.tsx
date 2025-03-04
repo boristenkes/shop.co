@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import Avatar from '@/components/utils/avatar'
 import { User } from '@/db/schema/users'
-import { deleteUser } from '@/features/user/actions'
+import { deleteUser } from '@/features/user/actions/delete'
 import { formatDate, getRoleBadgeVariant } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { ColumnDef } from '@tanstack/react-table'

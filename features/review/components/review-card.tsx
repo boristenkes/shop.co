@@ -1,7 +1,7 @@
 import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
+import { GetProductReviewsReview } from '@/features/review/actions/read'
 import { cn, formatDate } from '@/lib/utils'
-import { GetProductReviewsReview } from '../actions'
 
 type ReviewCardProps = React.ComponentProps<'article'> & {
 	review: GetProductReviewsReview

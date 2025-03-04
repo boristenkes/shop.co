@@ -25,7 +25,7 @@ export default function CartItem({ item }: { item: SessionCartItem }) {
 		<li className='flex gap-3.5 [&:not(:last-child)]:border-b-2 [&:not(:last-child)]:pb-3.5'>
 			<Link
 				href={href}
-				className='bg-stone-100 rounded-lg aspect-square w-[100px]'
+				className='bg-stone-100 rounded-lg aspect-square w-[100px] shrink-0'
 			>
 				<Image
 					src={item.product.image}
@@ -40,7 +40,7 @@ export default function CartItem({ item }: { item: SessionCartItem }) {
 				<div className='flex items-center justify-between gap-2 w-full'>
 					<Link
 						href={href}
-						className='line-clamp-1 font-bold whitespace-nowrap overflow-hidden text-ellipsis flex-1'
+						className='line-clamp-1 font-bold whitespace-nowrap overflow-hidden text-ellipsis grow'
 					>
 						{item.product.name}
 					</Link>

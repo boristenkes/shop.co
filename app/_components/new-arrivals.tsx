@@ -1,6 +1,6 @@
 import ErrorMessage from '@/components/error-message'
 import { Button } from '@/components/ui/button'
-import { getProducts } from '@/features/product/actions'
+import { getProducts } from '@/features/product/actions/read'
 import ProductCardList, {
 	ProductCardListSkeleton
 } from '@/features/product/components/product-list'

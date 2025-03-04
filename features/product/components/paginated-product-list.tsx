@@ -7,7 +7,7 @@ import { TSize } from '@/db/schema/enums'
 import {
 	filterProducts,
 	FilterProductsReturn
-} from '@/features/product/actions'
+} from '@/features/product/actions/filter'
 import useUpdateEffect from '@/hooks/use-update-effect'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'

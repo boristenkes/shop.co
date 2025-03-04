@@ -30,11 +30,9 @@ import {
 	TooltipTrigger
 } from '@/components/ui/tooltip'
 import Avatar from '@/components/utils/avatar'
-import {
-	approveReview,
-	deleteReview,
-	GetReviewsReturnReview
-} from '@/features/review/actions'
+import { deleteReview } from '@/features/review/actions/delete'
+import { GetReviewsReturnReview } from '@/features/review/actions/read'
+import { approveReview } from '@/features/review/actions/update'
 import { formatDate } from '@/lib/utils'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
