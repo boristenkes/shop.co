@@ -39,12 +39,14 @@ export default async function ProductPageDetails({
 
 			<div className='space-y-4'>
 				<div>
-					<Link
-						href={`/products?category=${product.category.slug}`}
-						className='hover:opacity-80'
-					>
-						{product.category.name}
-					</Link>
+					{product.category && (
+						<Link
+							href={`/products?category=${product.category.slug}`}
+							className='hover:opacity-80'
+						>
+							{product.category.name}
+						</Link>
+					)}
 					<h1
 						className={`${integralCf.className} text-4xl font-bold uppercase`}
 					>

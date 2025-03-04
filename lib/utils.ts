@@ -101,6 +101,14 @@ export function limitTextLength(text: string, limit: number) {
 	return text.length > limit ? text.slice(0, limit) : text
 }
 
+export function isEmpty(value: unknown): value is [] | Record<string, never> {
+	if (!value || typeof value !== 'object') return true
+
+	const { length } = isArray(value) ? value : Object.keys(value)
+
+	return length === 0
+}
+
 export function formatPrice(
 	priceInCents: number | string,
 	options: Intl.NumberFormatOptions = {}

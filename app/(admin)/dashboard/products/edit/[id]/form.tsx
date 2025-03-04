@@ -32,7 +32,7 @@ import {
 	editProductSchema
 } from '@/features/product/zod'
 import { useUploadThing } from '@/lib/uploadthing'
-import { cn, getUploadthingKey } from '@/lib/utils'
+import { cn, darkenHex, getUploadthingKey, isEmpty } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon, PlusIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
@@ -80,9 +80,19 @@ export function EditProductForm({
 				if (!files.length) throw new Error('At least one image is required.')
 				if (files.length > 10) throw new Error('Maximum 10 images are allowed.')
 
+				const dirtyFields = Object.keys(form.formState.dirtyFields)
+				type DataKey = keyof typeof data
+
+				const dirtyValues = Object.fromEntries(
+					dirtyFields.map(key => [key, data[key as DataKey]])
+				) as EditProductSchema
+
 				let newImages
 
 				const hasNewImages = files.some(file => file instanceof File)
+				const hasDirtyFields = !isEmpty(dirtyValues)
+
+				if (!hasNewImages && !hasDirtyFields) return
 
 				if (files.length !== product.images.length || hasNewImages) {
 					let uploadedImages: ClientUploadedFileData<null>[] | undefined = []
@@ -103,7 +113,7 @@ export function EditProductForm({
 					)
 				}
 
-				const response = await updateProduct(product.id, data, newImages)
+				const response = await updateProduct(product.id, dirtyValues, newImages)
 
 				if (!response.success) throw new Error(response.message)
 
@@ -251,11 +261,10 @@ export function EditProductForm({
 														: 'outline'
 												}
 												onClick={() => {
-													const updatedSizes = (
-														field.value as TSize[]
-													).includes(size)
-														? field.value.filter(s => s !== size)
-														: [...field.value, size]
+													const value = field.value as TSize[]
+													const updatedSizes = value.includes(size)
+														? value.filter(s => s !== size)
+														: [...value, size]
 													field.onChange(updatedSizes)
 												}}
 											>
@@ -292,17 +301,19 @@ export function EditProductForm({
 															: 'outline'
 													}
 													onClick={() => {
-														const updatedColors = (
-															field.value as number[]
-														).includes(color.id)
-															? field.value.filter(s => s !== color.id)
-															: [...field.value, color.id]
+														const value = field.value as number[]
+														const updatedColors = value.includes(color.id)
+															? value.filter(s => s !== color.id)
+															: [...value, color.id]
 														field.onChange(updatedColors)
 													}}
 												>
 													<div
 														className='size-4 rounded-sm'
-														style={{ backgroundColor: color.hexCode }}
+														style={{
+															backgroundColor: color.hexCode,
+															borderColor: darkenHex(color.hexCode)
+														}}
 													/>{' '}
 													{color.name}
 												</Button>

@@ -3,10 +3,10 @@
 import { db } from '@/db'
 import { products, productsToColors } from '@/db/schema'
 import { NewProductImage, productImages } from '@/db/schema/product-images'
-import { Product } from '@/db/schema/products'
+import { NewProduct, Product } from '@/db/schema/products'
 import { requirePermission } from '@/features/action-utils'
-import { editProductSchema } from '@/features/product/zod'
-import { slugify, toCents } from '@/lib/utils'
+import { EditProductSchema, editProductSchema } from '@/features/product/zod'
+import { isEmpty, slugify, toCents } from '@/lib/utils'
 import { and, eq, inArray } from 'drizzle-orm'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
@@ -27,12 +27,12 @@ const imagesSchema = z
 const uploadthingApi = new UTApi()
 
 type UpdateProductReturn =
-	| { success: true; slug: string }
+	| { success: true }
 	| { success: false; message: string }
 
 export async function updateProduct(
 	productId: Product['id'],
-	newData: z.infer<typeof editProductSchema>,
+	newData: EditProductSchema,
 	images?: NewProductImage[]
 ): Promise<UpdateProductReturn> {
 	try {
@@ -51,31 +51,34 @@ export async function updateProduct(
 			...rest
 		} = validatedData
 
-		await db.transaction(async tx => {
-			await tx
-				.delete(productsToColors)
-				.where(eq(productsToColors.productId, productId))
-			await tx.insert(productsToColors).values(
-				colors.map(colorId => ({
-					colorId,
-					productId
-				}))
-			)
-		})
+		if (colors && !isEmpty(colors)) {
+			await db.transaction(async tx => {
+				await tx
+					.delete(productsToColors)
+					.where(eq(productsToColors.productId, productId))
+				await tx.insert(productsToColors).values(
+					colors.map(colorId => ({
+						colorId,
+						productId
+					}))
+				)
+			})
+		}
 
-		const slug = slugify(rest.name)
+		const updatedData = rest as NewProduct
+
+		if (priceInDollars) updatedData.priceInCents = toCents(priceInDollars)
+		if (updatedData.name) updatedData.slug = slugify(updatedData.name)
 
 		await db
 			.update(products)
 			.set({
-				...rest,
-				priceInCents: toCents(priceInDollars),
-				slug,
+				...updatedData,
 				categoryId
 			})
 			.where(eq(products.id, productId))
 
-		return { success: true, slug }
+		return { success: true }
 	} catch (error) {
 		console.error('[UPDATE_PRODUCT]:', error)
 		return {
