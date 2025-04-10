@@ -5,25 +5,30 @@ import {
 	serial,
 	smallint,
 	timestamp,
-	unique
+	unique,
+	uniqueIndex
 } from 'drizzle-orm/pg-core'
 import { colors } from './colors'
 import { sizeEnum } from './enums'
 import { products } from './products'
 import { users } from './users'
 
-export const carts = pgTable('carts', {
-	id: serial().primaryKey(),
+export const carts = pgTable(
+	'carts',
+	{
+		id: serial().primaryKey(),
 
-	userId: integer()
-		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
+		userId: integer()
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
 
-	createdAt: timestamp().defaultNow(),
-	updatedAt: timestamp()
-		.defaultNow()
-		.$onUpdate(() => new Date())
-})
+		createdAt: timestamp().defaultNow(),
+		updatedAt: timestamp()
+			.defaultNow()
+			.$onUpdate(() => new Date())
+	},
+	t => [uniqueIndex('cart_user_unique').on(t.userId)]
+)
 
 export const cartsRelations = relations(carts, ({ one, many }) => ({
 	user: one(users, {

@@ -4,9 +4,12 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Color } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
 import { Product } from '@/db/schema/products'
+import { getUserCartItems } from '@/features/cart/actions'
+import { SetState } from '@/lib/types'
+import { useQuery } from '@tanstack/react-query'
 import { AlertCircleIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 export type SessionCartProduct = Pick<
 	Product,
@@ -14,7 +17,7 @@ export type SessionCartProduct = Pick<
 > & { image: string }
 
 export type SessionCartItem = {
-	id: string
+	id: string | number
 	color: Color
 	size: TSize
 	quantity: number
@@ -22,16 +25,16 @@ export type SessionCartItem = {
 }
 
 type CartContextValue = {
-	sessionCartItems: SessionCartItem[]
-	addToCart: (item: Omit<SessionCartItem, 'id'>) => void
-	editCartItem: (
+	items: SessionCartItem[]
+	add: (item: Omit<SessionCartItem, 'id'>) => void
+	edit: (
 		itemId: SessionCartItem['id'],
 		newData: Partial<SessionCartItem>
 	) => void
-	removeFromCart: (itemId: SessionCartItem['id']) => void
-	clearCart: () => void
-	cartOpen: boolean
-	setCartOpen: React.Dispatch<React.SetStateAction<boolean>>
+	remove: (itemId: SessionCartItem['id']) => void
+	clear: () => void
+	isOpen: boolean
+	setIsOpen: SetState<boolean>
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -47,69 +50,92 @@ export const useCart = () => {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-	const [sessionCartItems, setSessionCartItems] = useState<SessionCartItem[]>(
-		[]
-	)
-	const [cartOpen, setCartOpen] = useState(false)
+	const [items, setItems] = useState<SessionCartItem[]>([])
+	const [isOpen, setIsOpen] = useState(false)
+	const session = useSession()
+	const isAuthenticated = session.status === 'authenticated'
+	const cartQuery = useQuery({
+		queryKey: ['cart:get:own'],
+		queryFn: () => getUserCartItems(session.data?.user.id!),
+		enabled: isAuthenticated
+	})
 
 	useEffect(() => {
-		if (typeof window === 'undefined') return
+		if (cartQuery.data?.success) {
+			console.log(cartQuery.data.items)
+			setItems(cartQuery.data.items)
+		}
+	}, [cartQuery.data])
+
+	useEffect(() => {
+		if (typeof window === 'undefined' || isAuthenticated) return
 
 		try {
 			const stored = sessionStorage.getItem(SESSION_STORAGE_CART_KEY)
 
-			setSessionCartItems(JSON.parse(stored ?? '[]'))
+			setItems(JSON.parse(stored ?? '[]'))
 		} catch (error) {
 			console.error('Failed to parse cart items from sessionStorage')
 			sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
 		}
 	}, [])
 
-	const syncSessionStorage = (items: SessionCartItem[]) => {
-		setSessionCartItems(items)
+	const syncSessionStorage = (newItems: SessionCartItem[]) => {
+		setItems(newItems)
 
-		sessionStorage.setItem(SESSION_STORAGE_CART_KEY, JSON.stringify(items))
+		if (!isAuthenticated) {
+			sessionStorage.setItem(SESSION_STORAGE_CART_KEY, JSON.stringify(newItems))
+		}
 	}
 
-	const addToCart = (item: Omit<SessionCartItem, 'id'>) => {
-		syncSessionStorage([
-			...sessionCartItems,
-			{ id: crypto.randomUUID(), ...item }
-		])
+	const add = (newItem: Omit<SessionCartItem, 'id'>) => {
+		const isAlreadyInCart = items.some(
+			item =>
+				item.product.id === newItem.product.id &&
+				item.color.id === newItem.color.id &&
+				item.size === newItem.size
+		)
+
+		if (isAlreadyInCart)
+			throw new Error(
+				'This product with same color and size is already in the cart.'
+			)
+
+		syncSessionStorage([...items, { id: crypto.randomUUID(), ...newItem }])
 	}
 
-	const editCartItem = (
+	const edit = (
 		itemId: SessionCartItem['id'],
 		newData: Partial<SessionCartItem>
 	) => {
-		const updatedItems = sessionCartItems.map(item =>
+		const updatedItems = items.map(item =>
 			item.id === itemId ? { ...item, ...newData } : item
 		)
 
 		syncSessionStorage(updatedItems)
 	}
 
-	const removeFromCart = (itemId: SessionCartItem['id']) => {
-		const filteredItems = sessionCartItems.filter(item => item.id !== itemId)
+	const remove = (itemId: SessionCartItem['id']) => {
+		const filteredItems = items.filter(item => item.id !== itemId)
 
 		syncSessionStorage(filteredItems)
 	}
 
-	const clearCart = () => {
-		setSessionCartItems([])
+	const clear = () => {
+		setItems([])
 		sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
 	}
 
 	return (
 		<CartContext.Provider
 			value={{
-				sessionCartItems,
-				addToCart,
-				editCartItem,
-				removeFromCart,
-				clearCart,
-				cartOpen,
-				setCartOpen
+				items,
+				add,
+				edit,
+				remove,
+				clear,
+				isOpen,
+				setIsOpen
 			}}
 		>
 			{children}
@@ -119,7 +145,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 export function CartSyncAlert(props: React.ComponentProps<'div'>) {
 	const session = useSession()
-	const { sessionCartItems } = useCart()
+	const { items: sessionCartItems } = useCart()
 
 	if (session.status !== 'unauthenticated' || sessionCartItems.length === 0)
 		return null

@@ -24,18 +24,9 @@ import { SlidersHorizontalIcon } from 'lucide-react'
 import { Suspense } from 'react'
 
 const sortItems: SortSelectItem[] = [
-	{
-		label: 'Date',
-		value: 'date'
-	},
-	{
-		label: 'Price',
-		value: 'price'
-	},
-	{
-		label: 'Rating',
-		value: 'rating'
-	}
+	{ label: 'Date', value: 'date' },
+	{ label: 'Price', value: 'price' },
+	{ label: 'Rating', value: 'rating' }
 ]
 
 export default async function ProductsPage(props: {

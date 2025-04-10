@@ -31,6 +31,12 @@ export const {
 	session: {
 		strategy: 'database'
 	},
+	callbacks: {
+		session({ session, user }) {
+			session.user.id = user.id
+			return session
+		}
+	},
 	trustHost: true
 })
 

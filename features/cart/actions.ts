@@ -4,7 +4,6 @@ import { SessionCartItem } from '@/context/cart'
 import { db } from '@/db'
 import { cartItems, carts } from '@/db/schema'
 import { CartItem } from '@/db/schema/carts'
-import { Color } from '@/db/schema/colors'
 import { Size, TSize } from '@/db/schema/enums'
 import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
@@ -26,9 +25,7 @@ const productPageFormSchema = z.object({
 	productId: z.coerce.number().int().positive().finite()
 })
 
-export type AddToCartReturn =
-	| { success: true }
-	| { success: false; message: string }
+export type AddToCartReturn = { success: boolean }
 
 export async function saveToCart(data: NewItemData): Promise<AddToCartReturn> {
 	try {
@@ -72,8 +69,8 @@ export async function saveToCart(data: NewItemData): Promise<AddToCartReturn> {
 
 		return { success: true }
 	} catch (error) {
-		console.error('[ADD_TO_CART]:', error)
-		return { success: false, message: 'Something went wrong.' }
+		console.error('[SAVE_TO_CART]:', error)
+		return { success: false }
 	}
 }
 
@@ -124,18 +121,20 @@ export async function saveItemsToCart(
 		return { success: true }
 	} catch (error) {
 		console.error('[SAVE_ITEMS_TO_CART]', error)
-		return { success: false, message: 'Something went wrong.' }
+		return { success: false }
 	}
 }
 
 export type GetUserCartItemsReturn =
-	| { success: true; items: (CartItem & { color: Color })[] }
+	| { success: true; items: SessionCartItem[] }
 	| { success: false; message: string }
 
 export async function getUserCartItems(
 	userId: User['id']
 ): Promise<GetUserCartItemsReturn> {
 	try {
+		if (!userId) throw new Error('Invalid data')
+
 		const session = await auth()
 		const currentUser = session?.user
 
@@ -144,16 +143,47 @@ export async function getUserCartItems(
 
 		const cart = await db.query.carts.findFirst({
 			where: eq(carts.userId, userId),
+			columns: {},
 			with: {
 				cartItems: {
-					with: { color: true }
+					columns: {
+						id: true,
+						quantity: true,
+						size: true
+					},
+					with: {
+						color: true,
+						product: {
+							columns: {
+								id: true,
+								name: true,
+								slug: true,
+								priceInCents: true,
+								discount: true,
+								stock: true
+							},
+							with: {
+								images: {
+									columns: {
+										url: true
+									},
+									limit: 1
+								}
+							}
+						}
+					}
 				}
 			}
 		})
 
-		const items = cart ? cart.cartItems : []
+		const items = cart ? cart.cartItems : ([] as SessionCartItem[])
 
-		return { success: true, items }
+		items.forEach(item => {
+			item.product.image = item.product.images[0].url
+			delete item.product.images
+		})
+
+		return { success: true, items: items as SessionCartItem[] }
 	} catch (error) {
 		console.error('[GET_USER_CART_ITEMS]:', error)
 		return { success: false, message: 'Something went wrong.' }
@@ -198,10 +228,14 @@ export async function updateCartItem(
 	}
 }
 
-export async function deleteCartItem(itemId: CartItem['id']) {
+export async function deleteCartItem(itemId: CartItem['id'] | string) {
 	try {
 		const session = await auth()
 		const currentUser = session?.user
+
+		itemId = Number(itemId)
+
+		if (isNaN(itemId)) throw new Error('Invalid data')
 
 		if (!currentUser) throw new Error('Unauthorized')
 

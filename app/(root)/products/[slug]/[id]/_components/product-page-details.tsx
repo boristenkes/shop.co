@@ -96,7 +96,6 @@ export default async function ProductPageDetails({
 					colors={product.productsToColors.map(({ color }) => color)}
 					sizes={product.sizes as TSize[]}
 					stock={product.stock as number}
-					currentUserId={currentUserId}
 					product={{
 						id: product.id,
 						slug: product.slug,

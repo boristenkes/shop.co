@@ -3,13 +3,13 @@
 import NumberInput from '@/components/number-input'
 import { SessionCartItem, useCart } from '@/context/cart'
 import { calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
-import { Trash2Icon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
+import DeleteCartItemButton from './delete-cart-item-button'
 
 export default function CartItem({ item }: { item: SessionCartItem }) {
-	const { removeFromCart, editCartItem } = useCart()
+	const cart = useCart()
 	const [quantity, setQuantity] = useState(item.quantity)
 	const totalPrice = useMemo(() => {
 		const priceWithDiscount = calculatePriceWithDiscount(
@@ -44,9 +44,8 @@ export default function CartItem({ item }: { item: SessionCartItem }) {
 					>
 						{item.product.name}
 					</Link>
-					<button onClick={() => removeFromCart(item.id)}>
-						<Trash2Icon className='text-red-500 size-4' />
-					</button>
+
+					<DeleteCartItemButton itemId={item.id} />
 				</div>
 
 				<div className='text-sm'>
@@ -63,7 +62,7 @@ export default function CartItem({ item }: { item: SessionCartItem }) {
 					<NumberInput
 						value={quantity}
 						onChange={newQuantity => {
-							editCartItem(item.id, { quantity: newQuantity })
+							cart.edit(item.id, { quantity: newQuantity })
 							setQuantity(newQuantity)
 						}}
 						max={item.product.stock!}

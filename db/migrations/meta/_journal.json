@@ -50,6 +50,13 @@
       "when": 1739550321515,
       "tag": "0006_foamy_radioactive_man",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1744310848423,
+      "tag": "0007_real_zeigeist",
+      "breakpoints": true
     }
   ]
 }

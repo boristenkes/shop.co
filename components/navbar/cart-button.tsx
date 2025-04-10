@@ -17,16 +17,16 @@ import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 
 export default function CartButton() {
-	const { sessionCartItems, cartOpen, setCartOpen } = useCart()
-	const hasItems = sessionCartItems.length > 0
+	const cart = useCart()
+	const hasItems = cart.items.length > 0
 	const pathname = usePathname()
 
-	useEffect(() => setCartOpen(false), [pathname])
+	useEffect(() => cart.setIsOpen(false), [pathname])
 
 	return (
 		<Sheet
-			open={cartOpen}
-			onOpenChange={setCartOpen}
+			open={cart.isOpen}
+			onOpenChange={cart.setIsOpen}
 		>
 			<SheetTrigger
 				aria-label='Cart'
@@ -35,7 +35,7 @@ export default function CartButton() {
 				<ShoppingCartIcon className='size-6' />
 				{hasItems && (
 					<div className='absolute right-0 top-0 -mr-2 -mt-2 size-4 rounded bg-red-600 text-xs font-medium text-white'>
-						{sessionCartItems.length > 9 ? '9+' : sessionCartItems.length}
+						{cart.items.length > 9 ? '9+' : cart.items.length}
 					</div>
 				)}
 			</SheetTrigger>
@@ -51,7 +51,7 @@ export default function CartButton() {
 
 				{hasItems ? (
 					<div className='flex flex-col flex-grow justify-between overflow-hidden gap-4'>
-						<CartItemList items={sessionCartItems} />
+						<CartItemList items={cart.items} />
 						<Button asChild>
 							<Link href='/cart'>Go to cart page</Link>
 						</Button>

@@ -5,6 +5,7 @@ import NumberInput from '@/components/number-input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { queryClient } from '@/components/utils/providers'
 import { SessionCartProduct, useCart } from '@/context/cart'
 import { Color } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
@@ -12,6 +13,7 @@ import { NewItemData, saveToCart } from '@/features/cart/actions'
 import { darkenHex } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2Icon, ShoppingCartIcon } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -20,7 +22,6 @@ type ProductPageFormProps = {
 	colors: Color[]
 	sizes: TSize[]
 	stock: number
-	currentUserId: number | undefined
 	product: SessionCartProduct
 }
 
@@ -28,11 +29,11 @@ export default function ProductPageForm({
 	colors,
 	sizes,
 	stock,
-	currentUserId,
 	product
 }: ProductPageFormProps) {
 	const params = useSearchParams()
-	const { sessionCartItems, addToCart } = useCart()
+	const session = useSession()
+	const cart = useCart()
 	const [color, setColor] = useState<Color | null>(
 		colors.find(c => c.slug === params.get('color')) ?? null
 	)
@@ -42,12 +43,19 @@ export default function ProductPageForm({
 			: null
 	)
 	const [quantity, setQuantity] = useState(1)
+	const [error, setError] = useState<string | null>(null)
 	const mutation = useMutation({
 		mutationKey: ['cart:create'],
-		mutationFn: async (data: NewItemData) => saveToCart(data),
+		mutationFn: (data: NewItemData) => saveToCart(data),
 		onSettled(data) {
 			if (data?.success) {
-				toast.success('Added to cart')
+				toast.success('Successfully added to cart')
+				setError(null)
+				queryClient.invalidateQueries({
+					queryKey: ['cart:get:own']
+				})
+			} else {
+				setError('Failed to add to cart.')
 			}
 		}
 	})
@@ -75,7 +83,7 @@ export default function ProductPageForm({
 		if (!color || !size) return
 
 		try {
-			if (currentUserId) {
+			if (session.status === 'authenticated') {
 				mutation.mutate({
 					size,
 					quantity,
@@ -83,19 +91,7 @@ export default function ProductPageForm({
 					productId: product.id
 				})
 			} else {
-				const isAlreadyInCart = sessionCartItems.some(
-					item =>
-						item.product.id === product.id &&
-						item.color.id === color.id &&
-						item.size === size
-				)
-
-				if (isAlreadyInCart)
-					throw new Error(
-						'This product with same color and size is already in the cart.'
-					)
-
-				addToCart({ product, color, quantity, size }) // Use local cart context
+				cart.add({ product, color, quantity, size }) // Use local cart context
 				toast.success('Product added to the cart')
 			}
 		} catch (error: any) {
@@ -135,7 +131,7 @@ export default function ProductPageForm({
 
 				<div className='space-y-4'>
 					<Label className='text-base font-normal text-stone-700'>
-						Choose Size
+						Choose size
 					</Label>
 					<div className='flex flex-wrap gap-2'>
 						{sizes.map(s => (
@@ -153,9 +149,7 @@ export default function ProductPageForm({
 				</div>
 			</div>
 
-			{mutation.data && !mutation.data.success && (
-				<ErrorMessage message={mutation.data.message} />
-			)}
+			{error && <ErrorMessage message={error} />}
 
 			<div className='flex items-center gap-5 mt-6 flex-wrap'>
 				<Label

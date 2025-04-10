@@ -7,7 +7,7 @@ import ReviewList, {
 	ReviewCardListSkeleton
 } from '@/features/review/components/review-list'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { ChevronDownIcon, Loader2Icon } from 'lucide-react'
+import { Loader2Icon } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import ReviewButton from './review-button'
 
@@ -32,46 +32,38 @@ export default function ProductPageReviews() {
 			<div className='flex items-center justify-between gap-4 mb-8'>
 				<h2 className='text-2xl font-bold'>All Reviews</h2>
 
-				<div className='flex items-center gap-2.5'>
-					<Button
-						variant='secondary'
-						className='max-md:hidden'
-					>
-						Latest <ChevronDownIcon />
-					</Button>
-
-					<ReviewButton />
-				</div>
+				<ReviewButton />
 			</div>
 
 			{query.isLoading && <ReviewCardListSkeleton />}
 
 			{query.isError && <ErrorMessage message='Something went wrong' />}
 
-			{query.isSuccess && reviews.length > 0 ? (
-				<>
-					<ReviewList reviews={reviews} />
+			{query.isSuccess &&
+				(reviews.length > 0 ? (
+					<>
+						<ReviewList reviews={reviews} />
 
-					{hasMore && (
-						<Button
-							variant='outline'
-							size='lg'
-							className='mx-auto mt-9 flex items-center gap-2'
-							onClick={() => query.fetchNextPage()}
-							disabled={query.isFetchingNextPage}
-						>
-							{query.isFetchingNextPage ? 'Loading' : 'Load More'}
-							{query.isFetchingNextPage && (
-								<Loader2Icon className='animate-spin' />
-							)}
-						</Button>
-					)}
-				</>
-			) : (
-				<p className='p-16 text-center'>
-					This product doesn&apos;t have any reviews
-				</p>
-			)}
+						{hasMore && (
+							<Button
+								variant='outline'
+								size='lg'
+								className='mx-auto mt-9 flex items-center gap-2'
+								onClick={() => query.fetchNextPage()}
+								disabled={query.isFetchingNextPage}
+							>
+								{query.isFetchingNextPage ? 'Loading' : 'Load More'}
+								{query.isFetchingNextPage && (
+									<Loader2Icon className='animate-spin' />
+								)}
+							</Button>
+						)}
+					</>
+				) : (
+					<p className='p-16 text-center'>
+						This product doesn&apos;t have any reviews
+					</p>
+				))}
 		</div>
 	)
 }
