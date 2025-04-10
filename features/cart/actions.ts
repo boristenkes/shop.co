@@ -179,7 +179,9 @@ export async function getUserCartItems(
 		const items = cart ? cart.cartItems : ([] as SessionCartItem[])
 
 		items.forEach(item => {
+			// @ts-expect-error
 			item.product.image = item.product.images[0].url
+			// @ts-expect-error
 			delete item.product.images
 		})
 

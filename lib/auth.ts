@@ -33,6 +33,7 @@ export const {
 	},
 	callbacks: {
 		session({ session, user }) {
+			// @ts-expect-error TODO
 			session.user.id = user.id
 			return session
 		}

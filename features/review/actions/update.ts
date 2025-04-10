@@ -6,10 +6,14 @@ import { requirePermission } from '@/features/action-utils'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
+export type ApproveReviewReturn =
+	| { success: true }
+	| { success: false; message: string }
+
 export async function approveReview(
 	reviewId: Review['id'],
 	path = '/dashboard/reviews'
-) {
+): Promise<ApproveReviewReturn> {
 	try {
 		await requirePermission('reviews', ['update'])
 
