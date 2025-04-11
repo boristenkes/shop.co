@@ -26,8 +26,12 @@ export default function CartItemQuantity({
 	const handleQuantityChange = async (newQuantity: number) => {
 		newQuantity = Math.min(newQuantity, maxQuantity) // Limit quantity to maxQuantity
 
-		if (session.status !== 'unauthenticated')
+		if (session.status === 'loading') return
+
+		if (session.status !== 'authenticated') {
 			cart.edit(itemId, { quantity: newQuantity })
+			return
+		}
 
 		if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
 
@@ -48,7 +52,9 @@ export default function CartItemQuantity({
 			value={quantity}
 			onChange={handleQuantityChange}
 			max={maxQuantity}
+			min={1}
 			size='sm'
+			disabled={session.status === 'loading'}
 		/>
 	)
 }

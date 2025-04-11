@@ -232,7 +232,7 @@ export async function updateCartItem(
 
 		return { success: true }
 	} catch (error) {
-		console.error('[UPATE_CART_ITEM]:', error)
+		console.error('[UPDATE_CART_ITEM]:', error)
 		return { success: false }
 	}
 }

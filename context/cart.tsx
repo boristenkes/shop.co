@@ -63,7 +63,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 	useEffect(() => {
 		if (cartQuery.data?.success) {
-			console.log(cartQuery.data.items)
 			setItems(cartQuery.data.items)
 		}
 	}, [cartQuery.data])
