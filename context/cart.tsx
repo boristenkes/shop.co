@@ -32,6 +32,7 @@ type CartContextValue = {
 		newData: Partial<SessionCartItem>
 	) => void
 	remove: (itemId: SessionCartItem['id']) => void
+	get: (itemId: SessionCartItem['id']) => SessionCartItem | undefined
 	clear: () => void
 	isOpen: boolean
 	setIsOpen: SetState<boolean>
@@ -126,6 +127,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
 	}
 
+	const get = (itemId: SessionCartItem['id']) => {
+		return items.find(item => item.id === itemId)
+	}
+
 	return (
 		<CartContext.Provider
 			value={{
@@ -134,6 +139,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 				edit,
 				remove,
 				clear,
+				get,
 				isOpen,
 				setIsOpen
 			}}

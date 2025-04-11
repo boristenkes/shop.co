@@ -10,6 +10,7 @@ import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { editCartItemSchema } from './zod'
 
 export type NewItemData = {
 	colorId: number
@@ -200,13 +201,19 @@ export async function updateCartItem(
 		const session = await auth()
 		const currentUser = session?.user
 
+		itemId = Number(itemId)
+
+		if (!itemId) throw new Error('Invalid data')
+
 		if (
 			!currentUser ||
 			!hasPermission(currentUser.role, 'carts', ['update:own'])
 		)
 			throw new Error('Unauthorized')
 
-		const parsed = productPageFormSchema.parse(newData)
+		if (newData.quantity) newData.quantity = Math.min(newData.quantity, 20)
+
+		const parsed = editCartItemSchema.parse(newData)
 
 		const targetCartItem = await db.query.cartItems.findFirst({
 			where: eq(cartItems.id, itemId),

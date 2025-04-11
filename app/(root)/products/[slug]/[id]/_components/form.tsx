@@ -34,14 +34,12 @@ export default function ProductPageForm({
 	const params = useSearchParams()
 	const session = useSession()
 	const cart = useCart()
-	const [color, setColor] = useState<Color | null>(
-		colors.find(c => c.slug === params.get('color')) ?? null
-	)
-	const [size, setSize] = useState<TSize | null>(
-		sizes.includes(params.get('size') as TSize)
-			? (params.get('size') as TSize)
-			: null
-	)
+	const defaultColor = colors.find(c => c.slug === params.get('color')) ?? null
+	const defaultSize = sizes.includes(params.get('size') as TSize)
+		? (params.get('size') as TSize)
+		: null
+	const [color, setColor] = useState<Color | null>(defaultColor)
+	const [size, setSize] = useState<TSize | null>(defaultSize)
 	const [quantity, setQuantity] = useState(1)
 	const [error, setError] = useState<string | null>(null)
 	const mutation = useMutation({
