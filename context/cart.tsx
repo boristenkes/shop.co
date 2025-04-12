@@ -36,6 +36,7 @@ type CartContextValue = {
 	clear: () => void
 	isOpen: boolean
 	setIsOpen: SetState<boolean>
+	isLoading: boolean
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -140,7 +141,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 				clear,
 				get,
 				isOpen,
-				setIsOpen
+				setIsOpen,
+				isLoading: cartQuery.isLoading
 			}}
 		>
 			{children}

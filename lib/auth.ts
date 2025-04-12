@@ -34,7 +34,9 @@ export const {
 	callbacks: {
 		session({ session, user }) {
 			// @ts-expect-error TODO
-			session.user.id = user.id
+			session.user = { id: user.id, email: user.email, image: user.image }
+			// @ts-expect-error TODO
+			delete session.sessionToken
 			return session
 		}
 	},

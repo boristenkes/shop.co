@@ -5,7 +5,7 @@ import { useCart } from '@/context/cart'
 import { CartItem } from '@/db/schema/carts'
 import { updateCartItem } from '@/features/cart/actions'
 import { useSession } from 'next-auth/react'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { toast } from 'sonner'
 
 export type CartItemQuantityProps = {
@@ -18,8 +18,6 @@ export default function CartItemQuantity({
 	maxQuantity = Infinity
 }: CartItemQuantityProps) {
 	const cart = useCart()
-	const defaultQuantity = cart.get(itemId)?.quantity ?? 0
-	const [quantity, setQuantity] = useState(defaultQuantity)
 	const session = useSession()
 	const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -28,10 +26,9 @@ export default function CartItemQuantity({
 
 		if (session.status === 'loading') return
 
-		if (session.status !== 'authenticated') {
-			cart.edit(itemId, { quantity: newQuantity })
-			return
-		}
+		cart.edit(itemId, { quantity: newQuantity })
+
+		if (session.status === 'unauthenticated') return
 
 		if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
 
@@ -43,13 +40,11 @@ export default function CartItemQuantity({
 			if (!response.success)
 				toast.error('Failed to update item quantity. Please try again later.')
 		}, 250)
-
-		setQuantity(newQuantity)
 	}
 
 	return (
 		<NumberInput
-			value={quantity}
+			value={cart.get(itemId)?.quantity ?? 0}
 			onChange={handleQuantityChange}
 			max={maxQuantity}
 			min={1}
