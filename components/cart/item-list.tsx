@@ -41,7 +41,7 @@ export function CartItemListSkeleton({
 			)}
 			{...props}
 		>
-			{Array.from({ length: 6 }).map((_, idx) => (
+			{Array.from({ length: 4 }).map((_, idx) => (
 				<CartItemSkeleton key={idx} />
 			))}
 		</ul>

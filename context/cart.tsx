@@ -37,6 +37,8 @@ type CartContextValue = {
 	isOpen: boolean
 	setIsOpen: SetState<boolean>
 	isLoading: boolean
+	isError: boolean
+	error: Error | null
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -142,7 +144,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 				get,
 				isOpen,
 				setIsOpen,
-				isLoading: cartQuery.isLoading
+				isLoading: cartQuery.isLoading,
+				isError: cartQuery.isError,
+				error: cartQuery.error
 			}}
 		>
 			{children}

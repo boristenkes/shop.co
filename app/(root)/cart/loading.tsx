@@ -1,6 +1,6 @@
 import { CartItemListSkeleton } from '@/components/cart/item-list'
 import { Skeleton } from '@/components/ui/skeleton'
-import OrderSummary from './order-summary'
+import { OrderSummarySkeleton } from './order-summary'
 
 export default function CartPageLoading() {
 	return (
@@ -12,7 +12,7 @@ export default function CartPageLoading() {
 			<div className='flex items-start gap-4 mt-6'>
 				<CartItemListSkeleton className='basis-3/5' />
 
-				<OrderSummary />
+				<OrderSummarySkeleton />
 			</div>
 		</main>
 	)
