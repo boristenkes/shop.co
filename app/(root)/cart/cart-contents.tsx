@@ -9,13 +9,7 @@ import OrderSummary, { OrderSummarySkeleton } from './order-summary'
 export default function CartContents() {
 	const cart = useCart()
 
-	if (cart.isLoading)
-		return (
-			<div className='flex items-start gap-4 mt-6'>
-				<CartItemListSkeleton className='basis-3/5' />
-				<OrderSummarySkeleton />
-			</div>
-		)
+	if (cart.isLoading) return <CartContentsSkeleton />
 
 	if (cart.isError)
 		return (
@@ -42,6 +36,15 @@ export default function CartContents() {
 				className='basis-3/5'
 			/>
 			<OrderSummary />
+		</div>
+	)
+}
+
+export function CartContentsSkeleton() {
+	return (
+		<div className='flex items-start gap-4 mt-6'>
+			<CartItemListSkeleton className='basis-3/5' />
+			<OrderSummarySkeleton />
 		</div>
 	)
 }

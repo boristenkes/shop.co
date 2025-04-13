@@ -144,7 +144,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 				get,
 				isOpen,
 				setIsOpen,
-				isLoading: cartQuery.isLoading,
+				isLoading: cartQuery.isLoading || session.status === 'loading',
 				isError: cartQuery.isError,
 				error: cartQuery.error
 			}}
