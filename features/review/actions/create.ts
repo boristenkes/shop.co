@@ -20,17 +20,19 @@ export async function createReview(
 		if (!currentUser || !hasPermission(currentUser.role, 'reviews', ['create']))
 			throw new Error('Unauthorized')
 
-		const alredyLeftReview = await db.query.reviews
+		const alreadyLeftReview = await db.query.reviews
 			.findFirst({
 				where: and(
 					eq(reviews.userId, currentUser.id),
 					eq(reviews.productId, data.productId)
 				),
-				columns: {}
+				columns: { id: true }
 			})
 			.then(Boolean)
 
-		if (alredyLeftReview) {
+		console.log(alreadyLeftReview)
+
+		if (alreadyLeftReview) {
 			return {
 				success: false,
 				message: 'You already left review for this product.'

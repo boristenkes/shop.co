@@ -140,7 +140,7 @@ export async function getUserCartItems(
 		const currentUser = session?.user
 
 		if (!currentUser || !hasPermission(currentUser.role, 'carts', ['read:own']))
-			throw new Error('Unauthorized')
+			return { success: true, items: [] }
 
 		const cart = await db.query.carts.findFirst({
 			where: eq(carts.userId, userId),
