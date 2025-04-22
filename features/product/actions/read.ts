@@ -9,7 +9,7 @@ import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
 import { User } from '@/db/schema/users'
 import { requirePermission } from '@/features/action-utils'
-import { and, eq, isNull, max, min, ne, sql } from 'drizzle-orm'
+import { and, eq, ilike, isNull, max, min, ne, or, sql } from 'drizzle-orm'
 import { ProductCard } from '../types'
 
 export type ProductsReturn = Product & {
@@ -330,11 +330,51 @@ export async function getRelatedProducts(
 	}
 }
 
-export async function searchProducts(query: string) {
-	if (!query?.length) return db.query.products.findMany()
+type SearchProductsReturn =
+	| { success: true; products: ProductCard[] }
+	| { success: false }
 
-	// TODO: Implement search feature
-	return db.query.products.findMany()
+export async function searchProducts(
+	query: string
+): Promise<SearchProductsReturn> {
+	try {
+		if (!query?.length) return { success: true, products: [] }
+
+		const results = await db.query.products.findMany({
+			where: or(
+				ilike(products.name, `%${query}%`),
+				ilike(products.description, `%${query}%`)
+			),
+			columns: {
+				discount: true,
+				name: true,
+				priceInCents: true,
+				slug: true,
+				id: true
+			},
+			with: {
+				images: {
+					columns: { url: true },
+					limit: 1,
+					orderBy: (images, { asc }) => asc(images.id)
+				}
+			},
+			extras: {
+				averageRating: sql<number>`(
+				SELECT COALESCE(AVG(r.rating), 0) ::float
+				FROM reviews r
+				WHERE r.product_id = ${products.id}
+			)`.as('average_rating')
+			}
+			// offset: (page - 1) * pageSize,
+			// limit: pageSize
+		})
+
+		return { success: true, products: results }
+	} catch (error) {
+		console.error('[SEARCH_PRODUCTS]:', error)
+		return { success: false }
+	}
 }
 
 type GetProductPriceMinMaxReturn =

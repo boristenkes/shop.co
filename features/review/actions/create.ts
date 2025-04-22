@@ -30,8 +30,6 @@ export async function createReview(
 			})
 			.then(Boolean)
 
-		console.log(alreadyLeftReview)
-
 		if (alreadyLeftReview) {
 			return {
 				success: false,

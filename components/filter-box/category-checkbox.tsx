@@ -30,7 +30,8 @@ export default function CategoryCheckbox({
 				name='category'
 				value={category.slug}
 			/>
-			{category.name} <small>({category.productCount})</small>
+			{category.name}{' '}
+			<small className='text-gray-600'>({category.productCount})</small>
 		</label>
 	)
 }
