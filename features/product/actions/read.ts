@@ -335,7 +335,8 @@ type SearchProductsReturn =
 	| { success: false }
 
 export async function searchProducts(
-	query: string
+	query: string,
+	{ limit }: { limit?: number } = {}
 ): Promise<SearchProductsReturn> {
 	try {
 		if (!query?.length) return { success: true, products: [] }
@@ -365,9 +366,9 @@ export async function searchProducts(
 				FROM reviews r
 				WHERE r.product_id = ${products.id}
 			)`.as('average_rating')
-			}
+			},
+			limit
 			// offset: (page - 1) * pageSize,
-			// limit: pageSize
 		})
 
 		return { success: true, products: results }
