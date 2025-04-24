@@ -2,7 +2,7 @@
 
 import { useCart } from '@/context/cart'
 import { CartItem } from '@/db/schema/carts'
-import { deleteCartItem } from '@/features/cart/actions'
+import { deleteCartItem } from '@/features/cart/actions/delete'
 import { useMutation } from '@tanstack/react-query'
 import { Trash2Icon } from 'lucide-react'
 import { useSession } from 'next-auth/react'

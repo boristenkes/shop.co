@@ -18,12 +18,12 @@ export default function ProductCard({
 }: ProductCardProps) {
 	return (
 		<article
-			className={cn('flex flex-col gap-4 group', className)}
+			className={cn('flex flex-col gap-2 group', className)}
 			{...props}
 		>
 			<Link
 				href={`/products/${product.slug}/${product.id}`}
-				className='bg-[#f0eeed] size-80 rounded-lg grow p-4'
+				className='bg-stone-100 size-80 rounded-lg grow p-4'
 			>
 				<Image
 					src={product.images[0].url}

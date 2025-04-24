@@ -47,6 +47,7 @@ export default function Searchbar() {
 					value={searchTerm}
 					name='query'
 					type='search'
+					placeholder='Enter search term here...'
 				/>
 			</Form>
 

@@ -4,7 +4,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Color } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
 import { Product } from '@/db/schema/products'
-import { getUserCartItems } from '@/features/cart/actions'
+import { getUserCartItems } from '@/features/cart/actions/read'
+import { syncUserCart } from '@/features/cart/actions/update'
 import { SetState } from '@/lib/types'
 import { useQuery } from '@tanstack/react-query'
 import { AlertCircleIcon } from 'lucide-react'
@@ -71,17 +72,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 	}, [cartQuery.data])
 
 	useEffect(() => {
-		if (typeof window === 'undefined' || isAuthenticated) return
+		const asyncFn = async () => {
+			if (typeof window === 'undefined') return
 
-		try {
-			const stored = sessionStorage.getItem(SESSION_STORAGE_CART_KEY)
+			try {
+				const stored = sessionStorage.getItem(SESSION_STORAGE_CART_KEY)
 
-			setItems(JSON.parse(stored ?? '[]'))
-		} catch (error) {
-			console.error('Failed to parse cart items from sessionStorage')
-			sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
+				const parsed = JSON.parse(stored ?? '[]') as SessionCartItem[]
+
+				if (!isAuthenticated) {
+					setItems(parsed)
+					return
+				}
+
+				if (!parsed.length) return
+
+				const response = await syncUserCart(parsed)
+
+				if (!response.success)
+					throw new Error('Failed to save browser cart in database')
+				sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
+				cartQuery.refetch()
+			} catch (error) {
+				console.error('Failed to parse cart items from sessionStorage')
+				sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
+			}
 		}
-	}, [])
+
+		asyncFn()
+	}, [session])
 
 	const syncSessionStorage = (newItems: SessionCartItem[]) => {
 		setItems(newItems)

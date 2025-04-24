@@ -9,14 +9,14 @@ import { cn, formatDate } from '@/lib/utils'
 import { TrashIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 export default async function UserReviewsPage() {
 	const session = await auth()
 	const currentUser = session?.user
 
 	if (!currentUser || !hasPermission(currentUser.role, 'reviews', ['read:own']))
-		notFound()
+		redirect('/')
 
 	const response = await getUserReviews(currentUser.id)
 

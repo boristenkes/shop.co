@@ -2,6 +2,7 @@ import Star from '@/components/icons/star'
 import { Button } from '@/components/ui/button'
 import { integralCf } from '@/lib/fonts'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Hero() {
 	return (
@@ -19,7 +20,12 @@ export default function Hero() {
 						style.
 					</p>
 
-					<Button size='lg'>Shop Now</Button>
+					<Button
+						size='lg'
+						asChild
+					>
+						<Link href='/products'>Shop Now</Link>
+					</Button>
 
 					<div className='flex items-center max-md:justify-center gap-4 space-x-8 flex-wrap pt-8'>
 						<div>

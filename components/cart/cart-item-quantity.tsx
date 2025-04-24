@@ -3,7 +3,7 @@
 import NumberInput from '@/components/number-input'
 import { useCart } from '@/context/cart'
 import { CartItem } from '@/db/schema/carts'
-import { updateCartItem } from '@/features/cart/actions'
+import { updateCartItem } from '@/features/cart/actions/update'
 import { useSession } from 'next-auth/react'
 import { useRef } from 'react'
 import { toast } from 'sonner'

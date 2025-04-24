@@ -52,3 +52,21 @@ export type NewProductSchema = z.infer<typeof newProductSchema>
 export const editProductSchema = newProductSchema.partial()
 
 export type EditProductSchema = z.infer<typeof editProductSchema>
+
+export const productSchema = z.object({
+	id: z.number().int().positive().finite(),
+	name: z.string().min(1),
+	slug: z.string().min(1),
+	description: z.string().optional(),
+	priceInCents: z.number().int().positive().finite(),
+	discount: z.number().min(0).max(100),
+	stock: z.number().min(0).finite(),
+	archived: z.boolean(),
+	featured: z.boolean(),
+	sizes: z.nativeEnum(Size).array(),
+	categoryId: z.number().int().positive().finite(),
+	userId: z.number().int().positive().finite(),
+	createdAt: z.coerce.string().datetime(),
+	updatedAt: z.coerce.string().datetime(),
+	deletedAt: z.coerce.string().datetime().optional()
+})
