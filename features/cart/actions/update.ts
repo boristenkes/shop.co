@@ -6,7 +6,7 @@ import { cartItems } from '@/db/schema'
 import { CartItem, carts } from '@/db/schema/carts'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { editCartItemSchema, sessionCartItemSchema } from '../zod'
 import { NewItemData } from './create'
 
@@ -97,7 +97,17 @@ export async function syncUserCart(sessionCartItems: SessionCartItem[]) {
 						cartId
 					}))
 				)
-				.onConflictDoNothing() // TODO: use `.onConflictDoUpdate` instead to update sum quantities
+				.onConflictDoUpdate({
+					target: [
+						cartItems.cartId,
+						cartItems.productId,
+						cartItems.size,
+						cartItems.colorId
+					],
+					set: {
+						quantity: sql`LEAST(excluded.quantity, 20)`
+					}
+				})
 		})
 
 		return { success: true }

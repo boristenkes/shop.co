@@ -31,7 +31,14 @@ export default function CategoryCheckbox({
 				value={category.slug}
 			/>
 			{category.name}{' '}
-			<small className='text-gray-600'>({category.productCount})</small>
+			<small
+				className={cn(
+					'transition-colors',
+					checked ? 'text-gray-200' : 'text-gray-600'
+				)}
+			>
+				({category.productCount})
+			</small>
 		</label>
 	)
 }
