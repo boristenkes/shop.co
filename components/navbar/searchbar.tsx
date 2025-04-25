@@ -52,7 +52,7 @@ export default function Searchbar() {
 			</Form>
 
 			{isEnabled && expanded && (
-				<div className='bg-neutral-100 rounded-lg absolute inset-x-0 top-12 shadow-md p-2'>
+				<div className='bg-white rounded-lg absolute inset-x-0 top-12 shadow-md p-2'>
 					{query.isLoading && (
 						<Loader2Icon className='animate-spin mx-auto my-8' />
 					)}
@@ -73,7 +73,7 @@ export default function Searchbar() {
 										>
 											<Link
 												href={`/products/${product.slug}/${product.id}`}
-												className='bg-[#f0eeed] size-24 rounded-lg p-1'
+												className='bg-stone-100 size-24 rounded-lg p-1'
 											>
 												<Image
 													src={product.images[0].url}
@@ -89,7 +89,20 @@ export default function Searchbar() {
 														{product.name}
 													</h2>
 												</Link>
-												<Rating rating={product.averageRating} />
+
+												{product.averageRating > 0 ? (
+													<div className='flex items-center space-x-2'>
+														<Rating rating={product.averageRating} />
+
+														<span className='text-gray-700 text-sm'>
+															{product.averageRating.toFixed(1)}
+															<span className='text-gray-400'>/5</span>
+														</span>
+													</div>
+												) : (
+													<p>No rating</p>
+												)}
+
 												<div className='font-bold'>
 													{!product.discount || product.discount === 0 ? (
 														formatPrice(product.priceInCents)
@@ -117,7 +130,7 @@ export default function Searchbar() {
 									))}
 								</ul>
 								<Link
-									href={`/search?query=${encodeURI(debouncedSearchTerm)}`}
+									href={`/search?query=${debouncedSearchTerm}`}
 									className='mx-auto my-2 font-medium text-blue-500 hover:text-blue-400 block w-fit'
 								>
 									See all results

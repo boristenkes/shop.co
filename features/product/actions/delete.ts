@@ -134,9 +134,7 @@ export async function deleteProduct(
 		const productImageKeys = await db.query.productImages
 			.findMany({
 				where: eq(productImages.productId, productId),
-				columns: {
-					key: true
-				}
+				columns: { key: true }
 			})
 			.then(images => images.map(image => image.key))
 

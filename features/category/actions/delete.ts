@@ -31,9 +31,7 @@ export async function deleteCategory(
 				? prev
 				: parseInt(formData?.get('categoryId') as string)
 
-		const response = await db
-			.delete(categories)
-			.where(eq(categories.id, categoryId))
+		await db.delete(categories).where(eq(categories.id, categoryId))
 
 		revalidatePath(path)
 

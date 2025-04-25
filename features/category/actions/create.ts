@@ -29,9 +29,12 @@ export async function createCategory(
 
 		if (!name?.length || !slug) throw new Error('Invalid data')
 
-		const existingCategorySlug = await db.query.categories.findFirst({
-			where: eq(categories.slug, slug)
-		})
+		const existingCategorySlug = await db.query.categories
+			.findFirst({
+				where: eq(categories.slug, slug),
+				columns: { id: true }
+			})
+			.then(Boolean)
 
 		if (existingCategorySlug)
 			throw new Error(
@@ -40,10 +43,7 @@ export async function createCategory(
 
 		const newCategory = await db
 			.insert(categories)
-			.values({
-				name,
-				slug
-			})
+			.values({ name, slug })
 			.returning({ id: categories.id })
 
 		revalidatePath(path)

@@ -10,10 +10,7 @@ export type GetCategoriesConfig = {
 }
 
 export type GetCategoriesReturn =
-	| {
-			success: true
-			categories: (Category & { productCount: number })[]
-	  }
+	| { success: true; categories: (Category & { productCount: number })[] }
 	| { success: false; message: string }
 
 export async function getCategories({
@@ -32,10 +29,7 @@ export async function getCategories({
 			.groupBy(categories.id) // Group by category id to calculate product counts
 			.orderBy(asc(categories.id))
 
-		return {
-			success: true,
-			categories: results
-		}
+		return { success: true, categories: results }
 	} catch (error: any) {
 		console.error('[GET_CATEGORIES]:', error)
 		const errorMessage =
@@ -43,9 +37,6 @@ export async function getCategories({
 
 		if (throwOnError) throw new Error(errorMessage)
 
-		return {
-			success: false,
-			message: errorMessage
-		}
+		return { success: false, message: errorMessage }
 	}
 }

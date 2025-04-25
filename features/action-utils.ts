@@ -59,10 +59,7 @@ export async function getStatistics(): Promise<GetStatisticsReturn> {
 			totalRevenue
 		} as StatisticsResults
 
-		return {
-			success: true,
-			results
-		}
+		return { success: true, results }
 	} catch (error) {
 		console.error('[GET_STATISTICS]:', error)
 		return {
