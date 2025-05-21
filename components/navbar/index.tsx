@@ -8,12 +8,18 @@ import {
 } from '@/components/ui/sheet'
 import UserButton from '@/components/user-button'
 import { navLinks } from '@/constants'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import CartButton from './cart-button'
 import Searchbar from './searchbar'
 
-export default function Navbar() {
+export default async function Navbar() {
+	const session = await auth()
+	const canViewCart =
+		!session || hasPermission(session.user.role, 'carts', ['read:own'])
+
 	return (
 		<header className='fixed top-0 inset-x-0 px-4 py-5 z-50 w-full bg-white/80 backdrop-blur-sm shadow-sm'>
 			<div className='container flex items-center justify-between'>
@@ -65,7 +71,7 @@ export default function Navbar() {
 
 				<div className='flex items-center gap-4'>
 					<Searchbar />
-					<CartButton />
+					{canViewCart && <CartButton />}
 					<UserButton />
 				</div>
 			</div>

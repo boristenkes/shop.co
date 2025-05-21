@@ -7,7 +7,6 @@ import { useMutation } from '@tanstack/react-query'
 import { Trash2Icon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { toast } from 'sonner'
-import { queryClient } from '../utils/providers'
 
 export default function DeleteCartItemButton({
 	itemId
@@ -22,9 +21,7 @@ export default function DeleteCartItemButton({
 		mutationFn: () => deleteCartItem(itemId),
 		onSettled(data) {
 			if (data?.success) {
-				queryClient.invalidateQueries({
-					queryKey: ['cart:get:own']
-				})
+				cart.remove(itemId)
 			} else {
 				toast.error('Failed to delete item. Please try again later.')
 			}
