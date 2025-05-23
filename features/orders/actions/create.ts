@@ -89,8 +89,8 @@ export async function checkout(
 				userId: currentUser.id
 			},
 			mode: 'payment',
-			success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cart`,
-			cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/cancel`
+			success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
+			cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`
 		})
 
 		return { success: true, sessionId: stripeSession.id }

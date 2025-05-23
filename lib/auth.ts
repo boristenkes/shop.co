@@ -9,7 +9,6 @@ import { User, users } from '@/db/schema/users'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import NextAuth, { DefaultSession } from 'next-auth'
 import Google from 'next-auth/providers/google'
-import { cache } from 'react'
 
 declare module 'next-auth' {
 	interface Session {
