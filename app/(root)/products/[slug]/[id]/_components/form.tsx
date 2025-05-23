@@ -10,7 +10,7 @@ import { SessionCartProduct, useCart } from '@/context/cart'
 import { Color } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
 import { NewItemData, saveToCart } from '@/features/cart/actions/create'
-import { darkenHex } from '@/lib/utils'
+import { calculatePriceWithDiscount, darkenHex } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2Icon, ShoppingCartIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
@@ -86,7 +86,11 @@ export default function ProductPageForm({
 					size,
 					quantity,
 					colorId: color.id,
-					productId: product.id
+					productId: product.id,
+					productPriceInCents: calculatePriceWithDiscount(
+						product.priceInCents,
+						product.discount ?? 0
+					)
 				})
 			} else {
 				cart.add({ product, color, quantity, size }) // Use local cart context

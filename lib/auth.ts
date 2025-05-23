@@ -21,7 +21,7 @@ export const {
 	handlers,
 	signIn,
 	signOut,
-	auth: nextAuth
+	auth
 } = NextAuth({
 	adapter: DrizzleAdapter(db, {
 		// @ts-expect-error DrizzleAdapter doesn't like my schemas
@@ -42,5 +42,3 @@ export const {
 	},
 	trustHost: true
 })
-
-export const auth = cache(nextAuth)

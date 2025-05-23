@@ -43,6 +43,7 @@ export const orderItems = pgTable('order_items', {
 	id: serial().primaryKey(),
 	quantity: smallint().notNull(),
 	size: sizeEnum().notNull(),
+	productPriceInCents: integer().notNull(),
 
 	productId: integer()
 		.notNull()

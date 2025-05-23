@@ -1,5 +1,5 @@
 {
-  "id": "bc8af19b-acde-4760-bb12-deb355b39f01",
+  "id": "8c7268d8-fd19-478d-972a-1ac9d7734eeb",
   "prevId": "dab7820d-97af-446c-8f20-7d9d74be7105",
   "version": "7",
   "dialect": "postgresql",
@@ -219,6 +219,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "product_price_in_cents": {
+          "name": "product_price_in_cents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "product_id": {
           "name": "product_id",
           "type": "integer",
@@ -342,7 +348,23 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "cart_user_unique": {
+          "name": "cart_user_unique",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "carts_user_id_users_id_fk": {
           "name": "carts_user_id_users_id_fk",
@@ -500,6 +522,12 @@
           "name": "size",
           "type": "size",
           "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "product_price_in_cents": {
+          "name": "product_price_in_cents",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -1240,7 +1268,7 @@
           "name": "image",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",

@@ -47,6 +47,7 @@ export const cartItems = pgTable(
 		id: serial().primaryKey(),
 		quantity: smallint().notNull(),
 		size: sizeEnum().notNull(),
+		productPriceInCents: integer().notNull(),
 
 		productId: integer()
 			.notNull()

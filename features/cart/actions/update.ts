@@ -6,6 +6,7 @@ import { cartItems } from '@/db/schema'
 import { CartItem, carts } from '@/db/schema/carts'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { calculatePriceWithDiscount } from '@/lib/utils'
 import { eq, sql } from 'drizzle-orm'
 import { editCartItemSchema, sessionCartItemSchema } from '../zod'
 import { NewItemData } from './create'
@@ -94,6 +95,10 @@ export async function syncUserCart(sessionCartItems: SessionCartItem[]) {
 						colorId: item.color.id,
 						quantity: item.quantity,
 						size: item.size,
+						productPriceInCents: calculatePriceWithDiscount(
+							item.product.priceInCents,
+							item.product.discount ?? 0
+						),
 						cartId
 					}))
 				)

@@ -2,9 +2,13 @@
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { stripePromise } from '@/components/utils/providers'
 import { useCart } from '@/context/cart'
+import { checkout } from '@/features/orders/actions/create'
 import { calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
-import { ArrowRightIcon, TagIcon } from 'lucide-react'
+import { ArrowRightIcon, Loader2Icon, TagIcon } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function OrderSummary() {
 	const cart = useCart()
@@ -17,6 +21,27 @@ export default function OrderSummary() {
 		return acc + priceWithDiscount * curr.quantity
 	}, 0)
 	const totalInCents = calculatePriceWithDiscount(subtotalInCents, 0)
+	const [checkoutPending, setCheckoutPending] = useState(false)
+
+	const handleCheckout = async () => {
+		try {
+			setCheckoutPending(true)
+			const response = await checkout(cart.items)
+
+			if (!response.success) {
+				toast.error('Something went wrong. Please try again later')
+				return
+			}
+
+			const stripe = await stripePromise
+
+			await stripe?.redirectToCheckout({
+				sessionId: response.sessionId
+			})
+		} finally {
+			setCheckoutPending(false)
+		}
+	}
 
 	return (
 		<aside className='grow p-3.5 rounded-3xl border-2 overflow-y-auto custom-scrollbar scroll-p-3.5 basis-2/5'>
@@ -74,8 +99,15 @@ export default function OrderSummary() {
 			<Button
 				size='lg'
 				className='w-full'
+				onClick={handleCheckout}
+				disabled={checkoutPending}
 			>
-				Go to Checkout <ArrowRightIcon />
+				{checkoutPending ? 'Please wait' : 'Go to Checkout'}{' '}
+				{checkoutPending ? (
+					<Loader2Icon className='animate-spin size-4' />
+				) : (
+					<ArrowRightIcon />
+				)}
 			</Button>
 		</aside>
 	)

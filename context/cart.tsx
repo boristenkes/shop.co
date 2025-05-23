@@ -91,6 +91,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 				if (!response.success)
 					throw new Error('Failed to save browser cart in database')
+
 				sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
 				cartQuery.refetch()
 			} catch (error) {
