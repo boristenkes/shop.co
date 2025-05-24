@@ -30,10 +30,10 @@ export default function CartContents() {
 		)
 
 	return (
-		<div className='flex items-start gap-4 mt-6'>
+		<div className='flex items-start max-md:flex-col gap-4 mt-6'>
 			<CartItemList
 				items={cart.items}
-				className='basis-3/5'
+				className='basis-3/5 max-md:w-full'
 			/>
 			<OrderSummary />
 		</div>

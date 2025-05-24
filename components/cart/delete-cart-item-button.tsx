@@ -4,7 +4,7 @@ import { useCart } from '@/context/cart'
 import { CartItem } from '@/db/schema/carts'
 import { deleteCartItem } from '@/features/cart/actions/delete'
 import { useMutation } from '@tanstack/react-query'
-import { Trash2Icon } from 'lucide-react'
+import { Loader2Icon, Trash2Icon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { toast } from 'sonner'
 
@@ -38,9 +38,13 @@ export default function DeleteCartItemButton({
 				}
 			}}
 			disabled={mutation.isPending}
-			className='disabled:opacity-50'
+			className='text-red-500 disabled:opacity-50'
 		>
-			<Trash2Icon className='text-red-500 size-4' />
+			{mutation.isPending ? (
+				<Loader2Icon className='size-4 animate-spin' />
+			) : (
+				<Trash2Icon className='size-4' />
+			)}
 		</button>
 	)
 }

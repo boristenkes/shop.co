@@ -32,43 +32,49 @@ export async function POST(req: NextRequest) {
 			return new NextResponse('Missing metadata', { status: 400 })
 
 		// Update database
-		await db.transaction(async tx => {
-			const cartItems = await tx.query.cartItems.findMany({
-				where: item => eq(item.cartId, cartId)
-			})
-
-			const [order] = await tx
-				.insert(orders)
-				.values({
-					userId,
-					totalPriceInCents: Number(checkoutSession.amount_total)
+		try {
+			await db.transaction(async tx => {
+				const cartItems = await tx.query.cartItems.findMany({
+					where: item => eq(item.cartId, cartId)
 				})
-				.returning({ id: orders.id })
 
-			await tx.insert(orderItems).values(
-				cartItems.map(item => ({
-					orderId: order.id,
-					...item
-				}))
-			)
+				const [order] = await tx
+					.insert(orders)
+					.values({
+						userId,
+						totalPriceInCents: Number(checkoutSession.amount_total)
+					})
+					.returning({ id: orders.id })
 
-			await tx.execute(sql`
-				UPDATE ${products}
-				SET stock = ${products.stock} - CAST(data.quantity AS INTEGER)
-				FROM (
-					VALUES ${sql.join(
-						cartItems.map(
-							item =>
-								sql`(CAST(${item.productId} AS INTEGER), ${item.quantity})`
-						),
-						sql`, `
-					)}
-				) AS data(id, quantity)
-				WHERE ${products}.id = data.id
-			`)
+				await tx.insert(orderItems).values(
+					cartItems.map(item => ({
+						orderId: order.id,
+						...item
+					}))
+				)
 
-			await tx.delete(carts).where(eq(carts.id, cartId))
-		})
+				// Update product quantities
+				await tx.execute(sql`
+					UPDATE ${products}
+					SET stock = ${products.stock} - CAST(data.quantity AS INTEGER)
+					FROM (
+						VALUES ${sql.join(
+							cartItems.map(
+								item =>
+									sql`(CAST(${item.productId} AS INTEGER), ${item.quantity})`
+							),
+							sql`, `
+						)}
+					) AS data(id, quantity)
+					WHERE ${products}.id = data.id
+				`)
+
+				await tx.delete(carts).where(eq(carts.id, cartId))
+			})
+		} catch (error) {
+			console.error('[WEBHOOK/TRANSACTION]:', error)
+			return new NextResponse('Something went wrong', { status: 500 })
+		}
 	}
 
 	return new NextResponse('Success', { status: 200 })

@@ -26,7 +26,7 @@ export default function OrderSummary() {
 	const handleCheckout = async () => {
 		try {
 			setCheckoutPending(true)
-			const response = await checkout(cart.items)
+			const response = await checkout()
 
 			if (!response.success) {
 				toast.error('Something went wrong. Please try again later')
@@ -44,7 +44,7 @@ export default function OrderSummary() {
 	}
 
 	return (
-		<aside className='grow p-3.5 rounded-3xl border-2 overflow-y-auto custom-scrollbar scroll-p-3.5 basis-2/5'>
+		<aside className='grow p-3.5 rounded-3xl border-2 overflow-y-auto custom-scrollbar scroll-p-3.5 basis-2/5 max-md:w-full'>
 			<h2 className='font-semibold text-lg mb-4'>Order Summary</h2>
 
 			<dl className='space-y-3 mb-6'>

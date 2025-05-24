@@ -1,6 +1,5 @@
 'use server'
 
-import { SessionCartItem } from '@/context/cart'
 import { db } from '@/db'
 import { carts } from '@/db/schema'
 import { auth } from '@/lib/auth'
@@ -15,9 +14,7 @@ export type CheckoutReturn =
 	| { success: true; sessionId: StripeCheckoutSession['id'] }
 	| { success: false }
 
-export async function checkout(
-	items: SessionCartItem[]
-): Promise<CheckoutReturn> {
+export async function checkout(): Promise<CheckoutReturn> {
 	try {
 		const session = await auth()
 		const currentUser = session?.user
