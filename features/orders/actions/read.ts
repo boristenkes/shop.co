@@ -29,6 +29,7 @@ export async function getUserOrders(
 	try {
 		const session = await auth()
 		const currentUser = session?.user
+
 		if (!currentUser) throw new Error('Unauthorized')
 
 		const isOwnOrder = !userId || userId === currentUser.id

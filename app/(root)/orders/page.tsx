@@ -8,11 +8,20 @@ import {
 	BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 import { getUserOrders } from '@/features/orders/actions/read'
+import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
+import { hasPermission } from '@/lib/permissions'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import OrderList from './order-list'
 
 export default async function OrdersPage() {
+	const session = await auth()
+	const currentUser = session?.user
+
+	if (!currentUser || !hasPermission(currentUser.role, 'orders', ['read:own']))
+		redirect('/')
+
 	const response = await getUserOrders()
 
 	return (

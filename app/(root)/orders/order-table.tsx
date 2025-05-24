@@ -18,7 +18,15 @@ import Link from 'next/link'
 export default function OrderTable({ order }: { order: GetUserOrdersOrder }) {
 	return (
 		<Table>
-			<TableCaption>Order date: {formatDate(order.createdAt!)}</TableCaption>
+			<TableCaption>
+				Order date:{' '}
+				<time
+					dateTime={order.createdAt?.toISOString()}
+					className='font-medium'
+				>
+					{formatDate(order.createdAt!)}
+				</time>
+			</TableCaption>
 			<TableHeader>
 				<TableRow>
 					<TableHead className='w-[100px]'>Product</TableHead>

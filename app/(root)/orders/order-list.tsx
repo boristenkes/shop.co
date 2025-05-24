@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
 	Card,
 	CardContent,
@@ -7,9 +8,12 @@ import {
 	CardTitle
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import Paragraph from '@/components/utils/paragraph'
 import { Order } from '@/db/schema/orders'
 import { GetUserOrdersOrder } from '@/features/orders/actions/read'
 import { cn } from '@/lib/utils'
+import { ArrowRightIcon } from 'lucide-react'
+import Link from 'next/link'
 import OrderTable, { OrderTableSkeleton } from './order-table'
 
 export default function OrderList({
@@ -17,6 +21,24 @@ export default function OrderList({
 }: {
 	orders: GetUserOrdersOrder[]
 }) {
+	if (orders.length === 0)
+		return (
+			<div className='text-center py-16'>
+				<h1 className='text-3xl'>You haven&apos;t placed any orders yet</h1>
+				<Paragraph className='mx-auto mt-4'>
+					This is where you will find your future orders.
+				</Paragraph>
+				<Button
+					asChild
+					className='mt-8'
+				>
+					<Link href='/products'>
+						Start shopping <ArrowRightIcon />
+					</Link>
+				</Button>
+			</div>
+		)
+
 	return (
 		<ul className='my-8 space-y-12'>
 			{orders.map(order => (
