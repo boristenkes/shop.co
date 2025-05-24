@@ -9,13 +9,10 @@ import {
 } from '@/components/ui/breadcrumb'
 import { getUserOrders } from '@/features/orders/actions/read'
 import { integralCf } from '@/lib/fonts'
-import { delay } from '@/lib/utils'
 import Link from 'next/link'
 import OrderList from './order-list'
 
 export default async function OrdersPage() {
-	await delay(5000)
-
 	const response = await getUserOrders()
 
 	return (
