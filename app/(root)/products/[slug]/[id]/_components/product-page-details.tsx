@@ -1,6 +1,7 @@
 import ErrorMessage from '@/components/error-message'
 import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
+import Paragraph from '@/components/utils/paragraph'
 import { TSize } from '@/db/schema/enums'
 import { Product } from '@/db/schema/products'
 import { getProductById } from '@/features/product/actions/read'
@@ -90,7 +91,7 @@ export default async function ProductPageDetails({
 					)}
 				</div>
 
-				<p className='text-balance border-b pb-6'>{product.description}</p>
+				<Paragraph className='border-b pb-6'>{product.description}</Paragraph>
 
 				<ProductPageForm
 					colors={product.productsToColors.map(({ color }) => color)}
