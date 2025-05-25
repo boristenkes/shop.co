@@ -56,7 +56,11 @@ export async function POST(req: NextRequest) {
 				await tx.insert(orderItems).values(
 					cartItems.map(item => ({
 						orderId: order.id,
-						...item
+						colorId: item.colorId,
+						productId: item.productId,
+						productPriceInCents: item.productPriceInCents,
+						quantity: item.quantity,
+						size: item.size
 					}))
 				)
 
