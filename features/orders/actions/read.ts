@@ -91,7 +91,7 @@ export async function getAllOrders(): Promise<GetAllOrdersReturn> {
 			throw new Error('Unauthorized')
 
 		const orders = await db.query.orders.findMany({
-			orderBy: (order, { desc }) => desc(order.createdAt),
+			orderBy: (order, { desc }) => desc(order.id),
 			with: {
 				user: {
 					columns: {

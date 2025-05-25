@@ -17,8 +17,10 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
+import { BackButton } from '@/components/utils/back-button'
 import { getOrder } from '@/features/orders/actions/read'
 import { formatDate, formatPrice } from '@/lib/utils'
+import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import OrderStatusSelect from './_components/status-select'
@@ -31,7 +33,16 @@ export default async function OrderDetailsPage(props: {
 
 	return (
 		<main className='container py-16'>
-			<h1 className='text-4xl font-bold mb-8'>Order Details</h1>
+			<div className='flex items-center gap-4 mb-8'>
+				<BackButton
+					variant='outline'
+					className='rounded-sm text-sm'
+				>
+					<ArrowLeft /> Back
+				</BackButton>
+				<h1 className='text-4xl font-bold'>Order Details</h1>
+			</div>
+
 			{response.success ? (
 				<Card>
 					<CardHeader className='flex justify-between flex-row items-start'>

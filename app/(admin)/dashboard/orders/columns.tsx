@@ -145,8 +145,8 @@ export const columns: ColumnDef<GetAllOrdersOrder>[] = [
 		}
 	},
 	{
-		accessorKey: '#',
-		header: '',
+		accessorKey: 'actions',
+		header: 'Actions',
 		cell: ({ row }) => (
 			<Button
 				asChild

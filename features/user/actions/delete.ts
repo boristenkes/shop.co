@@ -12,9 +12,7 @@ export type DeleteUserConfig = {
 	throwOnError?: boolean
 }
 
-type DeleteUserReturn =
-	| { success: true; userId: number }
-	| { success: false; message?: string }
+type DeleteUserReturn = { success: true } | { success: false; message?: string }
 
 export async function deleteUser(
 	prev: any,
@@ -30,10 +28,9 @@ export async function deleteUser(
 				: parseInt(formData?.get('userId') as string)
 
 		const session = await auth()
+		const currentUser = session?.user
 
-		if (!session?.user?.id) throw new Error('Unauthorized')
-
-		const currentUser = session.user
+		if (!currentUser) throw new Error('Unauthorized')
 
 		if (!hasPermission(currentUser.role, 'users', ['delete'])) {
 			if (currentUser.id !== targetUserId) {
@@ -49,7 +46,7 @@ export async function deleteUser(
 
 		revalidatePath(path)
 
-		return { success: true, userId: targetUserId }
+		return { success: true }
 	} catch (error: any) {
 		console.error('[DELETE_USER]:', error)
 
