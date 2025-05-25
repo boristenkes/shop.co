@@ -11,7 +11,8 @@
 		"db:migrate": "npx drizzle-kit migrate",
 		"db:push": "npx drizzle-kit push",
 		"db:pull": "npx drizzle-kit pull",
-		"db:studio": "npx drizzle-kit studio"
+		"db:studio": "npx drizzle-kit studio",
+		"stripe:listen": "stripe listen --forward-to http://localhost:3000/api/webhooks"
 	},
 	"dependencies": {
 		"@auth/drizzle-adapter": "^1.7.4",

@@ -70,3 +70,43 @@ export async function getUserOrders(
 		return { success: false }
 	}
 }
+
+export type GetAllOrdersOrder = Order & {
+	user: Pick<User, 'id' | 'name' | 'image' | 'email'>
+}
+
+export type GetAllOrdersReturn =
+	| {
+			success: true
+			orders: GetAllOrdersOrder[]
+	  }
+	| { success: false; message?: string }
+
+export async function getAllOrders(): Promise<GetAllOrdersReturn> {
+	try {
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (!currentUser || !hasPermission(currentUser.role, 'orders', ['read']))
+			throw new Error('Unauthorized')
+
+		const orders = await db.query.orders.findMany({
+			orderBy: (order, { desc }) => desc(order.createdAt),
+			with: {
+				user: {
+					columns: {
+						id: true,
+						name: true,
+						image: true,
+						email: true
+					}
+				}
+			}
+		})
+
+		return { success: true, orders }
+	} catch (error) {
+		console.error('[GET_ALL_ORDERS]:', error)
+		return { success: false }
+	}
+}

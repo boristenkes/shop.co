@@ -38,10 +38,17 @@ export async function POST(req: NextRequest) {
 					where: item => eq(item.cartId, cartId)
 				})
 
+				const rawShippingAddress =
+					checkoutSession.collected_information?.shipping_details?.address!
+				const shippingAddress = Object.values(rawShippingAddress)
+					.filter(Boolean)
+					.join(', ')
+
 				const [order] = await tx
 					.insert(orders)
 					.values({
 						userId,
+						shippingAddress,
 						totalPriceInCents: Number(checkoutSession.amount_total)
 					})
 					.returning({ id: orders.id })

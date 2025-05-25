@@ -42,8 +42,8 @@ export default function CartContents() {
 
 export function CartContentsSkeleton() {
 	return (
-		<div className='flex items-start gap-4 mt-6'>
-			<CartItemListSkeleton className='basis-3/5' />
+		<div className='flex items-start max-md:flex-col gap-4 mt-6'>
+			<CartItemListSkeleton className='basis-3/5 max-md:w-full' />
 			<OrderSummarySkeleton />
 		</div>
 	)
