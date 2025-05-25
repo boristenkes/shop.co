@@ -18,23 +18,12 @@ import {
 	TableRow
 } from '@/components/ui/table'
 import { BackButton } from '@/components/utils/back-button'
-import { db } from '@/db'
 import { getOrder } from '@/features/orders/actions/read'
 import { formatDate, formatPrice } from '@/utils/format'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import OrderStatusSelect from './_components/status-select'
-
-export async function generateStaticParams() {
-	const orders = await db.query.orders.findMany({
-		columns: { id: true }
-	})
-
-	if (!orders) return []
-
-	return orders.map(order => ({ id: order.id.toString() }))
-}
 
 export default async function OrderDetailsPage(props: {
 	params: Promise<{ id: string }>
