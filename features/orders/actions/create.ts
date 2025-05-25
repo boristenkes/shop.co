@@ -85,6 +85,21 @@ export async function checkout(): Promise<CheckoutReturn> {
 				cartId: userCart.id,
 				userId: currentUser.id
 			},
+			shipping_address_collection: {
+				allowed_countries: [
+					'US',
+					'CA',
+					'GB',
+					'DE',
+					'FR',
+					'AU',
+					'IT',
+					'ES',
+					'NL',
+					'JP',
+					'RS'
+				]
+			},
 			mode: 'payment',
 			success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
 			cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`

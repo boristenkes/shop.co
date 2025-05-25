@@ -75,7 +75,7 @@ export default function OrderList({
 	)
 }
 
-function getOrderStatusColor(status: Order['status']) {
+export function getOrderStatusColor(status: Order['status']) {
 	switch (status) {
 		case 'canceled':
 			return 'bg-gray-500'

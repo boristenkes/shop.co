@@ -115,7 +115,7 @@ export default function OrderSummary() {
 
 export function OrderSummarySkeleton() {
 	return (
-		<aside className='grow p-3.5 rounded-3xl border-2 overflow-y-auto custom-scrollbar scroll-p-3.5 basis-2/5'>
+		<aside className='grow p-3.5 rounded-3xl border-2 overflow-y-auto custom-scrollbar scroll-p-3.5 basis-2/5 max-md:w-full'>
 			<Skeleton className='w-32 h-6 rounded-lg mb-4' />
 
 			<dl className='space-y-3 mb-6'>
