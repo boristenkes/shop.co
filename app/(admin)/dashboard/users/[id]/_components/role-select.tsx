@@ -40,7 +40,7 @@ export default function RoleSelect({ userId, defaultRole }: RoleSelectProps) {
 		>
 			<SelectTrigger
 				disabled={isPending}
-				className='capitalize'
+				className='capitalize max-w-40'
 			>
 				<SelectValue placeholder={defaultRole} />
 			</SelectTrigger>

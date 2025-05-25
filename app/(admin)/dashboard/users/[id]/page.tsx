@@ -4,6 +4,7 @@ import Avatar from '@/components/utils/avatar'
 import CopyButton from '@/components/utils/copy-button'
 import { Role, TRole } from '@/db/schema/enums'
 import { getUserById, GetUserByIdUser } from '@/features/user/actions/read'
+import DeleteUserButton from '@/features/user/components/delete-button'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { formatDate, getRoleBadgeVariant } from '@/lib/utils'
@@ -61,9 +62,13 @@ function UserHeader({
 				className='size-48'
 			/>
 
-			<div className='space-y-2'>
-				<h1 className='text-5xl font-bold'>{user.name}</h1>
-
+			<div className='space-y-2 grow'>
+				<div className='flex items-start justify-between gap-2'>
+					<h1 className='text-5xl font-bold'>{user.name}</h1>
+					{hasPermission(currentUserRole, 'users', ['delete']) && (
+						<DeleteUserButton userId={user.id} />
+					)}
+				</div>
 				<div className='flex items-center gap-2'>
 					<a
 						href={`mailto:${user.email}`}

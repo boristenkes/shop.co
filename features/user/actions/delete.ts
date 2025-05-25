@@ -14,7 +14,7 @@ export type DeleteUserConfig = {
 
 type DeleteUserReturn =
 	| { success: true; userId: number }
-	| { success: false; message: string }
+	| { success: false; message?: string }
 
 export async function deleteUser(
 	prev: any,
@@ -58,10 +58,6 @@ export async function deleteUser(
 				'Something went wrong while deleting user. Please try again later.'
 			)
 
-		return {
-			success: false,
-			message:
-				'Something went wrong while deleting user. Please try again later.'
-		}
+		return { success: false }
 	}
 }

@@ -147,7 +147,9 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 						</DialogDescription>
 
 						{mutation.data && !mutation.data.success && (
-							<ErrorMessage message={mutation.data.message} />
+							<ErrorMessage
+								message={mutation.data.message ?? 'Something went wrong'}
+							/>
 						)}
 						<DialogFooter>
 							<DialogClose asChild>
