@@ -2,7 +2,7 @@
 
 import { db } from '@/db'
 import { Color } from '@/db/schema/colors'
-import { Order, OrderItem } from '@/db/schema/orders'
+import { Order, OrderItem, orders } from '@/db/schema/orders'
 import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { User } from '@/db/schema/users'
@@ -107,6 +107,79 @@ export async function getAllOrders(): Promise<GetAllOrdersReturn> {
 		return { success: true, orders }
 	} catch (error) {
 		console.error('[GET_ALL_ORDERS]:', error)
+		return { success: false }
+	}
+}
+
+export type GetOrderOrder = Order & {
+	user: Pick<User, 'id' | 'name' | 'image' | 'createdAt'>
+	orderItems: (Pick<
+		OrderItem,
+		'id' | 'productPriceInCents' | 'quantity' | 'size'
+	> & {
+		color: Color
+		product: Pick<Product, 'id' | 'name' | 'slug'> & {
+			images: Pick<ProductImage, 'url'>[]
+		}
+	})[]
+}
+
+export type GetOrderReturn =
+	| { success: true; order: GetOrderOrder }
+	| { success: false; message?: string }
+
+export async function getOrder(orderId: Order['id']): Promise<GetOrderReturn> {
+	try {
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (!currentUser || !hasPermission(currentUser.role, 'orders', ['read']))
+			throw new Error('Unauthorized')
+
+		const order = await db.query.orders.findFirst({
+			where: eq(orders.id, orderId),
+			with: {
+				user: {
+					columns: {
+						id: true,
+						name: true,
+						image: true,
+						email: true,
+						createdAt: true
+					}
+				},
+				orderItems: {
+					columns: {
+						id: true,
+						productPriceInCents: true,
+						quantity: true,
+						size: true
+					},
+					with: {
+						color: true,
+						product: {
+							columns: {
+								id: true,
+								slug: true,
+								name: true
+							},
+							with: {
+								images: {
+									columns: { url: true },
+									limit: 1
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+
+		if (!order) return { success: false, message: 'Order not found' }
+
+		return { success: true, order }
+	} catch (error) {
+		console.error('[GET_ORDER]:', error)
 		return { success: false }
 	}
 }
