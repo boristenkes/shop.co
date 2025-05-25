@@ -1,27 +1,13 @@
 import ErrorMessage from '@/components/error-message'
 import { Rating } from '@/components/rating'
 import { Button } from '@/components/ui/button'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle
-} from '@/components/ui/card'
 import { User } from '@/db/schema/users'
 import { getUserReviews } from '@/features/review/actions/read'
 import { CheckIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-type UserReviewsProps = React.ComponentProps<'div'> & {
-	userId: User['id']
-}
-
-export default async function UserReviews({
-	userId,
-	...props
-}: UserReviewsProps) {
+export default async function UserReviews({ userId }: { userId: User['id'] }) {
 	const response = await getUserReviews(userId)
 
 	if (!response.success) return <ErrorMessage message='Something went wrong' />
@@ -29,44 +15,39 @@ export default async function UserReviews({
 	const { reviews } = response
 	const hasReviews = reviews.length > 0
 
-	return (
-		<Card {...props}>
-			<CardHeader>
-				<CardTitle>User Reviews</CardTitle>
-				<CardDescription>List of all reviews this user posted.</CardDescription>
-			</CardHeader>
-			<CardContent>
-				{hasReviews ? (
-					<ul className='space-y-4'>
-						{reviews.map(review => (
-							<li
-								key={review.id}
-								className='flex items-center justify-between'
-							>
-								<div className='flex items-start gap-4'>
-									<Link
-										href={`/products/${review.product.slug}/${review.product.id}/reviews`}
-										className='bg-stone-100 rounded-sm'
-									>
-										<Image
-											src={review.product.images[0].url}
-											alt={review.product.name}
-											width={80}
-											height={80}
-											className='size-20 object-contain'
-										/>
-									</Link>
-									<div className='space-y-2'>
-										<Link
-											href={`/products/${review.product.slug}/${review.product.id}/reviews`}
-										>
-											<h3 className='font-semibold'>{review.product.name}</h3>
-										</Link>
+	if (!hasReviews)
+		return (
+			<p className='text-center py-8'>This user did not post any reviews.</p>
+		)
 
-										<q>{review.comment}</q>
-										<Rating rating={review.rating} />
-									</div>
-								</div>
+	return (
+		<ul className='space-y-4'>
+			{reviews.map(review => (
+				<li
+					key={review.id}
+					className='flex items-center justify-between'
+				>
+					<div className='flex items-start gap-4'>
+						<Link
+							href={`/products/${review.product.slug}/${review.product.id}/reviews`}
+							className='bg-stone-100 rounded-sm shrink-0'
+						>
+							<Image
+								src={review.product.images[0].url}
+								alt={review.product.name}
+								width={80}
+								height={80}
+								className='size-20 object-contain'
+							/>
+						</Link>
+						<div className='space-y-2'>
+							<div className='flex items-center justify-between gap-2'>
+								<Link
+									href={`/products/${review.product.slug}/${review.product.id}/reviews`}
+								>
+									<h3 className='font-semibold'>{review.product.name}</h3>
+								</Link>
+
 								{review.approved ? (
 									<p className='flex items-center gap-2'>
 										Approved <CheckIcon className='size-4' />
@@ -74,15 +55,14 @@ export default async function UserReviews({
 								) : (
 									<Button size='sm'>Approve</Button>
 								)}
-							</li>
-						))}
-					</ul>
-				) : (
-					<p className='text-center py-8'>
-						This user did not post any reviews.
-					</p>
-				)}
-			</CardContent>
-		</Card>
+							</div>
+
+							<q>{review.comment}</q>
+							<Rating rating={review.rating} />
+						</div>
+					</div>
+				</li>
+			))}
+		</ul>
 	)
 }

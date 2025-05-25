@@ -1,6 +1,14 @@
 import ErrorMessage from '@/components/error-message'
 import { Badge } from '@/components/ui/badge'
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle
+} from '@/components/ui/card'
 import Avatar from '@/components/utils/avatar'
+import { BackButton } from '@/components/utils/back-button'
 import CopyButton from '@/components/utils/copy-button'
 import { Role, TRole } from '@/db/schema/enums'
 import { getUserById, GetUserByIdUser } from '@/features/user/actions/read'
@@ -9,10 +17,11 @@ import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { formatDate } from '@/utils/format'
 import { getRoleBadgeVariant } from '@/utils/helpers'
-import { Loader2Icon } from 'lucide-react'
+import { ArrowLeft, Loader2Icon } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import RoleSelect from './_components/role-select'
+import UserOrders from './_components/user-orders'
 import UserReviews from './_components/user-reviews'
 
 export default async function DashboardUsersPage(props: {
@@ -33,15 +42,69 @@ export default async function DashboardUsersPage(props: {
 
 	return (
 		<main className='container py-12 space-y-12'>
+			<div className='flex items-center justify-between gap-4'>
+				<BackButton
+					variant='outline'
+					className='rounded-sm text-sm'
+				>
+					<ArrowLeft /> Back
+				</BackButton>
+
+				{hasPermission(currentUser.role, 'users', ['delete']) && (
+					<DeleteUserButton userId={user.id} />
+				)}
+			</div>
+
 			<UserHeader
 				user={user}
 				currentUserRole={currentUser.role}
 			/>
-			<Suspense
-				fallback={<Loader2Icon className='animate-spin mx-auto my-16' />}
-			>
-				<UserReviews userId={user.id} />
-			</Suspense>
+
+			<div className='flex items-start gap-8 max-lg:flex-col'>
+				<Card className='basis-1/2 max-lg:w-full'>
+					<CardHeader>
+						<CardTitle>User Reviews</CardTitle>
+						<CardDescription>
+							List of all reviews this user posted.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						{hasPermission(user.role, 'reviews', ['create']) ? (
+							<Suspense
+								fallback={
+									<Loader2Icon className='animate-spin mx-auto my-16' />
+								}
+							>
+								<UserReviews userId={user.id} />
+							</Suspense>
+						) : (
+							<p className='text-center py-16'>This user cannot post reviews</p>
+						)}
+					</CardContent>
+				</Card>
+
+				<Card className='basis-1/2 max-lg:w-full'>
+					<CardHeader>
+						<CardTitle>User Orders</CardTitle>
+						<CardDescription>
+							List of all orders this user placed.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						{hasPermission(user.role, 'orders', ['create']) ? (
+							<Suspense
+								fallback={
+									<Loader2Icon className='animate-spin mx-auto my-16' />
+								}
+							>
+								<UserOrders userId={user.id} />
+							</Suspense>
+						) : (
+							<p className='text-center py-16'>This user cannot place orders</p>
+						)}
+					</CardContent>
+				</Card>
+			</div>
 		</main>
 	)
 }
@@ -64,12 +127,8 @@ function UserHeader({
 			/>
 
 			<div className='space-y-2 grow'>
-				<div className='flex items-start justify-between gap-2'>
-					<h1 className='text-5xl font-bold'>{user.name}</h1>
-					{hasPermission(currentUserRole, 'users', ['delete']) && (
-						<DeleteUserButton userId={user.id} />
-					)}
-				</div>
+				<h1 className='text-5xl font-bold'>{user.name}</h1>
+
 				<div className='flex items-center gap-2'>
 					<a
 						href={`mailto:${user.email}`}

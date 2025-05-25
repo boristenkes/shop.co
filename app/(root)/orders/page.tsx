@@ -7,7 +7,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { getUserOrders } from '@/features/orders/actions/read'
+import { getOwnOrders } from '@/features/orders/actions/read'
 import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
 import { hasPermission } from '@/lib/permissions'
@@ -22,7 +22,7 @@ export default async function OrdersPage() {
 	if (!currentUser || !hasPermission(currentUser.role, 'orders', ['read:own']))
 		redirect('/')
 
-	const response = await getUserOrders()
+	const response = await getOwnOrders()
 
 	return (
 		<main className='container pt-6'>

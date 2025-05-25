@@ -10,12 +10,12 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
-import { GetUserOrdersOrder } from '@/features/orders/actions/read'
+import { GetOwnOrdersOrder } from '@/features/orders/actions/read'
 import { formatDate, formatPrice } from '@/utils/format'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function OrderTable({ order }: { order: GetUserOrdersOrder }) {
+export default function OrderTable({ order }: { order: GetOwnOrdersOrder }) {
 	return (
 		<Table>
 			<TableCaption>

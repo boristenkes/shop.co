@@ -10,17 +10,13 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import Paragraph from '@/components/utils/paragraph'
 import { Order } from '@/db/schema/orders'
-import { GetUserOrdersOrder } from '@/features/orders/actions/read'
+import { GetOwnOrdersOrder } from '@/features/orders/actions/read'
 import { cn } from '@/lib/utils'
 import { ArrowRightIcon } from 'lucide-react'
 import Link from 'next/link'
 import OrderTable, { OrderTableSkeleton } from './order-table'
 
-export default function OrderList({
-	orders
-}: {
-	orders: GetUserOrdersOrder[]
-}) {
+export default function OrderList({ orders }: { orders: GetOwnOrdersOrder[] }) {
 	if (orders.length === 0)
 		return (
 			<div className='text-center py-16'>

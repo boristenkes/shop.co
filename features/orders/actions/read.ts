@@ -10,7 +10,36 @@ import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { eq } from 'drizzle-orm'
 
-export type GetUserOrdersOrder = Order & {
+export type GetUserOrdersReturn =
+	| { success: true; orders: Order[] }
+	| { success: false; message?: string }
+
+export async function getUserOrders(
+	userId: User['id']
+): Promise<GetUserOrdersReturn> {
+	try {
+		if (!userId) throw new Error('Invalid data')
+
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (!currentUser || !hasPermission(currentUser.role, 'orders', ['read']))
+			throw new Error('Unauthorized')
+
+		const orders = await db.query.orders.findMany({
+			where: order => eq(order.userId, userId)
+		})
+
+		if (!orders) return { success: false, message: 'Orders not found' }
+
+		return { success: true, orders }
+	} catch (error) {
+		console.error('[GET_USER_ORDERS]:', error)
+		return { success: false }
+	}
+}
+
+export type GetOwnOrdersOrder = Order & {
 	orderItems: (OrderItem & {
 		color: Color
 		product: Pick<Product, 'id' | 'name' | 'slug'> & {
@@ -19,28 +48,23 @@ export type GetUserOrdersOrder = Order & {
 	})[]
 }
 
-export type GetUserOrdersReturn =
-	| { success: true; orders: GetUserOrdersOrder[] }
+export type GetOwnOrdersReturn =
+	| { success: true; orders: GetOwnOrdersOrder[] }
 	| { success: false; message?: string }
 
-export async function getUserOrders(
-	userId?: User['id']
-): Promise<GetUserOrdersReturn> {
+export async function getOwnOrders(): Promise<GetOwnOrdersReturn> {
 	try {
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (!currentUser) throw new Error('Unauthorized')
-
-		const isOwnOrder = !userId || userId === currentUser.id
-		const hasAccess = hasPermission(currentUser.role, 'orders', [
-			isOwnOrder ? 'read:own' : 'read'
-		])
-
-		if (!hasAccess) throw new Error('Unauthorized')
+		if (
+			!currentUser ||
+			!hasPermission(currentUser.role, 'orders', ['read:own'])
+		)
+			throw new Error('Unauthorized')
 
 		const orders = await db.query.orders.findMany({
-			where: order => eq(order.userId, userId ?? currentUser.id),
+			where: order => eq(order.userId, currentUser.id),
 			orderBy: (order, { desc }) => desc(order.createdAt),
 			with: {
 				orderItems: {
