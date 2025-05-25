@@ -2,7 +2,6 @@
 
 import { Color } from '@/db/schema/colors'
 import { darkenHex } from '@/lib/utils'
-import { CheckIcon } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
@@ -29,7 +28,7 @@ export default function ColorCheckbox({ color }: { color: Color }) {
 				value={color.slug}
 			/>
 			{checked && (
-				<CheckIcon className='absolute inset-0 m-auto size-4 text-white' />
+				<div className='absolute -inset-[5px] -z-10 rounded-full border-2 border-blue-700' />
 			)}
 		</label>
 	)
