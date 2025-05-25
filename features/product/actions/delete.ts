@@ -3,7 +3,7 @@
 import { db } from '@/db'
 import { products } from '@/db/schema'
 import { productImages } from '@/db/schema/product-images'
-import { requirePermission } from '@/features/action-utils'
+import { requirePermission } from '@/utils/actions'
 import { eq, isNotNull } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { UTApi } from 'uploadthing/server'

@@ -27,7 +27,7 @@ import {
 import Avatar from '@/components/utils/avatar'
 import { softDeleteProduct } from '@/features/product/actions/delete'
 import { ProductsReturn } from '@/features/product/actions/read'
-import { formatDate, formatPrice } from '@/lib/utils'
+import { formatDate, formatPrice } from '@/utils/format'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'

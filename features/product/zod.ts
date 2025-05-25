@@ -1,5 +1,5 @@
 import { Size } from '@/db/schema/enums'
-import { formatFileSize } from '@/lib/utils'
+import { formatFileSize } from '@/utils/format'
 import { z } from 'zod'
 
 export const productImageSchema = z

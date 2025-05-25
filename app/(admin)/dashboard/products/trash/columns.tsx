@@ -17,7 +17,7 @@ import {
 	restoreProduct
 } from '@/features/product/actions/delete'
 import { ProductsReturn } from '@/features/product/actions/read'
-import { formatDate, getTimeDistanceFromNow } from '@/lib/utils'
+import { formatDate, getTimeDistanceFromNow } from '@/utils/format'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'

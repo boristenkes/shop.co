@@ -1,7 +1,7 @@
 'use client'
 
 import { Color } from '@/db/schema/colors'
-import { darkenHex } from '@/lib/utils'
+import { darkenHex } from '@/utils/helpers'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 

@@ -5,9 +5,9 @@ import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { Review } from '@/db/schema/reviews'
 import { User } from '@/db/schema/users'
-import { requirePermission } from '@/features/action-utils'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { requirePermission } from '@/utils/actions'
 
 export type GetProductReviewsReview = Pick<
 	Review,

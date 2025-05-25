@@ -2,8 +2,8 @@
 
 import { db } from '@/db'
 import { colors } from '@/db/schema/colors'
-import { requirePermission } from '@/features/action-utils'
 import { slugify } from '@/lib/utils'
+import { requirePermission } from '@/utils/actions'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { newColorSchema } from '../zod'

@@ -3,8 +3,8 @@
 import { db } from '@/db'
 import { Role } from '@/db/schema/enums'
 import { User, users } from '@/db/schema/users'
-import { requirePermission } from '@/features/action-utils'
 import { auth } from '@/lib/auth'
+import { requirePermission } from '@/utils/actions'
 import { eq } from 'drizzle-orm'
 
 export async function updateUser(userId: User['id'], newData: Partial<User>) {

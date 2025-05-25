@@ -8,7 +8,7 @@ import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
 import { User } from '@/db/schema/users'
-import { requirePermission } from '@/features/action-utils'
+import { requirePermission } from '@/utils/actions'
 import { and, eq, ilike, isNull, max, min, ne, or, sql } from 'drizzle-orm'
 import { ProductCard } from '../types'
 

@@ -1,8 +1,8 @@
 import ErrorMessage from '@/components/error-message'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { getStatistics } from '@/features/action-utils'
 import { auth } from '@/lib/auth'
-import { formatInt, formatPrice } from '@/lib/utils'
+import { getStatistics } from '@/utils/actions'
+import { formatInt, formatPrice } from '@/utils/format'
 import { DollarSign, ShoppingBag, Star, Users } from 'lucide-react'
 import { notFound } from 'next/navigation'
 

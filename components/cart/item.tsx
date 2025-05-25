@@ -1,7 +1,8 @@
 'use client'
 
 import { SessionCartItem } from '@/context/cart'
-import { calculatePriceWithDiscount, formatPrice } from '@/lib/utils'
+import { calculatePriceWithDiscount } from '@/lib/utils'
+import { formatPrice } from '@/utils/format'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'

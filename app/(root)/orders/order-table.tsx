@@ -11,7 +11,7 @@ import {
 	TableRow
 } from '@/components/ui/table'
 import { GetUserOrdersOrder } from '@/features/orders/actions/read'
-import { formatDate, formatPrice } from '@/lib/utils'
+import { formatDate, formatPrice } from '@/utils/format'
 import Image from 'next/image'
 import Link from 'next/link'
 

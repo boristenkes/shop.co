@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import { type Color } from '@/db/schema/colors'
 import { deleteColor } from '@/features/color/actions/delete'
-import { darkenHex } from '@/lib/utils'
+import { darkenHex } from '@/utils/helpers'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'

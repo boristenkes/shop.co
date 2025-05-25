@@ -1,6 +1,7 @@
 'use client'
 
-import { cn, formatFileSize } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { formatFileSize } from '@/utils/format'
 import { UploadCloudIcon, XIcon } from 'lucide-react'
 import Image from 'next/image'
 import { forwardRef, useMemo, useState } from 'react'

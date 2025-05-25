@@ -5,7 +5,7 @@ import { products, productsToColors } from '@/db/schema'
 import { categories, Category } from '@/db/schema/categories'
 import { Color, colors } from '@/db/schema/colors'
 import { TSize } from '@/db/schema/enums'
-import { isArray, toCents } from '@/lib/utils'
+import { isArray, toCents } from '@/utils/helpers'
 import {
 	and,
 	arrayOverlaps,

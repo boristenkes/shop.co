@@ -2,9 +2,9 @@
 
 import { db } from '@/db'
 import { User, users } from '@/db/schema/users'
-import { requirePermission } from '@/features/action-utils'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { requirePermission } from '@/utils/actions'
 import { eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 

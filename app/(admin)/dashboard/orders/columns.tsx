@@ -11,7 +11,8 @@ import {
 } from '@/components/ui/hover-card'
 import Avatar from '@/components/utils/avatar'
 import { GetAllOrdersOrder } from '@/features/orders/actions/read'
-import { cn, formatDate, formatPrice } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { formatDate, formatPrice } from '@/utils/format'
 import { type ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
 

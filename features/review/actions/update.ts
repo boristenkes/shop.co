@@ -2,7 +2,7 @@
 
 import { db } from '@/db'
 import { Review, reviews } from '@/db/schema/reviews'
-import { requirePermission } from '@/features/action-utils'
+import { requirePermission } from '@/utils/actions'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 

@@ -32,7 +32,8 @@ import {
 	editProductSchema
 } from '@/features/product/zod'
 import { useUploadThing } from '@/lib/uploadthing'
-import { cn, darkenHex, getUploadthingKey, isEmpty } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { darkenHex, getUploadthingKey, isEmpty } from '@/utils/helpers'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon, PlusIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'

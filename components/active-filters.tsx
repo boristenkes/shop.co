@@ -1,6 +1,7 @@
 'use client'
 
-import { cn, unslugify } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { unslugify } from '@/utils/helpers'
 import { XIcon } from 'lucide-react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
