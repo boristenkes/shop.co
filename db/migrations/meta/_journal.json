@@ -43,6 +43,13 @@
       "when": 1748039124137,
       "tag": "0005_curious_chamber",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1748274729191,
+      "tag": "0006_slimy_black_bolt",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,7 @@ import { formatFileSize } from '@/utils/format'
 import { z } from 'zod'
 
 export const productImageSchema = z
-	.instanceof(File)
+	.any()
 	.refine(
 		file => file.type.startsWith('image/'),
 		'Invalid file type. Must be image'

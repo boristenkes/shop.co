@@ -11,7 +11,7 @@ export const subscribers = pgTable(
 	{
 		id: serial().primaryKey(),
 		email: text().unique().notNull(),
-		subscribedAt: timestamp().defaultNow()
+		subscribedAt: timestamp({ withTimezone: true }).defaultNow()
 	},
 	t => [uniqueIndex().on(t.email)]
 )

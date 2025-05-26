@@ -28,8 +28,8 @@ export const reviews = pgTable(
 			.notNull()
 			.references(() => products.id, { onDelete: 'cascade' }),
 
-		createdAt: timestamp().defaultNow(),
-		updatedAt: timestamp()
+		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
 			.$onUpdate(() => new Date())
 	},

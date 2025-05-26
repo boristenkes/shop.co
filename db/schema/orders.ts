@@ -22,8 +22,8 @@ export const orders = pgTable('orders', {
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
 
-	createdAt: timestamp().defaultNow(),
-	updatedAt: timestamp()
+	createdAt: timestamp({ withTimezone: true }).defaultNow(),
+	updatedAt: timestamp({ withTimezone: true })
 		.defaultNow()
 		.$onUpdate(() => new Date())
 })
@@ -55,8 +55,8 @@ export const orderItems = pgTable('order_items', {
 		.notNull()
 		.references(() => colors.id, { onDelete: 'restrict' }),
 
-	createdAt: timestamp().defaultNow(),
-	updatedAt: timestamp()
+	createdAt: timestamp({ withTimezone: true }).defaultNow(),
+	updatedAt: timestamp({ withTimezone: true })
 		.defaultNow()
 		.$onUpdate(() => new Date())
 })

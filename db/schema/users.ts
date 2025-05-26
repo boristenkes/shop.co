@@ -22,8 +22,8 @@ export const users = pgTable(
 		role: roleEnum().default('customer').notNull(),
 		image: text(),
 
-		createdAt: timestamp().defaultNow(),
-		updatedAt: timestamp()
+		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
 			.$onUpdate(() => new Date())
 	},

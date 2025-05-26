@@ -36,11 +36,11 @@ export const products = pgTable(
 		}),
 		userId: integer().references(() => users.id, { onDelete: 'set null' }),
 
-		createdAt: timestamp().defaultNow(),
-		updatedAt: timestamp()
+		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
 			.$onUpdate(() => new Date()),
-		deletedAt: timestamp()
+		deletedAt: timestamp({ withTimezone: true })
 	},
 	t => [uniqueIndex('product_slug_idx').on(t.slug)]
 )
