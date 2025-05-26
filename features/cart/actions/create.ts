@@ -5,6 +5,7 @@ import { cartItems, carts } from '@/db/schema'
 import { Size, TSize } from '@/db/schema/enums'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { touchCart } from '@/utils/actions'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
@@ -60,6 +61,7 @@ export async function saveToCart(data: NewItemData): Promise<AddToCartReturn> {
 				cartId = newCart.id
 			} else {
 				cartId = activeCart.id
+				await touchCart(cartId) // Update cart `updatedAt`
 			}
 
 			// Add the cart item

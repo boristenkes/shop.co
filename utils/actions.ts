@@ -2,6 +2,7 @@
 
 import { db } from '@/db'
 import { orders, products, reviews, users } from '@/db/schema'
+import { Cart, carts } from '@/db/schema/carts'
 import { OrderStatus, Role } from '@/db/schema/enums'
 import { auth } from '@/lib/auth'
 import { Action, Entity, hasPermission } from '@/lib/permissions'
@@ -68,4 +69,11 @@ export async function getStatistics(): Promise<GetStatisticsReturn> {
 				'Something went wrong while getting statistics. Please try again later.'
 		}
 	}
+}
+
+export async function touchCart(cartId: Cart['id']) {
+	await db
+		.update(carts)
+		.set({ updatedAt: new Date() })
+		.where(eq(carts.id, cartId))
 }

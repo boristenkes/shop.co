@@ -7,6 +7,7 @@ import { CartItem, carts } from '@/db/schema/carts'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { calculatePriceWithDiscount } from '@/lib/utils'
+import { touchCart } from '@/utils/actions'
 import { eq, sql } from 'drizzle-orm'
 import { editCartItemSchema, sessionCartItemSchema } from '../zod'
 import { NewItemData } from './create'
@@ -46,7 +47,15 @@ export async function updateCartItem(
 		if (targetCartItem?.cart.userId !== currentUser.id)
 			throw new Error('Unauthorized')
 
-		await db.update(cartItems).set(parsed).where(eq(cartItems.id, itemId))
+		const [updatedCartItem] = await db
+			.update(cartItems)
+			.set(parsed)
+			.where(eq(cartItems.id, itemId))
+			.returning({
+				cartId: cartItems.cartId
+			})
+
+		await touchCart(updatedCartItem.cartId)
 
 		return { success: true }
 	} catch (error) {

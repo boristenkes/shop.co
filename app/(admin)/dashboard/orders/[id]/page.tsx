@@ -19,15 +19,24 @@ import {
 } from '@/components/ui/table'
 import { BackButton } from '@/components/utils/back-button'
 import { getOrder } from '@/features/orders/actions/read'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
 import { formatDate, formatPrice } from '@/utils/format'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import OrderStatusSelect from './_components/status-select'
 
 export default async function OrderDetailsPage(props: {
 	params: Promise<{ id: string }>
 }) {
+	const session = await auth()
+	const currentUser = session?.user
+
+	if (!currentUser || !hasPermission(currentUser.role, 'orders', ['read']))
+		notFound()
+
 	const orderId = (await props.params).id
 	const response = await getOrder(Number(orderId))
 

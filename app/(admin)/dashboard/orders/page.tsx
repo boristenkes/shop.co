@@ -1,9 +1,18 @@
 import ErrorMessage from '@/components/error-message'
 import { getAllOrders } from '@/features/orders/actions/read'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
+import { notFound } from 'next/navigation'
 import { columns } from './columns'
 import { OrdersTable } from './table'
 
 export default async function OrdersPage() {
+	const session = await auth()
+	const currentUser = session?.user
+
+	if (!currentUser || !hasPermission(currentUser.role, 'orders', ['read']))
+		notFound()
+
 	const response = await getAllOrders()
 
 	return (
