@@ -13,7 +13,7 @@ export default async function ProductsPage() {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !hasPermission(currentUser.role, 'products', ['read']))
+	if (!currentUser || !['admin', 'moderator'].includes(currentUser.role))
 		notFound()
 
 	const response = await getProductsForAdmin()
