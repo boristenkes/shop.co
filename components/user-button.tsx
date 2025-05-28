@@ -45,7 +45,9 @@ export default async function UserButton({ ...props }) {
 			<DropdownMenuContent>
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem>Profile</DropdownMenuItem>
+				<DropdownMenuItem>
+					<Link href='/profile'>Profile</Link>
+				</DropdownMenuItem>
 				{hasPermission(currentUser.role, 'orders', ['read:own']) && (
 					<DropdownMenuItem>
 						<Link href='/orders'>My Orders</Link>

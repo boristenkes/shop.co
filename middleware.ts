@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export const config = {
-	matcher: ['/dashboard/:path*']
+	matcher: [
+		'/dashboard/:path*',
+		'/reviews',
+		'/orders',
+		'/profile',
+		'/checkout/:path*'
+	]
 }
 
 export function middleware(req: NextRequest) {

@@ -12,7 +12,7 @@ const permissions: Permissions = {
 		orders: ['read', 'update', 'delete'],
 		carts: ['read', 'delete'],
 		reviews: ['read', 'update', 'delete'],
-		users: ['read', 'update', 'delete'],
+		users: ['read', 'read:own', 'update', 'delete'],
 		categories: ['create', 'read', 'update', 'delete'],
 		colors: ['create', 'read', 'update', 'delete']
 	},
@@ -30,7 +30,7 @@ const permissions: Permissions = {
 		orders: ['create', 'read:own'],
 		carts: ['create', 'read:own', 'update:own', 'delete:own'],
 		reviews: ['create', 'read:own', 'delete:own', 'update:own'],
-		users: [],
+		users: ['read:own', 'delete:own'],
 		categories: [],
 		colors: []
 	},
