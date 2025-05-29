@@ -55,7 +55,7 @@ export default async function EditProductPage(props: {
 							asChild
 						>
 							<Link href={`/products/${productResponse.product.slug}/${id}`}>
-								Go to Product Page
+								View in store
 							</Link>
 						</Button>
 					)}

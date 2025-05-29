@@ -415,7 +415,10 @@ function UserCart({ cart }: { cart: GetUserByIdUser['cart'] }) {
 							className='border rounded-lg p-3'
 						>
 							<div className='flex gap-3'>
-								<div className='flex-shrink-0'>
+								<Link
+									href={`/dashboard/products/${item.product.id}`}
+									className='flex-shrink-0'
+								>
 									<Image
 										width={48}
 										height={48}
@@ -423,7 +426,7 @@ function UserCart({ cart }: { cart: GetUserByIdUser['cart'] }) {
 										alt={item.product.name}
 										className='size-12 object-contain rounded-md'
 									/>
-								</div>
+								</Link>
 								<div className='flex-1 min-w-0'>
 									<div className='flex items-center justify-between gap-2'>
 										<h5 className='font-medium text-sm truncate'>

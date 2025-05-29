@@ -116,7 +116,7 @@ export default async function CartDetailsPage(props: {
 										<TableRow key={item.id}>
 											<TableCell className='font-medium'>
 												<Link
-													href={`/products/${item.product.slug}/${item.product.id}`}
+													href={`/dashboard/products/${item.product.id}`}
 													className='hover:underline underline-offset-4'
 												>
 													<Image

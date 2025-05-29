@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { stripePromise } from '@/components/utils/providers'
 import { useCart } from '@/context/cart'
 import { checkout } from '@/features/orders/actions/create'
+import { stripePromise } from '@/lib/stripe-client'
 import { calculatePriceWithDiscount } from '@/lib/utils'
 import { formatPrice } from '@/utils/format'
 import { ArrowRightIcon, Loader2Icon, TagIcon } from 'lucide-react'

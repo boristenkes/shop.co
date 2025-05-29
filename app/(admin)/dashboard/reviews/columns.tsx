@@ -57,7 +57,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 
 			return (
 				<Link
-					href={`/products/${product.slug}/${product.id}/reviews`}
+					href={`/dashboard/products/${product.id}`}
 					className='hover:underline underline-offset-4'
 				>
 					<Image

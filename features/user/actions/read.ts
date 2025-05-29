@@ -3,7 +3,7 @@
 import { db } from '@/db'
 import { Cart, CartItem } from '@/db/schema/carts'
 import { Color } from '@/db/schema/colors'
-import { Order } from '@/db/schema/orders'
+import { Order, orders } from '@/db/schema/orders'
 import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { Review } from '@/db/schema/reviews'
@@ -116,7 +116,9 @@ export async function getUserById(
 						}
 					}
 				},
-				orders: true,
+				orders: {
+					orderBy: desc(orders.id)
+				},
 				cart: {
 					with: {
 						cartItems: {
