@@ -9,9 +9,11 @@ export type GetColorsReturn =
 
 export async function getColors(): Promise<GetColorsReturn> {
 	try {
-		const results = await db.query.colors.findMany()
+		const colors = await db.query.colors.findMany({
+			orderBy: (color, { desc }) => desc(color.id)
+		})
 
-		return { success: true, colors: results }
+		return { success: true, colors }
 	} catch (error) {
 		console.error('[GET_COLORS]:', error)
 		return {

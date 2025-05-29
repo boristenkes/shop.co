@@ -5,7 +5,7 @@ import { User, users } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { requirePermission } from '@/utils/actions'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 
 export type GetUsersConfig = {
@@ -27,7 +27,7 @@ export async function getUsers({
 			throw new Error('Unauthorized')
 
 		const results = await db.query.users.findMany({
-			orderBy: (users, { desc }) => [desc(users.id)],
+			orderBy: desc(users.id),
 			columns: {
 				hashedPassword: false
 			}

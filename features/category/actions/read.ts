@@ -3,7 +3,7 @@
 import { db } from '@/db'
 import { categories, products } from '@/db/schema'
 import { Category } from '@/db/schema/categories'
-import { asc, eq, sql } from 'drizzle-orm'
+import { desc, eq, sql } from 'drizzle-orm'
 
 export type GetCategoriesConfig = {
 	throwOnError?: boolean
@@ -27,7 +27,7 @@ export async function getCategories({
 			.from(categories)
 			.leftJoin(products, eq(products.categoryId, categories.id))
 			.groupBy(categories.id) // Group by category id to calculate product counts
-			.orderBy(asc(categories.id))
+			.orderBy(desc(categories.id))
 
 		return { success: true, categories: results }
 	} catch (error: any) {

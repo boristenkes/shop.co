@@ -51,7 +51,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 			const image = product.images[0]
 
 			return (
-				<Link href={`/products/${product.slug}/${product.id}`}>
+				<Link href={`/dashboard/products/${product.id}`}>
 					<Image
 						src={image.url}
 						alt={image.url}
@@ -70,6 +70,11 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 				column={column}
 				title='Name'
 			/>
+		),
+		cell: ({ row }) => (
+			<Link href={`/dashboard/products/${row.original.id}`}>
+				{row.original.name}
+			</Link>
 		)
 	},
 	{
@@ -262,8 +267,13 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
 
 							<DropdownMenuItem>
+								<Link href={`/dashboard/products/${product.id}`}>
+									View details
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem>
 								<Link href={`/products/${product.slug}/${product.id}`}>
-									View product
+									View in store
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem>

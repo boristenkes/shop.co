@@ -102,7 +102,8 @@ export async function getReviews(): Promise<GetReviewsReturn> {
 						}
 					}
 				}
-			}
+			},
+			orderBy: (review, { desc }) => desc(review.id)
 		})
 
 		if (!reviews) throw new Error('Failed to get reviews')

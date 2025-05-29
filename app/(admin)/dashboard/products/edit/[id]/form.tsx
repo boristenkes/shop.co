@@ -25,7 +25,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Size, TSize } from '@/db/schema/enums'
 import { GetCategoriesReturn } from '@/features/category/actions/read'
 import { GetColorsReturn } from '@/features/color/actions/read'
-import { GetProductByIdReturnProduct } from '@/features/product/actions/read'
+import { GetProductByIdProduct } from '@/features/product/actions/read'
 import { updateProduct } from '@/features/product/actions/update'
 import {
 	type EditProductSchema,
@@ -44,7 +44,7 @@ import NewCategoryButton from '../../../categories/components'
 import NewColorButton from '../../../colors/components'
 
 type EditProductFormProps = {
-	product: GetProductByIdReturnProduct
+	product: GetProductByIdProduct
 	getCategoriesResponse: GetCategoriesReturn
 	getColorsResponse: GetColorsReturn
 }

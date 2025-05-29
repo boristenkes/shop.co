@@ -176,7 +176,8 @@ export async function getAllCarts(): Promise<GetAllCartsReturn> {
 					FROM cart_items 
 					WHERE cart_items.cart_id = carts.id
 				)`.as('item_count')
-			}
+			},
+			orderBy: (cart, { desc }) => desc(cart.id)
 		})
 
 		return { success: true, carts }

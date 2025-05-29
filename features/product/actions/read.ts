@@ -8,8 +8,20 @@ import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
 import { User } from '@/db/schema/users'
+import { auth } from '@/lib/auth'
 import { requirePermission } from '@/utils/actions'
-import { and, eq, ilike, isNull, max, min, ne, or, sql } from 'drizzle-orm'
+import {
+	and,
+	desc,
+	eq,
+	ilike,
+	isNull,
+	max,
+	min,
+	ne,
+	or,
+	sql
+} from 'drizzle-orm'
 import { ProductCard } from '../types'
 
 export type ProductsReturn = Product & {
@@ -48,7 +60,8 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 						email: true
 					}
 				}
-			}
+			},
+			orderBy: desc(products.id)
 		})) as ProductsReturn[]
 
 		return { success: true, products: results }
@@ -62,22 +75,22 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 	}
 }
 
-export type GetProductByIdReturnProduct = Product & {
-	productsToColors: (ProductToColor & { color: Color })[]
+export type GetProductByIdProduct = Product & {
+	productsToColors: { color: Color }[]
 	averageRating: number
-	images: ProductImage[]
-	category: Category
+	images: Pick<ProductImage, 'id' | 'url'>[]
+	category: Category | null
 }
 
 export type GetProductByIdReturn =
-	| { success: true; product: GetProductByIdReturnProduct }
+	| { success: true; product: GetProductByIdProduct }
 	| { success: false; message: string }
 
 export async function getProductById(
 	id: Product['id']
 ): Promise<GetProductByIdReturn> {
 	try {
-		const product = (await db.query.products.findFirst({
+		const product = await db.query.products.findFirst({
 			where: (products, { isNull }) =>
 				and(
 					eq(products.id, id),
@@ -94,12 +107,63 @@ export async function getProductById(
 			},
 			extras: {
 				averageRating: sql<number>`(
+				  SELECT COALESCE(AVG(r.rating), 0) ::float
+				  FROM reviews r
+				  WHERE r.product_id = ${id}
+				)`.as('average_rating')
+			}
+		})
+
+		if (!product) throw new Error('Product not found.')
+
+		return { success: true, product }
+	} catch (error) {
+		console.error('[GET_PRODUCT_BY_ID]:', error)
+		return { success: false, message: 'Product not found or it was deleted' }
+	}
+}
+
+export type GetProductByIdForAdminProduct = GetProductByIdProduct & {
+	totalSoldCount: number
+}
+
+export type GetProductByIdForAdminReturn =
+	| { success: true; product: GetProductByIdForAdminProduct }
+	| { success: false; message: string }
+
+export async function getProductByIdForAdmin(
+	id: Product['id']
+): Promise<GetProductByIdForAdminReturn> {
+	try {
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (!currentUser || !['admin', 'moderator'].includes(currentUser.role))
+			throw new Error('Unauthorized')
+
+		const product = await db.query.products.findFirst({
+			where: eq(products.id, id),
+			with: {
+				images: { columns: { id: true, url: true } },
+				productsToColors: {
+					with: { color: true },
+					columns: {}
+				},
+				category: true
+			},
+			extras: {
+				averageRating: sql<number>`(
           SELECT COALESCE(AVG(r.rating), 0) ::float
           FROM reviews r
           WHERE r.product_id = ${id}
-        )`.as('average_rating')
+        )`.as('average_rating'),
+				totalSoldCount: sql<number>`(
+					SELECT COALESCE(SUM(quantity)::int, 0)
+					FROM order_items
+					WHERE product_id = ${id}
+				)`.as('total_sold_count')
 			}
-		})) as GetProductByIdReturnProduct
+		})
 
 		if (!product) throw new Error('Product not found.')
 
