@@ -11,7 +11,7 @@ import { ArrowRightIcon, Loader2Icon, TagIcon } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-export default function OrderSummary() {
+export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 	const cart = useCart()
 	const subtotalInCents = cart.items.reduce((acc, curr) => {
 		const priceWithDiscount = calculatePriceWithDiscount(
@@ -101,14 +101,19 @@ export default function OrderSummary() {
 				size='lg'
 				className='w-full'
 				onClick={handleCheckout}
-				disabled={checkoutPending}
+				disabled={checkoutPending || !isSignedIn}
 			>
-				{checkoutPending ? 'Please wait' : 'Go to Checkout'}{' '}
-				{checkoutPending ? (
-					<Loader2Icon className='animate-spin size-4' />
-				) : (
-					<ArrowRightIcon />
-				)}
+				{isSignedIn
+					? checkoutPending
+						? 'Please wait'
+						: 'Go to Checkout'
+					: 'You must sign in'}{' '}
+				{isSignedIn &&
+					(checkoutPending ? (
+						<Loader2Icon className='animate-spin size-4' />
+					) : (
+						<ArrowRightIcon />
+					))}
 			</Button>
 		</aside>
 	)

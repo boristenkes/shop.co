@@ -11,7 +11,11 @@ import { ProductImage } from '@/db/schema/product-images'
 import useMediaQuery from '@/hooks/use-media-query'
 import Image from 'next/image'
 
-export default function ImageCarousel({ images }: { images: ProductImage[] }) {
+export default function ImageCarousel({
+	images
+}: {
+	images: Pick<ProductImage, 'id' | 'url'>[]
+}) {
 	const isMobile = useMediaQuery('(max-width: 1024px)')
 
 	return (

@@ -94,7 +94,7 @@ export default async function ProductDetailsPage(props: {
 									alt={`${product.name} - Image ${idx + 1}`}
 									width={462}
 									height={224}
-									className='w-full h-56 object-cover rounded-lg border'
+									className='w-full h-56 object-contain rounded-lg border'
 								/>
 							</a>
 						))}

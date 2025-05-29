@@ -1,6 +1,12 @@
 'use server'
 
 import { db } from '@/db'
+import { Cart, CartItem } from '@/db/schema/carts'
+import { Color } from '@/db/schema/colors'
+import { Order } from '@/db/schema/orders'
+import { ProductImage } from '@/db/schema/product-images'
+import { Product } from '@/db/schema/products'
+import { Review } from '@/db/schema/reviews'
 import { User, users } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
@@ -56,7 +62,24 @@ export async function getUsers({
 export type GetUserByIdUser = Omit<
 	User,
 	'emailVerified' | 'hashedPassword' | 'updatedAt'
->
+> & {
+	reviews: (Review & {
+		product: Pick<Product, 'id' | 'name' | 'slug'> & {
+			images: Pick<ProductImage, 'url'>[]
+		}
+	})[]
+	orders: Order[]
+	cart:
+		| (Cart & {
+				cartItems: (CartItem & {
+					product: Pick<Product, 'id' | 'name' | 'slug'> & {
+						images: Pick<ProductImage, 'url'>[]
+					}
+					color: Pick<Color, 'name' | 'hexCode'>
+				})[]
+		  })
+		| null
+}
 
 export type GetUserByIdReturn =
 	| { success: true; user: GetUserByIdUser }
@@ -74,6 +97,53 @@ export async function getUserById(
 				emailVerified: false,
 				hashedPassword: false,
 				updatedAt: false
+			},
+			with: {
+				reviews: {
+					with: {
+						product: {
+							columns: {
+								id: true,
+								name: true,
+								slug: true
+							},
+							with: {
+								images: {
+									columns: { url: true },
+									limit: 1
+								}
+							}
+						}
+					}
+				},
+				orders: true,
+				cart: {
+					with: {
+						cartItems: {
+							with: {
+								product: {
+									columns: {
+										id: true,
+										name: true,
+										slug: true
+									},
+									with: {
+										images: {
+											columns: { url: true },
+											limit: 1
+										}
+									}
+								},
+								color: {
+									columns: {
+										name: true,
+										hexCode: true
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		})
 

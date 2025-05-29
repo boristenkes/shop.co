@@ -43,7 +43,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 					alt={image.url}
 					width={64}
 					height={64}
-					className='size-16 rounded-sm object-cover'
+					className='size-16 rounded-sm object-contain'
 				/>
 			)
 		}

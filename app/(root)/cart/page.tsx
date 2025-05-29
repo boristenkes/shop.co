@@ -9,13 +9,11 @@ import {
 import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import CartContents from './cart-contents'
 
 export default async function CartPage() {
 	const session = await auth()
-
-	if (!session) redirect('/')
+	const isSignedIn = !!session
 
 	return (
 		<main className='container pt-6'>
@@ -44,7 +42,7 @@ export default async function CartPage() {
 				Your cart
 			</h1>
 
-			<CartContents />
+			<CartContents isSignedIn={isSignedIn} />
 		</main>
 	)
 }

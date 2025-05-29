@@ -6,7 +6,7 @@ import { useCart } from '@/context/cart'
 import { ShoppingCartIcon } from 'lucide-react'
 import OrderSummary, { OrderSummarySkeleton } from './order-summary'
 
-export default function CartContents() {
+export default function CartContents({ isSignedIn }: { isSignedIn: boolean }) {
 	const cart = useCart()
 
 	if (cart.isLoading) return <CartContentsSkeleton />
@@ -35,7 +35,7 @@ export default function CartContents() {
 				items={cart.items}
 				className='basis-3/5 max-md:w-full'
 			/>
-			<OrderSummary />
+			<OrderSummary isSignedIn={isSignedIn} />
 		</div>
 	)
 }

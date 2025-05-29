@@ -6,6 +6,7 @@ import {
 	timestamp,
 	uniqueIndex
 } from 'drizzle-orm/pg-core'
+import { carts } from './carts'
 import { roleEnum } from './enums'
 import { orders } from './orders'
 import { products } from './products'
@@ -33,7 +34,8 @@ export const users = pgTable(
 export const usersRelations = relations(users, ({ many, one }) => ({
 	products: many(products),
 	reviews: many(reviews),
-	orders: many(orders)
+	orders: many(orders),
+	cart: one(carts)
 }))
 
 export type User = typeof users.$inferSelect
