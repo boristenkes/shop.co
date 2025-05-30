@@ -1,0 +1,1 @@
+CREATE INDEX "faq_product_id_idx" ON "product_faqs" USING btree ("product_id");

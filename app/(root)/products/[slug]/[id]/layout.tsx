@@ -12,7 +12,7 @@ import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { limitTextLength } from '@/utils/format'
 import { absoluteUrl, unslugify } from '@/utils/helpers'
-import { EditIcon } from 'lucide-react'
+import { EditIcon, ExternalLinkIcon } from 'lucide-react'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -95,16 +95,25 @@ export default async function ProductLayout({
 					</BreadcrumbList>
 				</Breadcrumb>
 
-				{hasPermission(currentUser?.role!, 'products', ['update']) && (
-					<Button
-						variant='secondary'
-						asChild
-					>
-						<Link href={`/dashboard/products/edit/${id}`}>
-							Edit product
-							<EditIcon />
-						</Link>
-					</Button>
+				{['admin', 'moderator'].includes(currentUser?.role!) && (
+					<div className='flex items-center gap-4'>
+						{hasPermission(currentUser?.role!, 'products', ['update']) && (
+							<Button
+								variant='secondary'
+								asChild
+							>
+								<Link href={`/dashboard/products/edit/${id}`}>
+									Edit product
+									<EditIcon />
+								</Link>
+							</Button>
+						)}
+						<Button asChild>
+							<Link href={`/dashboard/products/${id}`}>
+								View details <ExternalLinkIcon />
+							</Link>
+						</Button>
+					</div>
 				)}
 			</div>
 

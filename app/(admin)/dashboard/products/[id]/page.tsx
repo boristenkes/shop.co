@@ -1,10 +1,17 @@
 import ErrorMessage from '@/components/error-message'
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger
+} from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { BackButton } from '@/components/utils/back-button'
 import Paragraph from '@/components/utils/paragraph'
+import { Product } from '@/db/schema/products'
 import {
 	getProductByIdForAdmin,
 	GetProductByIdForAdminProduct
@@ -16,6 +23,7 @@ import {
 	ArrowLeft,
 	Calendar,
 	Edit,
+	EditIcon,
 	Package,
 	Star,
 	TrendingUp
@@ -44,7 +52,7 @@ export default async function ProductDetailsPage(props: {
 	return (
 		<main className='container space-y-6'>
 			{/* Header */}
-			<div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
+			<header className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
 				<div className='flex items-center gap-4'>
 					<BackButton
 						variant='outline'
@@ -71,11 +79,17 @@ export default async function ProductDetailsPage(props: {
 						</Link>
 					</Button>
 				</div>
-			</div>
+			</header>
 
 			<div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
 				{/* Product Images */}
-				<ProductImages images={product.images} />
+				<div className='grid gap-4'>
+					<ProductImages images={product.images} />
+					<ProductFAQs
+						faqs={product.faqs}
+						productId={product.id}
+					/>
+				</div>
 
 				{/* Product Details */}
 				<div className='lg:col-span-2 space-y-6'>
@@ -123,6 +137,50 @@ function ProductImages({
 						/>
 					</a>
 				))}
+			</CardContent>
+		</Card>
+	)
+}
+
+function ProductFAQs({
+	faqs,
+	productId
+}: {
+	faqs: GetProductByIdForAdminProduct['faqs']
+	productId: Product['id']
+}) {
+	return (
+		<Card>
+			<CardHeader>
+				<div className='flex items-center justify-between'>
+					<CardTitle>Frequently Asked Questions</CardTitle>
+					<Button
+						variant='ghost'
+						size='icon'
+						asChild
+					>
+						<Link href={`/dashboard/products/${productId}/faqs`}>
+							<EditIcon className='size-4' />
+						</Link>
+					</Button>
+				</div>
+			</CardHeader>
+			<CardContent>
+				<Accordion
+					type='single'
+					collapsible
+					className='w-full'
+				>
+					{faqs.map(faq => (
+						<AccordionItem
+							key={faq.id}
+							value={faq.id.toString()}
+						>
+							<AccordionTrigger>{faq.question}</AccordionTrigger>
+							<AccordionContent>{faq.answer}</AccordionContent>
+						</AccordionItem>
+					))}
+				</Accordion>
 			</CardContent>
 		</Card>
 	)

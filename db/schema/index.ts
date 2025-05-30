@@ -9,6 +9,7 @@ export {
 	orders,
 	ordersRelations
 } from './orders'
+export { productFAQs, productFAQsRelations } from './product-faqs'
 export { productImages, productImagesRelations } from './product-images'
 export { products, productsRelations } from './products'
 export {

@@ -18,6 +18,11 @@ body {
 	margin-inline: auto;
 }
 
+.container-sm {
+	width: min(100% - 2rem, var(--max-width, 1080px));
+	margin-inline: auto;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
 	width: 10px;
 	height: 10px;

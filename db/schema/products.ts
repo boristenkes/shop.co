@@ -12,6 +12,7 @@ import {
 import { categories } from './categories'
 import { sizeEnum } from './enums'
 import { orderItems } from './orders'
+import { productFAQs } from './product-faqs'
 import { productImages } from './product-images'
 import { productsToColors } from './products-to-colors'
 import { reviews } from './reviews'
@@ -57,7 +58,8 @@ export const productsRelations = relations(products, ({ one, many }) => ({
 	productsToColors: many(productsToColors),
 	orderItems: many(orderItems),
 	images: many(productImages),
-	reviews: many(reviews)
+	reviews: many(reviews),
+	faqs: many(productFAQs)
 }))
 
 export type Product = typeof products.$inferSelect

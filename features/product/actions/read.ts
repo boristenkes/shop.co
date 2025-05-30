@@ -4,6 +4,7 @@ import { db } from '@/db'
 import { products } from '@/db/schema'
 import { Category } from '@/db/schema/categories'
 import { Color } from '@/db/schema/colors'
+import { ProductFAQ } from '@/db/schema/product-faqs'
 import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
@@ -125,6 +126,7 @@ export async function getProductById(
 
 export type GetProductByIdForAdminProduct = GetProductByIdProduct & {
 	totalSoldCount: number
+	faqs: ProductFAQ[]
 }
 
 export type GetProductByIdForAdminReturn =
@@ -149,7 +151,8 @@ export async function getProductByIdForAdmin(
 					with: { color: true },
 					columns: {}
 				},
-				category: true
+				category: true,
+				faqs: true
 			},
 			extras: {
 				averageRating: sql<number>`(

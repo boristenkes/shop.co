@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import React, {
+import {
 	createContext,
 	forwardRef,
 	useCallback,
