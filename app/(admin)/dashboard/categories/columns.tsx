@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { Category } from '@/db/schema/categories'
 import { deleteCategory } from '@/features/category/actions/delete'
+import { formatId } from '@/utils/format'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -24,7 +25,7 @@ export const columns: ColumnDef<Category>[] = [
 	{
 		accessorKey: 'id',
 		header: 'ID',
-		cell: ({ row }) => '#' + String(row.original.id).padStart(5, '0')
+		cell: ({ row }) => formatId(row.original.id)
 	},
 	{
 		accessorKey: 'name',

@@ -33,7 +33,7 @@ import Avatar from '@/components/utils/avatar'
 import { deleteReview } from '@/features/review/actions/delete'
 import { GetReviewsReturnReview } from '@/features/review/actions/read'
 import { approveReview } from '@/features/review/actions/update'
-import { formatDate } from '@/utils/format'
+import { formatDate, formatId } from '@/utils/format'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -47,7 +47,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 	{
 		accessorKey: 'id',
 		header: 'ID',
-		cell: ({ row }) => '#' + String(row.original.id).padStart(5, '0')
+		cell: ({ row }) => formatId(row.original.id)
 	},
 	{
 		accessorKey: 'product',

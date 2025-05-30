@@ -90,15 +90,17 @@ export function EditProductForm({
 
 				let newImages
 
-				const hasNewImages = files.some(file => file instanceof File)
+				const hasUpdatedImages =
+					files.length !== product.images.length ||
+					files.some(file => file instanceof File)
 				const hasDirtyFields = !isEmpty(dirtyValues)
 
-				if (!hasNewImages && !hasDirtyFields) return
+				if (!hasUpdatedImages && !hasDirtyFields) return
 
-				if (files.length !== product.images.length || hasNewImages) {
+				if (files.length !== product.images.length || hasUpdatedImages) {
 					let uploadedImages: ClientUploadedFileData<null>[] | undefined = []
 
-					if (hasNewImages) {
+					if (hasUpdatedImages) {
 						uploadedImages = await startUpload(
 							files.filter(file => file instanceof File)
 						)

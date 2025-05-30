@@ -21,7 +21,7 @@ import { BackButton } from '@/components/utils/back-button'
 import { getOrder } from '@/features/orders/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
-import { formatDate, formatPrice } from '@/utils/format'
+import { formatDate, formatId, formatPrice } from '@/utils/format'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -56,7 +56,7 @@ export default async function OrderDetailsPage(props: {
 				<Card>
 					<CardHeader className='flex justify-between flex-row items-start'>
 						<div>
-							<CardTitle>Order ID: {response.order.id}</CardTitle>
+							<CardTitle>Order ID: {formatId(response.order.id)}</CardTitle>
 							<CardDescription className='mt-2'>
 								{response.order.shippingAddress ?? 'No address'}
 							</CardDescription>

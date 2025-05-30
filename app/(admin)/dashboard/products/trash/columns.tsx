@@ -17,7 +17,7 @@ import {
 	restoreProduct
 } from '@/features/product/actions/delete'
 import { ProductsReturn } from '@/features/product/actions/read'
-import { formatDate, getTimeDistanceFromNow } from '@/utils/format'
+import { formatDate, formatId, getTimeDistanceFromNow } from '@/utils/format'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -29,7 +29,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 	{
 		accessorKey: 'id',
 		header: 'ID',
-		cell: ({ row }) => '#' + String(row.original.id).padStart(5, '0')
+		cell: ({ row }) => formatId(row.original.id)
 	},
 	{
 		accessorKey: 'images',

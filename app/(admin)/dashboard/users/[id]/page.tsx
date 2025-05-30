@@ -14,7 +14,7 @@ import DeleteUserButton from '@/features/user/components/delete-button'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
-import { formatDate, formatPrice } from '@/utils/format'
+import { formatDate, formatId, formatPrice } from '@/utils/format'
 import { getRoleBadgeVariant } from '@/utils/helpers'
 import {
 	ArrowLeft,
@@ -193,7 +193,7 @@ function UserProfile({
 							<label className='text-sm font-medium text-gray-500'>
 								User ID
 							</label>
-							<p className='text-sm'>#{user.id}</p>
+							<p className='text-sm'>{formatId(user.id)}</p>
 						</div>
 					</div>
 
@@ -248,7 +248,10 @@ function UserReviews({ reviews }: { reviews: GetUserByIdUser['reviews'] }) {
 								className='border rounded-lg p-4'
 							>
 								<div className='flex flex-col sm:flex-row gap-4'>
-									<div className='flex-shrink-0'>
+									<Link
+										href={`/dashboard/products/${review.product.id}`}
+										className='flex-shrink-0'
+									>
 										<Image
 											src={review.product.images[0].url}
 											alt={review.product.name}
@@ -256,7 +259,7 @@ function UserReviews({ reviews }: { reviews: GetUserByIdUser['reviews'] }) {
 											height={64}
 											className='size-16 object-contain rounded-lg'
 										/>
-									</div>
+									</Link>
 									<div className='flex-1'>
 										<div className='flex flex-col sm:flex-row justify-between items-start gap-2'>
 											<div>
@@ -323,7 +326,7 @@ function UserOrders({ orders }: { orders: GetUserByIdUser['orders'] }) {
 										<div className='flex items-center gap-2'>
 											<h4 className='font-semibold hover:underline'>
 												<Link href={`/dashboard/orders/${order.id}`}>
-													Order #{order.id}
+													Order {formatId(order.id)}
 												</Link>
 											</h4>
 											<Badge
@@ -368,7 +371,7 @@ function UserOrders({ orders }: { orders: GetUserByIdUser['orders'] }) {
 }
 
 function UserCart({ cart }: { cart: GetUserByIdUser['cart'] }) {
-	if (!cart) return null
+	if (!cart || !cart.cartItems.length) return null
 
 	const totalValue = cart.cartItems.reduce(
 		(acc, curr) => acc + curr.productPriceInCents * curr.quantity,

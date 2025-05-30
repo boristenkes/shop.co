@@ -10,7 +10,7 @@ import {
 import Avatar from '@/components/utils/avatar'
 import { GetAllCartsCart } from '@/features/cart/actions/read'
 import DeleteCartButton from '@/features/cart/components/delete-cart-button'
-import { formatInt, getTimeDistanceFromNow } from '@/utils/format'
+import { formatId, formatInt, getTimeDistanceFromNow } from '@/utils/format'
 import { type ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
 
@@ -23,7 +23,7 @@ export const columns: ColumnDef<GetAllCartsCart>[] = [
 				href={`/dashboard/carts/${row.original.id}`}
 				className='hover:font-medium'
 			>
-				{'#' + String(row.original.id).padStart(5, '0')}
+				{formatId(row.original.id)}
 			</Link>
 		)
 	},

@@ -12,6 +12,7 @@ import Paragraph from '@/components/utils/paragraph'
 import { Order } from '@/db/schema/orders'
 import { GetOwnOrdersOrder } from '@/features/orders/actions/read'
 import { cn } from '@/lib/utils'
+import { formatId } from '@/utils/format'
 import { ArrowRightIcon } from 'lucide-react'
 import Link from 'next/link'
 import OrderTable, { OrderTableSkeleton } from './order-table'
@@ -42,7 +43,7 @@ export default function OrderList({ orders }: { orders: GetOwnOrdersOrder[] }) {
 					<Card>
 						<CardHeader className='flex justify-between flex-row items-start'>
 							<div>
-								<CardTitle>Order ID: {order.id}</CardTitle>
+								<CardTitle>Order ID: {formatId(order.id)}</CardTitle>
 								<CardDescription className='mt-2'>
 									{order.shippingAddress ?? 'No address'}
 								</CardDescription>

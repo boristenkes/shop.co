@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import { type Color } from '@/db/schema/colors'
 import { deleteColor } from '@/features/color/actions/delete'
+import { formatId } from '@/utils/format'
 import { darkenHex } from '@/utils/helpers'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
@@ -24,7 +25,7 @@ export const columns: ColumnDef<Color>[] = [
 	{
 		accessorKey: 'id',
 		header: 'ID',
-		cell: ({ row }) => '#' + String(row.original.id).padStart(5, '0')
+		cell: ({ row }) => formatId(row.original.id)
 	},
 	{
 		accessorKey: 'name',

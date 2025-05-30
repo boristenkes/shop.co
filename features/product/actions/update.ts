@@ -68,6 +68,8 @@ export async function updateProduct(
 
 		const updatedData = rest as NewProduct
 
+		if (isEmpty(updatedData)) return { success: true }
+
 		if (priceInDollars) updatedData.priceInCents = toCents(priceInDollars)
 		if (updatedData.name) updatedData.slug = slugify(updatedData.name)
 
