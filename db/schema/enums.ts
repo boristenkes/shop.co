@@ -59,3 +59,7 @@ export const OrderStatus = {
 } as const
 
 export type TOrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+// Coupon Type
+
+export const couponTypeEnum = pgEnum('coupon_type', ['percentage', 'fixed'])

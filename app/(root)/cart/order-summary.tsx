@@ -71,19 +71,19 @@ export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 
 			<form className='flex items-center gap-2 mb-6'>
 				<label
-					htmlFor='promo-code'
+					htmlFor='coupon-code'
 					className='sr-only'
 				>
-					Promo code
+					Coupon code
 				</label>
 				<div className='relative grow'>
 					<TagIcon className='absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400' />
 					<input
 						type='text'
-						id='promo-code'
-						name='promo-code'
-						placeholder='Add promo code'
-						aria-label='Promo code'
+						id='coupon-code'
+						name='coupon-code'
+						placeholder='Enter coupon code'
+						aria-label='Coupon code'
 						className='w-full py-3 pl-12 rounded-full bg-neutral-100 placeholder-neutral-400'
 					/>
 				</div>

@@ -11,6 +11,7 @@ const permissions: Permissions = {
 		products: ['read', 'create', 'update', 'delete'],
 		orders: ['read', 'update', 'delete'],
 		carts: ['read', 'delete'],
+		coupons: ['read', 'create', 'update', 'delete'],
 		reviews: ['read', 'update', 'delete'],
 		users: ['read', 'read:own', 'update', 'delete'],
 		categories: ['create', 'read', 'update', 'delete'],
@@ -20,6 +21,7 @@ const permissions: Permissions = {
 		products: ['read', 'update'],
 		orders: ['read', 'update'],
 		carts: ['read', 'update'],
+		coupons: ['read', 'update'],
 		reviews: ['read', 'update'],
 		users: ['read'],
 		categories: ['read'],
@@ -29,6 +31,7 @@ const permissions: Permissions = {
 		products: ['read'],
 		orders: ['create', 'read:own', 'update:own'],
 		carts: ['create', 'read:own', 'update:own', 'delete:own'],
+		coupons: ['read:own'],
 		reviews: ['create', 'read:own', 'delete:own', 'update:own'],
 		users: ['read:own', 'delete:own'],
 		categories: [],
@@ -38,6 +41,7 @@ const permissions: Permissions = {
 		products: ['read'],
 		orders: [],
 		carts: [],
+		coupons: [],
 		reviews: [],
 		users: [],
 		categories: [],
@@ -49,6 +53,7 @@ export type Entity =
 	| 'products'
 	| 'orders'
 	| 'carts'
+	| 'coupons'
 	| 'reviews'
 	| 'users'
 	| 'categories'

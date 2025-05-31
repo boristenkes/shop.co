@@ -11,6 +11,7 @@ import {
 	ShoppingCart,
 	Star,
 	Tag,
+	Tags,
 	Users
 } from 'lucide-react'
 import Link from 'next/link'
@@ -21,6 +22,7 @@ const navItems = [
 	{ name: 'Products', href: '/dashboard/products', icon: ShoppingBag },
 	{ name: 'Orders', href: '/dashboard/orders', icon: ShoppingCart },
 	{ name: 'Carts', href: '/dashboard/carts', icon: ShoppingBasket },
+	{ name: 'Coupons', href: '/dashboard/coupons', icon: Tags },
 	{ name: 'Reviews', href: '/dashboard/reviews', icon: Star },
 	{ name: 'Categories', href: '/dashboard/categories', icon: Tag },
 	{ name: 'Colors', href: '/dashboard/colors', icon: Palette }

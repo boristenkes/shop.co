@@ -21,7 +21,7 @@ import { BackButton } from '@/components/utils/back-button'
 import { getCart } from '@/features/cart/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
-import { formatPrice, getTimeDistanceFromNow } from '@/utils/format'
+import { formatId, formatPrice, getTimeDistanceFromNow } from '@/utils/format'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -62,7 +62,7 @@ export default async function CartDetailsPage(props: {
 				<Card>
 					<CardHeader className='flex items-start justify-between flex-row'>
 						<div>
-							<CardTitle>Cart ID: {response.cart.id}</CardTitle>
+							<CardTitle>Cart ID: {formatId(response.cart.id)}</CardTitle>
 							<CardDescription className='mt-2'>
 								Opened:{' '}
 								<time
