@@ -5,6 +5,7 @@ import { products, productsToColors } from '@/db/schema'
 import { NewProductImage, productImages } from '@/db/schema/product-images'
 import { NewProduct, Product } from '@/db/schema/products'
 import { EditProductSchema, editProductSchema } from '@/features/product/zod'
+import { sanitizeHTML } from '@/lib/sanitize'
 import { slugify } from '@/lib/utils'
 import { requirePermission } from '@/utils/actions'
 import { isEmpty, toCents } from '@/utils/helpers'
@@ -72,6 +73,8 @@ export async function updateProduct(
 
 		if (priceInDollars) updatedData.priceInCents = toCents(priceInDollars)
 		if (updatedData.name) updatedData.slug = slugify(updatedData.name)
+		if (updatedData.detailsHTML)
+			updatedData.detailsHTML = sanitizeHTML(updatedData.detailsHTML)
 
 		await db
 			.update(products)
