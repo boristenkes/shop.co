@@ -58,10 +58,8 @@ export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 					<dd className='font-semibold text-red-500'>-$0.00</dd>
 				</div>
 				<div className='flex items-center justify-between'>
-					<dt className='text-gray-500'>Delivery Fee</dt>
-					<dd className='italic text-sm text-gray-600'>
-						Calculated at checkout
-					</dd>
+					<dt className='text-gray-500'>Delivery</dt>
+					<dd className='text-sm text-gray-600'>Free</dd>
 				</div>
 				<div className='border-t pt-3 flex items-center justify-between text-lg'>
 					<dt className='font-medium'>Total</dt>

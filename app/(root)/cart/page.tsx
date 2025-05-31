@@ -6,6 +6,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import { CartSyncAlert } from '@/context/cart'
 import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
 import Link from 'next/link'
@@ -41,6 +42,8 @@ export default async function CartPage() {
 			>
 				Your cart
 			</h1>
+
+			{!isSignedIn && <CartSyncAlert className='mt-6' />}
 
 			<CartContents isSignedIn={isSignedIn} />
 		</main>

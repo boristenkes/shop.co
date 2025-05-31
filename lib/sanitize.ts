@@ -7,7 +7,7 @@ const DOMPurify = createDOMPurify(window)
 export const sanitizeConfig = {
 	ALLOWED_TAGS: [
 		'b', 'i', 'em', 'strong',
-		'a', 'p', 'br', 'ul',
+		'a', 'p', 'blockquote', 'ul',
 		'ol', 'li', 'h3', 'h4'
 	],
 	ALLOWED_ATTR: ['href', 'target', 'rel']
