@@ -18,14 +18,18 @@ import {
 
 const headingLevels = [3, 4] as const
 
-export type RichTextEditorProps = {
+export type RichTextEditorProps = Omit<
+	React.ComponentProps<typeof EditorContent>,
+	'editor'
+> & {
 	onChange: (html: string) => void
-	disabled?: boolean
 }
 
 export default function RichTextEditor({
 	onChange,
-	disabled = false
+	disabled,
+	defaultValue = '',
+	...props
 }: RichTextEditorProps) {
 	const editor = useEditor({
 		extensions: [
@@ -35,7 +39,7 @@ export default function RichTextEditor({
 			Underline,
 			Link.configure({ openOnClick: false })
 		],
-		content: '',
+		content: defaultValue as string,
 		onUpdate({ editor }) {
 			onChange(editor.getHTML()) // Send HTML to parent
 		},
@@ -159,6 +163,7 @@ export default function RichTextEditor({
 				<EditorContent
 					editor={editor}
 					disabled={disabled}
+					{...props}
 				/>
 			</div>
 		</div>

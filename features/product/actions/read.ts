@@ -78,7 +78,7 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 	}
 }
 
-export type GetProductByIdProduct = Omit<Product, 'detailsHTML'> & {
+export type GetProductByIdProduct = Product & {
 	productsToColors: { color: Color }[]
 	averageRating: number
 	images: Pick<ProductImage, 'id' | 'url'>[]
@@ -100,9 +100,7 @@ export async function getProductById(
 					isNull(products.deletedAt),
 					eq(products.archived, false)
 				),
-			columns: {
-				detailsHTML: false
-			},
+
 			with: {
 				images: { columns: { id: true, url: true } },
 				productsToColors: {

@@ -2,6 +2,7 @@
 
 import ErrorMessage from '@/components/error-message'
 import { ImageDropzone } from '@/components/image-dropzone'
+import RichTextEditor from '@/components/rich-text-editor'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -59,6 +60,7 @@ export function EditProductForm({
 		defaultValues: {
 			name: product.name,
 			description: product.description ?? '',
+			detailsHTML: product.detailsHTML ?? undefined,
 			price: product.priceInCents / 100,
 			discount: product.discount ?? 0,
 			stock: product.stock ?? 0,
@@ -424,6 +426,31 @@ export function EditProductForm({
 									<FormLabel>Featured</FormLabel>
 									<FormDescription>
 										This product will appear on home page.
+									</FormDescription>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='detailsHTML'
+						render={({ field }) => (
+							<FormItem className='rounded-md space-y-2 col-span-full'>
+								<div className='space-y-2 leading-none'>
+									<FormLabel>Details (optional)</FormLabel>
+									<FormControl>
+										<RichTextEditor
+											onChange={field.onChange}
+											disabled={isSubmitting}
+											defaultValue={field.value}
+										/>
+									</FormControl>
+									<FormDescription>
+										Enter additional details about the product, such as
+										material, care instructions, or any other relevant
+										information.
 									</FormDescription>
 									<FormMessage />
 								</div>
