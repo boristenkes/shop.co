@@ -27,7 +27,7 @@ const permissions: Permissions = {
 	},
 	customer: {
 		products: ['read'],
-		orders: ['create', 'read:own'],
+		orders: ['create', 'read:own', 'update:own'],
 		carts: ['create', 'read:own', 'update:own', 'delete:own'],
 		reviews: ['create', 'read:own', 'delete:own', 'update:own'],
 		users: ['read:own', 'delete:own'],

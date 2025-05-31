@@ -1,4 +1,4 @@
-import { Size } from '@/db/schema/enums'
+import { OrderStatus, Size } from '@/db/schema/enums'
 import { requiredString } from '@/utils/zod'
 import { z } from 'zod'
 
@@ -15,3 +15,15 @@ export const orderItemSchema = z.object({
 	size: z.nativeEnum(Size),
 	quantity: z.number().int().min(1).max(20)
 })
+
+export const updateOrderSchema = z
+	.object({
+		quantity: z.coerce.number().int().positive().finite(),
+		status: z.nativeEnum(OrderStatus),
+		totalPriceInCents: z.coerce.number().int().finite(),
+		shippingAddress: requiredString,
+		userId: z.coerce.number().int().positive().finite()
+	})
+	.partial() // Everything optional
+
+export type UpdateOrderSchema = z.infer<typeof updateOrderSchema>

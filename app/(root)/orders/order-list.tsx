@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 import { formatId } from '@/utils/format'
 import { ArrowRightIcon } from 'lucide-react'
 import Link from 'next/link'
+import CancelOrderButton from './cancel-button'
 import OrderTable, { OrderTableSkeleton } from './order-table'
 
 export default function OrderList({ orders }: { orders: GetOwnOrdersOrder[] }) {
@@ -49,18 +50,23 @@ export default function OrderList({ orders }: { orders: GetOwnOrdersOrder[] }) {
 								</CardDescription>
 							</div>
 
-							<Badge
-								className='capitalize flex items-center gap-1'
-								variant='outline'
-							>
-								<div
-									className={cn(
-										'size-2 rounded-full',
-										getOrderStatusColor(order.status)
-									)}
-								/>
-								{order.status}
-							</Badge>
+							<div className='flex items-center gap-2'>
+								{order.status === 'pending' && (
+									<CancelOrderButton orderId={order.id} />
+								)}
+								<Badge
+									className='capitalize flex items-center gap-1'
+									variant='outline'
+								>
+									<div
+										className={cn(
+											'size-2 rounded-full',
+											getOrderStatusColor(order.status)
+										)}
+									/>
+									{order.status}
+								</Badge>
+							</div>
 						</CardHeader>
 						<CardContent>
 							<OrderTable order={order} />
