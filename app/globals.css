@@ -85,3 +85,93 @@ body {
 		--sidebar-ring: 217.2 91.2% 59.8%;
 	}
 }
+
+.rich-text {
+	all: revert;
+	line-height: 1.6;
+}
+
+.rich-text [contenteditable='true'] {
+	min-height: 200px;
+	padding: 0.25rem 0.5rem;
+}
+
+.rich-text * {
+	all: revert;
+}
+
+.rich-text a {
+	color: blue;
+	text-decoration: underline;
+}
+
+.rich-text ul {
+	list-style-type: disc;
+}
+
+.rich-text ol {
+	list-style-type: decimal;
+}
+
+.rich-text ul,
+.rich-text ol {
+	margin-left: 1rem;
+	padding-left: 1rem;
+}
+
+.rich-text li > p {
+	margin-block: 0;
+}
+
+.rich-text h3,
+.rich-text h4 {
+	font-weight: bold;
+	margin-block: 0.5em;
+}
+
+.rich-text h3 {
+	font-size: 1.75rem;
+}
+
+.rich-text h4 {
+	font-size: 1.25rem;
+}
+
+.rich-text p {
+	margin: 0.5em 0;
+}
+
+.rich-text blockquote {
+	border-left: 4px solid #ccc;
+	padding-left: 1rem;
+	color: #555;
+	font-style: italic;
+	margin: 1em 0;
+}
+
+.rich-text code {
+	background: #f5f5f5;
+	padding: 0.2em 0.4em;
+	border-radius: 4px;
+	font-family: monospace;
+}
+
+.rich-text pre {
+	background: #f5f5f5;
+	padding: 1em;
+	overflow-x: auto;
+	border-radius: 6px;
+}
+
+.rich-text table {
+	border-collapse: collapse;
+	width: 100%;
+	margin: 1em 0;
+}
+
+.rich-text th,
+.rich-text td {
+	border: 1px solid #ccc;
+	padding: 0.5em;
+	text-align: left;
+}

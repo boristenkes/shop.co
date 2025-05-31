@@ -25,6 +25,7 @@ export const products = pgTable(
 		name: text().notNull(),
 		slug: text().notNull(),
 		description: text(),
+		detailsHTML: text(),
 		priceInCents: integer().notNull(),
 		discount: smallint().default(0),
 		stock: integer().default(1),

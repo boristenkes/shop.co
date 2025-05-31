@@ -5,6 +5,7 @@ import { products, productsToColors } from '@/db/schema'
 import { NewProductImage, productImages } from '@/db/schema/product-images'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { sanitizeHTML } from '@/lib/sanitize'
 import { slugify } from '@/lib/utils'
 import { toCents } from '@/utils/helpers'
 import { revalidatePath } from 'next/cache'
@@ -46,6 +47,8 @@ export async function createProduct(
 		const validatedData = newProductSchema.parse(data)
 
 		const { price: priceInDollars, category, colors, ...rest } = validatedData
+
+		if (rest.detailsHTML) rest.detailsHTML = sanitizeHTML(rest.detailsHTML)
 
 		const [newProduct] = await db
 			.insert(products)

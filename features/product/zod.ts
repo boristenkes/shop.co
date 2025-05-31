@@ -27,6 +27,12 @@ export const newProductSchema = z.object({
 		.min(50, 'Description is too short.')
 		.max(1000, 'Description is too long.')
 		.optional(),
+	detailsHTML: z
+		.string()
+		.trim()
+		.min(50, 'Details are too short.')
+		.max(5000, 'Details are too long.')
+		.optional(),
 	price: z.coerce
 		.number({ required_error: 'Price is required' })
 		.positive('Price must be positive number')

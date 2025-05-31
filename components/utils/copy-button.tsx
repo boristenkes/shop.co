@@ -27,6 +27,7 @@ export default function CopyButton({
 	return (
 		<button
 			onClick={copy}
+			type='button'
 			className={cn(!copied && 'hover:opacity-70', className)}
 			disabled={copied || props.disabled}
 			{...props}

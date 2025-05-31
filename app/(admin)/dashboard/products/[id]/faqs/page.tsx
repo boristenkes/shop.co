@@ -4,6 +4,8 @@ import { getProductFAQsForAdmin } from '@/features/faq/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import FAQList from './_components/list'
 
@@ -26,8 +28,8 @@ export default async function ProductFAQsPage(props: {
 	const product = response.product
 
 	return (
-		<main className='container py-16'>
-			<header className='flex items-center justify-between gap-4'>
+		<main className='container-sm py-16'>
+			<header className='flex items-end justify-between gap-4'>
 				<div className='flex items-center gap-4'>
 					<BackButton
 						variant='outline'
@@ -35,10 +37,23 @@ export default async function ProductFAQsPage(props: {
 					>
 						<ArrowLeft /> Back
 					</BackButton>
-					<h1 className='text-3xl font-bold'>Product FAQs</h1>
+					<h1 className='text-3xl font-bold flex items-center gap-2'>
+						Manage FAQs for:
+						<Link
+							href={`/dashboard/products/${product.id}`}
+							className='flex items-center font-medium hover:underline'
+						>
+							<Image
+								src={product.images[0].url}
+								alt={product.name}
+								width={48}
+								height={48}
+								className='size-12 rounded-sm object-contain'
+							/>
+							{product.name}
+						</Link>
+					</h1>
 				</div>
-
-				{/* <ProductSelect /> */}
 			</header>
 
 			<FAQList

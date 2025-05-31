@@ -5,6 +5,7 @@ import { ImageDropzone } from '@/components/image-dropzone'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 
+import RichTextEditor from '@/components/rich-text-editor'
 import {
 	Form,
 	FormControl,
@@ -51,6 +52,7 @@ export function NewProductForm({
 		defaultValues: {
 			name: '',
 			description: '',
+			detailsHTML: undefined,
 			price: 0,
 			discount: 0,
 			stock: 1,
@@ -389,6 +391,30 @@ export function NewProductForm({
 									<FormLabel>Featured</FormLabel>
 									<FormDescription>
 										This product will appear on home page.
+									</FormDescription>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='detailsHTML'
+						render={({ field }) => (
+							<FormItem className='rounded-md space-y-2 col-span-full'>
+								<div className='space-y-2 leading-none'>
+									<FormLabel>Details (optional)</FormLabel>
+									<FormControl>
+										<RichTextEditor
+											onChange={field.onChange}
+											disabled={isSubmitting}
+										/>
+									</FormControl>
+									<FormDescription>
+										Enter additional details about the product, such as
+										material, care instructions, or any other relevant
+										information.
 									</FormDescription>
 									<FormMessage />
 								</div>

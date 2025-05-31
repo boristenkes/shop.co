@@ -291,20 +291,23 @@ export function DeleteProductFAQButton({
 	children: React.ReactNode
 }) {
 	const pathname = usePathname()
+	const [open, setOpen] = useState(false)
 	const mutation = useMutation({
 		mutationKey: ['faq:delete', faqId],
 		mutationFn: () => deleteProductFAQ(faqId, { path: pathname }),
 		onSettled(response) {
 			if (response?.success) {
 				toast.success('FAQ deleted successfully')
-			} else {
-				toast.error('Something went wrong')
+				setOpen(false)
 			}
 		}
 	})
 
 	return (
-		<Dialog>
+		<Dialog
+			open={open}
+			onOpenChange={setOpen}
+		>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
@@ -314,6 +317,12 @@ export function DeleteProductFAQButton({
 						undone. Proceed with caution.
 					</DialogDescription>
 				</DialogHeader>
+
+				{mutation.data && !mutation.data.success && (
+					<ErrorMessage
+						message={mutation.data.message ?? 'Something went wrong'}
+					/>
+				)}
 
 				<DialogFooter>
 					<DialogClose asChild>

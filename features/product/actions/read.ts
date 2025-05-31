@@ -10,6 +10,7 @@ import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
 import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
+import { sanitizeHTML } from '@/lib/sanitize'
 import { requirePermission } from '@/utils/actions'
 import {
 	and,
@@ -23,6 +24,7 @@ import {
 	or,
 	sql
 } from 'drizzle-orm'
+import { notFound } from 'next/navigation'
 import { ProductCard } from '../types'
 
 export type ProductsReturn = Product & {
@@ -76,7 +78,7 @@ export async function getProductsForAdmin(): Promise<GetProductsForAdminReturn> 
 	}
 }
 
-export type GetProductByIdProduct = Product & {
+export type GetProductByIdProduct = Omit<Product, 'detailsHTML'> & {
 	productsToColors: { color: Color }[]
 	averageRating: number
 	images: Pick<ProductImage, 'id' | 'url'>[]
@@ -98,6 +100,9 @@ export async function getProductById(
 					isNull(products.deletedAt),
 					eq(products.archived, false)
 				),
+			columns: {
+				detailsHTML: false
+			},
 			with: {
 				images: { columns: { id: true, url: true } },
 				productsToColors: {
@@ -174,6 +179,35 @@ export async function getProductByIdForAdmin(
 	} catch (error) {
 		console.error('[GET_PRODUCT_BY_ID]:', error)
 		return { success: false, message: 'Product not found or it was deleted' }
+	}
+}
+
+export type GetProductDescriptionReturn =
+	| { success: true; product: Pick<Product, 'detailsHTML'> }
+	| { success: false }
+
+export async function getProductDescription(
+	productId: Product['id']
+): Promise<GetProductDescriptionReturn> {
+	try {
+		const product = await db.query.products.findFirst({
+			where: (product, { eq }) => eq(product.id, Number(productId)),
+			columns: { detailsHTML: true }
+		})
+
+		if (!product) {
+			console.warn(`Product with ID ${productId} not found`)
+			notFound()
+		}
+
+		if (product.detailsHTML) {
+			product.detailsHTML = sanitizeHTML(product.detailsHTML)
+		}
+
+		return { success: true, product }
+	} catch (error) {
+		console.error('[GET_PRODUCT_DESCRIPTION]:', error)
+		return { success: false }
 	}
 }
 

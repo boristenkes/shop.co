@@ -71,6 +71,13 @@
       "when": 1748570720315,
       "tag": "0009_flowery_ricochet",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1748703790936,
+      "tag": "0010_living_smiling_tiger",
+      "breakpoints": true
     }
   ]
 }
