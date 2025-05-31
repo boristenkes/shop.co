@@ -166,21 +166,27 @@ function ProductFAQs({
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Accordion
-					type='single'
-					collapsible
-					className='w-full'
-				>
-					{faqs.map(faq => (
-						<AccordionItem
-							key={faq.id}
-							value={faq.id.toString()}
-						>
-							<AccordionTrigger>{faq.question}</AccordionTrigger>
-							<AccordionContent>{faq.answer}</AccordionContent>
-						</AccordionItem>
-					))}
-				</Accordion>
+				{faqs.length > 0 ? (
+					<Accordion
+						type='single'
+						collapsible
+						className='w-full'
+					>
+						{faqs.map(faq => (
+							<AccordionItem
+								key={faq.id}
+								value={faq.id.toString()}
+							>
+								<AccordionTrigger>{faq.question}</AccordionTrigger>
+								<AccordionContent>{faq.answer}</AccordionContent>
+							</AccordionItem>
+						))}
+					</Accordion>
+				) : (
+					<p className='text-center my-8'>
+						This product doesn&apos;t have any FAQs
+					</p>
+				)}
 			</CardContent>
 		</Card>
 	)
