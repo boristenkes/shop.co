@@ -291,8 +291,8 @@ export default function NewCouponForm() {
 									/>
 								</FormControl>
 								<FormDescription>
-									This won't be visible to customers. It's only for admins to
-									understand the purpose or conditions of the coupon.
+									This won&apos;t be visible to customers. It&apos;s only for
+									admins to understand the purpose or conditions of the coupon.
 								</FormDescription>
 								<FormMessage />
 							</FormItem>
