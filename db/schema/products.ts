@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm'
 import {
 	boolean,
+	index,
 	integer,
 	pgTable,
 	serial,
@@ -44,7 +45,10 @@ export const products = pgTable(
 			.$onUpdate(() => new Date()),
 		deletedAt: timestamp({ withTimezone: true })
 	},
-	t => [uniqueIndex('product_slug_idx').on(t.slug)]
+	t => [
+		uniqueIndex('product_slug_idx').on(t.slug),
+		index('product_category_idx').on(t.categoryId)
+	]
 )
 
 export const productsRelations = relations(products, ({ one, many }) => ({

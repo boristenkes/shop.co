@@ -2,12 +2,14 @@
 
 import { db } from '@/db'
 import { carts } from '@/db/schema'
+import { validateCoupon } from '@/features/coupon/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { stripe } from '@/lib/stripe'
 import { calculatePriceWithDiscount } from '@/lib/utils'
 import { StripeCheckoutSession } from '@stripe/stripe-js'
 import { eq } from 'drizzle-orm'
+import { cookies } from 'next/headers'
 import { orderItemSchema } from '../zod'
 
 export type CheckoutReturn =
@@ -63,6 +65,26 @@ export async function checkout(): Promise<CheckoutReturn> {
 		}))
 
 		const orderItems = orderItemSchema.array().parse(userCartItems)
+		const totalValue = orderItems.reduce(
+			(acc, curr) =>
+				acc +
+				calculatePriceWithDiscount(
+					curr.product.priceInCents,
+					curr.product.discount
+				),
+			0
+		)
+
+		const userCoupon = (await cookies()).get('coupon')
+
+		if (userCoupon) {
+			const couponValidation = await validateCoupon(
+				userCoupon.value,
+				totalValue
+			)
+
+			// Apply discount to Stripe checkout
+		}
 
 		const stripeSession = await stripe.checkout.sessions.create({
 			payment_method_types: ['card'],
@@ -76,7 +98,7 @@ export async function checkout(): Promise<CheckoutReturn> {
 					},
 					unit_amount: calculatePriceWithDiscount(
 						item.product.priceInCents,
-						item.product.discount ?? 0
+						item.product.discount
 					)
 				},
 				quantity: item.quantity

@@ -3,6 +3,7 @@
 import CartItemList, { CartItemListSkeleton } from '@/components/cart/item-list'
 import ErrorMessage from '@/components/error-message'
 import { useCart } from '@/context/cart'
+import { CookieProvider } from '@/context/cookie'
 import { ShoppingCartIcon } from 'lucide-react'
 import OrderSummary, { OrderSummarySkeleton } from './order-summary'
 
@@ -35,7 +36,10 @@ export default function CartContents({ isSignedIn }: { isSignedIn: boolean }) {
 				items={cart.items}
 				className='basis-3/5 max-md:w-full'
 			/>
-			<OrderSummary isSignedIn={isSignedIn} />
+
+			<CookieProvider cookieKey='coupon'>
+				<OrderSummary isSignedIn={isSignedIn} />
+			</CookieProvider>
 		</div>
 	)
 }

@@ -14,8 +14,10 @@ export const slugify = (str: string) =>
 
 export function calculatePriceWithDiscount(
 	priceInCents: number,
-	discountPercentage: number
+	discountPercentage?: number
 ): number {
+	if (!discountPercentage) return priceInCents
+
 	if (priceInCents < 0 || discountPercentage < 0 || discountPercentage > 100)
 		return 0
 

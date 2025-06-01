@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import {
 	boolean,
 	check,
@@ -10,6 +10,7 @@ import {
 	uniqueIndex
 } from 'drizzle-orm/pg-core'
 import { couponTypeEnum } from './enums'
+import { orders } from './orders'
 
 export const coupons = pgTable(
 	'coupons',
@@ -36,6 +37,10 @@ export const coupons = pgTable(
 		check('coupon_case_check', sql`(code = upper(code))`)
 	]
 )
+
+export const couponsRelations = relations(coupons, ({ many }) => ({
+	orders: many(orders)
+}))
 
 export type Coupon = typeof coupons.$inferSelect
 export type NewCoupon = typeof coupons.$inferInsert
