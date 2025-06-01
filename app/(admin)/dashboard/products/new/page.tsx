@@ -31,7 +31,7 @@ export default async function NewProductPage() {
 			className='space-y-8 container'
 			style={{ '--max-width': `960px` } as React.CSSProperties}
 		>
-			<div className='space-y-8'>
+			<div className='flex items-center gap-4'>
 				<BackButton
 					variant='outline'
 					className='rounded-sm text-sm'

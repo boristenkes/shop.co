@@ -77,11 +77,13 @@ export const columns: ColumnDef<Coupon>[] = [
 			/>
 		),
 		cell: ({ row }) => {
-			const order = row.original
+			const coupon = row.original
+
+			if (!coupon.expiresAt) return 'No expiry'
 
 			return (
-				<time dateTime={order.createdAt?.toISOString()}>
-					{formatDate(order.createdAt!, {
+				<time dateTime={coupon.expiresAt.toISOString()}>
+					{formatDate(coupon.expiresAt, {
 						month: 'long',
 						day: '2-digit',
 						year: 'numeric'
