@@ -37,12 +37,10 @@ import {
 	Loader2Icon,
 	PercentIcon
 } from 'lucide-react'
-import { usePathname } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 export default function NewCouponForm() {
-	const pathname = usePathname()
 	const form = useForm<NewCouponSchema>({
 		defaultValues: {
 			type: 'percentage'
@@ -52,7 +50,7 @@ export default function NewCouponForm() {
 
 	const onSubmit = async (data: NewCouponSchema) => {
 		const response = await createCoupon(data, {
-			path: pathname
+			path: '/dashboard/coupons'
 		})
 
 		if (response.success) {
@@ -83,8 +81,8 @@ export default function NewCouponForm() {
 									<Input
 										disabled={isSubmitting}
 										placeholder='SUMMER25'
-										value={field.value?.toUpperCase() ?? ''} // fallback + force uppercase
-										onChange={e => field.onChange(e.target.value.toUpperCase())} // ensure uppercase on change
+										value={field.value?.toUpperCase() ?? ''}
+										onChange={e => field.onChange(e.target.value.toUpperCase())}
 									/>
 								</FormControl>
 								<FormDescription>Enter coupon code</FormDescription>
@@ -259,7 +257,7 @@ export default function NewCouponForm() {
 									>
 										<Calendar
 											mode='single'
-											selected={field.value}
+											selected={field.value ?? undefined}
 											onSelect={field.onChange}
 											disabled={date => date < new Date()}
 										/>

@@ -39,6 +39,11 @@ export function CouponsTable<TData, TValue>({
 		getPaginationRowModel: getPaginationRowModel(),
 		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
+		initialState: {
+			columnVisibility: {
+				id: false
+			}
+		},
 		state: {
 			sorting
 		}

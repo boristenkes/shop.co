@@ -10,17 +10,18 @@ export const newCouponSchema = z.object({
 		.transform(value => value.toUpperCase()),
 	type: z.enum(couponTypeEnum.enumValues).default('percentage'),
 	value: integerSchema.positive(),
-	maxUses: integerSchema.positive().optional(),
+	maxUses: integerSchema.positive().optional().nullable(),
 	expiresAt: z.coerce
 		.date()
 		.optional()
+		.nullable()
 		.refine(
 			date => !date || date.getTime() > Date.now(),
 			'Expiration date must be in the future'
 		),
-	minValueInCents: integerSchema.positive().optional(),
+	minValueInCents: integerSchema.positive().optional().nullable(),
 	active: z.coerce.boolean().default(true).optional(),
-	description: z.string().optional()
+	description: z.string().optional().nullable()
 })
 
 export type NewCouponSchema = z.infer<typeof newCouponSchema>

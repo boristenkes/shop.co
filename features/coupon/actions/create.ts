@@ -4,6 +4,7 @@ import { db } from '@/db'
 import { coupons, NewCoupon } from '@/db/schema/coupons'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { toCents } from '@/utils/helpers'
 import { revalidatePath } from 'next/cache'
 import { newCouponSchema } from '../zod'
 
@@ -33,6 +34,10 @@ export async function createCoupon(
 
 		if (existingCoupon) {
 			return { success: false, message: 'Coupon with this code already exists' }
+		}
+
+		if (parsedData.type === 'fixed') {
+			parsedData.value = toCents(parsedData.value)
 		}
 
 		await db.insert(coupons).values(parsedData)

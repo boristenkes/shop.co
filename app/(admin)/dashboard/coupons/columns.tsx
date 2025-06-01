@@ -1,14 +1,39 @@
 'use client'
 
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import ErrorMessage from '@/components/error-message'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogTitle,
+	DialogTrigger
+} from '@/components/ui/dialog'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import CopyButton from '@/components/utils/copy-button'
 import { Coupon } from '@/db/schema/coupons'
+import { deleteCoupon } from '@/features/coupon/actions/delete'
+import { updateCoupon } from '@/features/coupon/actions/update'
 import { cn } from '@/lib/utils'
 import { formatDate, formatId, formatPrice } from '@/utils/format'
+import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
+import { Loader2Icon, MoreHorizontalIcon } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 export const columns: ColumnDef<Coupon>[] = [
 	{
@@ -148,15 +173,124 @@ export const columns: ColumnDef<Coupon>[] = [
 	{
 		accessorKey: 'actions',
 		header: 'Actions',
-		cell: ({ row }) => (
-			<Button
-				asChild
-				variant='outline'
-				size='sm'
-				className='text-sm'
-			>
-				<Link href={`/dashboard/coupons/${row.original.id}`}>View coupon</Link>
-			</Button>
-		)
+		cell: ({ row }) => {
+			const coupon = row.original
+			const pathname = usePathname()
+			const [open, setOpen] = useState(false)
+			const [active, setActive] = useState(coupon.active)
+			const mutation = useMutation({
+				mutationKey: ['coupon:delete', coupon.id],
+				mutationFn: () => deleteCoupon(coupon.id, { path: pathname }),
+				onSettled(data) {
+					if (data?.success) {
+						toast.success('Coupon deleted successfully')
+						setOpen(false)
+					}
+				}
+			})
+
+			const handleActivation = () => {
+				const activate = async () => {
+					const response = await updateCoupon(
+						coupon.id,
+						{ active: !active },
+						{ path: pathname }
+					)
+
+					if (!response.success) {
+						throw new Error(
+							response.message ??
+								`Failed to ${active ? 'disable' : 'activate'} coupon`
+						)
+					}
+
+					setActive(!active)
+
+					return response
+				}
+
+				toast.promise(activate(), {
+					loading: active ? 'Disabling coupon...' : 'Activating coupon...',
+					success: active ? 'Coupon disabled' : 'Coupon activated',
+					error: error => error.message ?? 'Something went wrong'
+				})
+			}
+
+			return (
+				<Dialog
+					open={open}
+					onOpenChange={setOpen}
+				>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button
+								variant='ghost'
+								size='icon'
+								className='size-8 rounded-sm'
+							>
+								<span className='sr-only'>Open menu</span>
+								<MoreHorizontalIcon className='size-4' />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align='end'>
+							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+							<DropdownMenuItem>
+								<Link href={`/dashboard/coupons/${coupon.id}`}>
+									View details
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem>
+								<button onClick={handleActivation}>
+									{active ? 'Disable coupon' : 'Activate coupon'}
+								</button>
+							</DropdownMenuItem>
+							<DropdownMenuItem>
+								<Link href={`/dashboard/coupons/edit/${coupon.id}`}>
+									Edit coupon
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem>
+								<DialogTrigger>Delete coupon</DialogTrigger>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+
+					<DialogContent>
+						<DialogTitle>Are you sure?</DialogTitle>
+						<DialogDescription>
+							You are about to permamently remove coupon{' '}
+							<strong>{coupon.code}</strong> from database. This cannot be
+							undone. Proceed with caution.
+						</DialogDescription>
+
+						{mutation.data && !mutation.data.success && (
+							<ErrorMessage message='Something went wrong' />
+						)}
+
+						<DialogFooter>
+							<DialogClose asChild>
+								<Button
+									variant='secondary'
+									disabled={mutation.isPending}
+								>
+									Cancel
+								</Button>
+							</DialogClose>
+
+							<Button
+								onClick={() => mutation.mutate()}
+								disabled={mutation.isPending}
+								variant='destructive'
+							>
+								{mutation.isPending && <Loader2Icon className='animate-spin' />}
+								{mutation.isPending ? 'Deleting' : 'Delete'}
+							</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
+			)
+		}
 	}
 ]
