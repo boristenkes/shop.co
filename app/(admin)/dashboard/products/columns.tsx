@@ -296,7 +296,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 						</DialogDescription>
 
 						{mutation.data && !mutation.data.success && (
-							<ErrorMessage message={mutation.data?.message!} />
+							<ErrorMessage message={mutation.data.message!} />
 						)}
 
 						<DialogFooter>

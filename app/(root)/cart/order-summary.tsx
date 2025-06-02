@@ -31,11 +31,6 @@ export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 	const couponCookie = useCookie()
 	const [coupon, setCoupon] = useState<ClientCouponSchema | null>(null)
 	const [checkoutPending, setCheckoutPending] = useState(false)
-	const discountText = coupon
-		? coupon.type === 'fixed'
-			? formatPrice(coupon.value)
-			: `${coupon.value}%`
-		: null
 	const totalWithDiscount = !coupon
 		? totalInCents
 		: coupon.type === 'fixed'

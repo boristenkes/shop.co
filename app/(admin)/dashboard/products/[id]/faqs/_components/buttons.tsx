@@ -200,9 +200,7 @@ export function EditProductFAQButton({
 		>
 			<DialogTrigger
 				asChild
-				onClick={e => {
-					setOpen(false)
-				}}
+				onClick={() => setOpen(false)}
 			>
 				{children}
 			</DialogTrigger>

@@ -5,7 +5,6 @@ import Paragraph from '@/components/utils/paragraph'
 import { TSize } from '@/db/schema/enums'
 import { Product } from '@/db/schema/products'
 import { getProductById } from '@/features/product/actions/read'
-import { auth } from '@/lib/auth'
 import { integralCf } from '@/lib/fonts'
 import { calculatePriceWithDiscount } from '@/lib/utils'
 import { formatPrice } from '@/utils/format'
@@ -18,9 +17,6 @@ export default async function ProductPageDetails({
 }: {
 	id: Product['id']
 }) {
-	const session = await auth()
-	const currentUserId = session?.user.id
-
 	const response = await getProductById(id)
 
 	if (!response.success)
