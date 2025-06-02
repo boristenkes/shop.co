@@ -4,7 +4,7 @@ import { db } from '@/db'
 import { products, productsToColors } from '@/db/schema'
 import { categories, Category } from '@/db/schema/categories'
 import { Color, colors } from '@/db/schema/colors'
-import { TSize } from '@/db/schema/enums'
+import { Size } from '@/lib/enums'
 import { isArray, toCents } from '@/utils/helpers'
 import {
 	and,
@@ -26,7 +26,7 @@ export type ProductFilters = {
 	min: number
 	max: number
 	color: Color['slug'][]
-	size: TSize[]
+	size: Size[]
 	category: Category['slug'][]
 	sortby: string
 }

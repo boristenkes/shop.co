@@ -1,15 +1,14 @@
 'use client'
 
-import { Size, TSize } from '@/db/schema/enums'
+import { Size } from '@/lib/enums'
 import { cn } from '@/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 export default function SizeFilter() {
-	const allSizes = Object.values(Size)
 	const searchParams = useSearchParams()
-	const [sizes, setSizes] = useState<TSize[]>(
-		searchParams.getAll('size') as TSize[]
+	const [sizes, setSizes] = useState<Size[]>(
+		searchParams.getAll('size') as Size[]
 	)
 
 	return (
@@ -17,7 +16,7 @@ export default function SizeFilter() {
 			<h3 className='text-lg font-bold'>Sizes</h3>
 
 			<ul className='flex flex-wrap gap-2'>
-				{allSizes.map(size => (
+				{sizes.map(size => (
 					<label
 						key={size}
 						className={cn(

@@ -3,7 +3,6 @@
 import { db } from '@/db'
 import { orders, products, reviews, users } from '@/db/schema'
 import { Cart, carts } from '@/db/schema/carts'
-import { OrderStatus, Role } from '@/db/schema/enums'
 import { auth } from '@/lib/auth'
 import { Action, Entity, hasPermission } from '@/lib/permissions'
 import { eq, isNull, sum } from 'drizzle-orm'
@@ -36,13 +35,13 @@ export async function getStatistics(): Promise<GetStatisticsReturn> {
 			throw new Error('Unauthorized')
 
 		const countProducts = db.$count(products, isNull(products.deletedAt))
-		const countUsers = db.$count(users, eq(users.role, Role.CUSTOMER))
+		const countUsers = db.$count(users, eq(users.role, 'customer'))
 		const countReviews = db.$count(reviews, eq(reviews.approved, true))
 
 		const getTotalRevenueInCents = db
 			.select({ total: sum(orders.totalPriceInCents) })
 			.from(orders)
-			.where(eq(orders.status, OrderStatus.DELIVERED))
+			.where(eq(orders.status, 'delivered'))
 			.then(res => res[0].total)
 
 		const responses = await Promise.all([

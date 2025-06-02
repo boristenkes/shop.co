@@ -24,11 +24,11 @@ import {
 	SelectValue
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Size, TSize } from '@/db/schema/enums'
 import { GetCategoriesReturn } from '@/features/category/actions/read'
 import { GetColorsReturn } from '@/features/color/actions/read'
 import { createProduct } from '@/features/product/actions/create'
 import { newProductSchema } from '@/features/product/zod'
+import { Size, sizes } from '@/lib/enums'
 import { useUploadThing } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -220,7 +220,7 @@ export function NewProductForm({
 								<FormLabel>Available Sizes</FormLabel>
 								<FormControl>
 									<div className='flex flex-wrap gap-2'>
-										{Object.values(Size).map(size => (
+										{sizes.map(size => (
 											<Button
 												key={size}
 												type='button'
@@ -228,14 +228,14 @@ export function NewProductForm({
 													isSubmitting || !getCategoriesResponse.success
 												}
 												variant={
-													(field.value as TSize[]).includes(size)
+													(field.value as Size[]).includes(size)
 														? 'default'
 														: 'outline'
 												}
 												onClick={() => {
-													const updatedSizes = (
-														field.value as TSize[]
-													).includes(size)
+													const updatedSizes = (field.value as Size[]).includes(
+														size
+													)
 														? field.value.filter(s => s !== size)
 														: [...field.value, size]
 													field.onChange(updatedSizes)

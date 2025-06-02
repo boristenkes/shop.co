@@ -8,19 +8,17 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select'
-import { OrderStatus, TOrderStatus } from '@/db/schema/enums'
 import { Order } from '@/db/schema/orders'
 import { updateOrder } from '@/features/orders/actions/update'
+import { OrderStatus, orderStatuses } from '@/lib/enums'
 import { cn } from '@/lib/utils'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-const orderStatusSchema = z.nativeEnum(OrderStatus)
-
 type OrderStatusSelectProps = {
 	orderId: Order['id']
-	defaultOrderStatus: TOrderStatus
+	defaultOrderStatus: OrderStatus
 }
 
 export default function OrderStatusSelect({
@@ -29,9 +27,9 @@ export default function OrderStatusSelect({
 }: OrderStatusSelectProps) {
 	const [isPending, startTransition] = useTransition()
 
-	const handleChange = async (newOrderStatus: TOrderStatus) => {
+	const handleChange = async (newOrderStatus: OrderStatus) => {
 		startTransition(async () => {
-			newOrderStatus = orderStatusSchema.parse(newOrderStatus)
+			newOrderStatus = z.enum(orderStatuses).parse(newOrderStatus)
 
 			const response = await updateOrder(orderId, { status: newOrderStatus })
 
@@ -53,7 +51,7 @@ export default function OrderStatusSelect({
 				<SelectValue placeholder={defaultOrderStatus} />
 			</SelectTrigger>
 			<SelectContent>
-				{Object.values(OrderStatus).map(orderStatus => (
+				{orderStatuses.map(orderStatus => (
 					<SelectItem
 						key={orderStatus}
 						value={orderStatus}

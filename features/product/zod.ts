@@ -1,4 +1,4 @@
-import { Size } from '@/db/schema/enums'
+import { sizes } from '@/lib/enums'
 import { formatFileSize } from '@/utils/format'
 import { z } from 'zod'
 
@@ -42,7 +42,7 @@ export const newProductSchema = z.object({
 		.number({ required_error: 'Stock is required' })
 		.int()
 		.positive(),
-	sizes: z.nativeEnum(Size).array().min(1, 'At least one size is required'),
+	sizes: z.enum(sizes).array().min(1, 'At least one size is required'),
 	colors: z.coerce
 		.number()
 		.positive()
@@ -69,7 +69,7 @@ export const productSchema = z.object({
 	stock: z.number().min(0).finite(),
 	archived: z.boolean(),
 	featured: z.boolean(),
-	sizes: z.nativeEnum(Size).array(),
+	sizes: z.enum(sizes).array(),
 	categoryId: z.number().int().positive().finite(),
 	userId: z.number().int().positive().finite(),
 	createdAt: z.coerce.string().datetime(),

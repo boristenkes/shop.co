@@ -8,8 +8,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { queryClient } from '@/components/utils/providers'
 import { SessionCartProduct, useCart } from '@/context/cart'
 import { Color } from '@/db/schema/colors'
-import { TSize } from '@/db/schema/enums'
 import { NewItemData, saveToCart } from '@/features/cart/actions/create'
+import { Size } from '@/lib/enums'
 import { calculatePriceWithDiscount } from '@/lib/utils'
 import { darkenHex } from '@/utils/helpers'
 import { useMutation } from '@tanstack/react-query'
@@ -21,7 +21,7 @@ import { toast } from 'sonner'
 
 type ProductPageFormProps = {
 	colors: Color[]
-	sizes: TSize[]
+	sizes: Size[]
 	stock: number
 	product: SessionCartProduct
 }
@@ -36,11 +36,11 @@ export default function ProductPageForm({
 	const session = useSession()
 	const cart = useCart()
 	const defaultColor = colors.find(c => c.slug === params.get('color')) ?? null
-	const defaultSize = sizes.includes(params.get('size') as TSize)
-		? (params.get('size') as TSize)
+	const defaultSize = sizes.includes(params.get('size') as Size)
+		? (params.get('size') as Size)
 		: null
 	const [color, setColor] = useState<Color | null>(defaultColor)
-	const [size, setSize] = useState<TSize | null>(defaultSize)
+	const [size, setSize] = useState<Size | null>(defaultSize)
 	const [quantity, setQuantity] = useState(1)
 	const [error, setError] = useState<string | null>(null)
 	const mutation = useMutation({

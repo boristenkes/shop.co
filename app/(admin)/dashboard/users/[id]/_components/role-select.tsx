@@ -7,23 +7,21 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select'
-import { Role, TRole } from '@/db/schema/enums'
 import { User } from '@/db/schema/users'
 import { updateUser } from '@/features/user/actions/update'
+import { Role, roles } from '@/lib/enums'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-const roleSchema = z.nativeEnum(Role)
-
-type RoleSelectProps = { userId: User['id']; defaultRole: TRole }
+type RoleSelectProps = { userId: User['id']; defaultRole: Role }
 
 export default function RoleSelect({ userId, defaultRole }: RoleSelectProps) {
 	const [isPending, startTransition] = useTransition()
 
-	const handleChange = async (newRole: TRole) => {
+	const handleChange = async (newRole: Role) => {
 		startTransition(async () => {
-			newRole = roleSchema.parse(newRole)
+			newRole = z.enum(roles).parse(newRole)
 
 			const response = await updateUser(userId, { role: newRole })
 
@@ -45,7 +43,7 @@ export default function RoleSelect({ userId, defaultRole }: RoleSelectProps) {
 				<SelectValue placeholder={defaultRole} />
 			</SelectTrigger>
 			<SelectContent>
-				{Object.values(Role)
+				{roles
 					.filter(role => role !== 'anonymous')
 					.map(role => (
 						<SelectItem

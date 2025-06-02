@@ -2,10 +2,10 @@
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Color } from '@/db/schema/colors'
-import { TSize } from '@/db/schema/enums'
 import { Product } from '@/db/schema/products'
 import { getUserCartItems } from '@/features/cart/actions/read'
 import { syncUserCart } from '@/features/cart/actions/update'
+import { Size } from '@/lib/enums'
 import { SetState } from '@/lib/types'
 import { useQuery } from '@tanstack/react-query'
 import { AlertCircleIcon } from 'lucide-react'
@@ -20,7 +20,7 @@ export type SessionCartProduct = Pick<
 export type SessionCartItem = {
 	id: string | number
 	color: Color
-	size: TSize
+	size: Size
 	quantity: number
 	product: SessionCartProduct
 }

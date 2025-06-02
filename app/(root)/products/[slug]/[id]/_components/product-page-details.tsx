@@ -2,9 +2,9 @@ import ErrorMessage from '@/components/error-message'
 import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
 import Paragraph from '@/components/utils/paragraph'
-import { TSize } from '@/db/schema/enums'
 import { Product } from '@/db/schema/products'
 import { getProductById } from '@/features/product/actions/read'
+import { Size } from '@/lib/enums'
 import { integralCf } from '@/lib/fonts'
 import { calculatePriceWithDiscount } from '@/lib/utils'
 import { formatPrice } from '@/utils/format'
@@ -92,7 +92,7 @@ export default async function ProductPageDetails({
 
 				<ProductPageForm
 					colors={product.productsToColors.map(({ color }) => color)}
-					sizes={product.sizes as TSize[]}
+					sizes={product.sizes as Size[]}
 					stock={product.stock as number}
 					product={{
 						id: product.id,

@@ -1,4 +1,3 @@
-import { Role } from '@/db/schema/enums'
 import { auth } from '@/lib/auth'
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
@@ -17,7 +16,7 @@ export const ourFileRouter = {
 			const session = await auth()
 			const currentUser = session?.user
 
-			if (!currentUser || currentUser.role !== Role.ADMIN)
+			if (!currentUser || !['admin', 'admin:demo'].includes(currentUser.role))
 				throw new UploadThingError('Unauthorized')
 
 			return { userId: currentUser.id }

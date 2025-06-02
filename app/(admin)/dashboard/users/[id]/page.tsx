@@ -7,11 +7,11 @@ import { Separator } from '@/components/ui/separator'
 import Avatar from '@/components/utils/avatar'
 import { BackButton } from '@/components/utils/back-button'
 import CopyButton from '@/components/utils/copy-button'
-import { Role, TRole } from '@/db/schema/enums'
 import DeleteCartButton from '@/features/cart/components/delete-cart-button'
 import { getUserById, GetUserByIdUser } from '@/features/user/actions/read'
 import DeleteUserButton from '@/features/user/components/delete-button'
 import { auth } from '@/lib/auth'
+import { Role } from '@/lib/enums'
 import { hasPermission } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import { formatDate, formatId, formatPrice } from '@/utils/format'
@@ -149,7 +149,7 @@ function UserProfile({
 	currentUserRole
 }: {
 	user: GetUserByIdUser
-	currentUserRole: TRole
+	currentUserRole: Role
 }) {
 	return (
 		<Card className='lg:col-span-1'>
@@ -167,7 +167,7 @@ function UserProfile({
 					/>
 					<div className='text-center'>
 						<h3 className='text-xl font-semibold'>{user.name}</h3>
-						{user.role !== Role.ADMIN &&
+						{user.role !== 'admin' &&
 						hasPermission(currentUserRole, 'users', ['update']) ? (
 							<RoleSelect
 								userId={user.id}

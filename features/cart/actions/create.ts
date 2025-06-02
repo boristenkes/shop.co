@@ -2,8 +2,8 @@
 
 import { db } from '@/db'
 import { cartItems, carts } from '@/db/schema'
-import { Size, TSize } from '@/db/schema/enums'
 import { auth } from '@/lib/auth'
+import { Size, sizes } from '@/lib/enums'
 import { hasPermission } from '@/lib/permissions'
 import { touchCart } from '@/utils/actions'
 import { eq } from 'drizzle-orm'
@@ -11,7 +11,7 @@ import { z } from 'zod'
 
 export type NewItemData = {
 	colorId: number
-	size: TSize
+	size: Size
 	quantity: number
 	productId: number
 	productPriceInCents: number
@@ -19,7 +19,7 @@ export type NewItemData = {
 
 const productPageFormSchema = z.object({
 	colorId: z.coerce.number().int().positive().finite(),
-	size: z.nativeEnum(Size),
+	size: z.enum(sizes),
 	quantity: z.coerce.number().int().positive().lte(20),
 	productId: z.coerce.number().int().positive().finite(),
 	productPriceInCents: z.coerce.number().int().positive().finite()

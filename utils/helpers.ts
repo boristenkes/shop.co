@@ -1,4 +1,4 @@
-import { Role, TRole } from '@/db/schema/enums'
+import { Role } from '@/lib/enums'
 
 export const delay = (ms: number) =>
 	new Promise(resolve => setTimeout(resolve, ms))
@@ -38,11 +38,11 @@ export function darkenHex(hex: string, amount: number = 20) {
 		.padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
 }
 
-export function getRoleBadgeVariant(role: TRole) {
+export function getRoleBadgeVariant(role: Role) {
 	switch (role) {
-		case Role.ADMIN:
+		case 'admin':
 			return 'destructive'
-		case Role.MODERATOR:
+		case 'moderator':
 			return 'default'
 		default:
 			return 'outline'

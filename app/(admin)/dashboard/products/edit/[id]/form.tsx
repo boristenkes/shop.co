@@ -23,7 +23,6 @@ import {
 	SelectValue
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Size, TSize } from '@/db/schema/enums'
 import { GetCategoriesReturn } from '@/features/category/actions/read'
 import { GetColorsReturn } from '@/features/color/actions/read'
 import { GetProductByIdProduct } from '@/features/product/actions/read'
@@ -32,6 +31,7 @@ import {
 	type EditProductSchema,
 	editProductSchema
 } from '@/features/product/zod'
+import { Size, sizes } from '@/lib/enums'
 import { useUploadThing } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
 import { darkenHex, getUploadthingKey, isEmpty } from '@/utils/helpers'
@@ -64,7 +64,7 @@ export function EditProductForm({
 			price: product.priceInCents / 100,
 			discount: product.discount ?? 0,
 			stock: product.stock ?? 0,
-			sizes: product.sizes as TSize[],
+			sizes: product.sizes as Size[],
 			colors: product.productsToColors.map(({ color }) => color.id),
 			archived: product.archived ?? false,
 			featured: product.featured ?? false,
@@ -253,7 +253,7 @@ export function EditProductForm({
 								<FormLabel>Available Sizes</FormLabel>
 								<FormControl>
 									<div className='flex flex-wrap gap-2'>
-										{Object.values(Size).map(size => (
+										{sizes.map(size => (
 											<Button
 												key={size}
 												type='button'
@@ -261,12 +261,12 @@ export function EditProductForm({
 													isSubmitting || !getCategoriesResponse.success
 												}
 												variant={
-													(field.value as TSize[]).includes(size)
+													(field.value as Size[]).includes(size)
 														? 'default'
 														: 'outline'
 												}
 												onClick={() => {
-													const value = field.value as TSize[]
+													const value = field.value as Size[]
 													const updatedSizes = value.includes(size)
 														? value.filter(s => s !== size)
 														: [...value, size]

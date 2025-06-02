@@ -3,12 +3,12 @@
 import DynamicPagination from '@/components/dynamic-pagination'
 import ErrorMessage from '@/components/error-message'
 import { Separator } from '@/components/ui/separator'
-import { TSize } from '@/db/schema/enums'
 import {
 	filterProducts,
 	FilterProductsReturn
 } from '@/features/product/actions/filter'
 import useUpdateEffect from '@/hooks/use-update-effect'
+import { Size } from '@/lib/enums'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
@@ -25,7 +25,7 @@ export default function PaginatedProductList({
 	const [page, setPage] = useState(parseInt(searchParams.get('page') ?? '1'))
 	const filters = {
 		color: searchParams.getAll('color'),
-		size: searchParams.getAll('size') as TSize[],
+		size: searchParams.getAll('size') as Size[],
 		category: searchParams.getAll('category'),
 		min: parseInt(searchParams.get('min')!),
 		max: parseInt(searchParams.get('max')!),
