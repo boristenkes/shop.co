@@ -2,6 +2,7 @@
 
 import { db } from '@/db'
 import { Color } from '@/db/schema/colors'
+import { Coupon } from '@/db/schema/coupons'
 import { Order, OrderItem, orders } from '@/db/schema/orders'
 import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
@@ -46,6 +47,7 @@ export type GetOwnOrdersOrder = Order & {
 			images: Pick<ProductImage, 'url'>[]
 		}
 	})[]
+	coupon: Pick<Coupon, 'code' | 'type' | 'value'> | null
 }
 
 export type GetOwnOrdersReturn =
@@ -83,6 +85,13 @@ export async function getOwnOrders(): Promise<GetOwnOrdersReturn> {
 								}
 							}
 						}
+					}
+				},
+				coupon: {
+					columns: {
+						code: true,
+						type: true,
+						value: true
 					}
 				}
 			}
@@ -146,6 +155,7 @@ export type GetOrderOrder = Order & {
 			images: Pick<ProductImage, 'url'>[]
 		}
 	})[]
+	coupon: Pick<Coupon, 'code' | 'type' | 'value'> | null
 }
 
 export type GetOrderReturn =
@@ -194,6 +204,13 @@ export async function getOrder(orderId: Order['id']): Promise<GetOrderReturn> {
 								}
 							}
 						}
+					}
+				},
+				coupon: {
+					columns: {
+						code: true,
+						type: true,
+						value: true
 					}
 				}
 			}

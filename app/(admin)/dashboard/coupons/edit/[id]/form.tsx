@@ -45,7 +45,13 @@ import { toast } from 'sonner'
 
 export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
 	const form = useForm<EditCouponSchema>({
-		defaultValues: editCouponSchema.parse(coupon),
+		defaultValues: {
+			...editCouponSchema.parse(coupon),
+			minValueInCents: coupon.minValueInCents
+				? coupon.minValueInCents / 100
+				: undefined,
+			value: coupon.type === 'fixed' ? coupon.value / 100 : coupon.value
+		},
 		resolver: zodResolver(editCouponSchema)
 	})
 
@@ -312,7 +318,7 @@ export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
 					disabled={isSubmitting}
 					className='mt-4 ml-auto flex items-center gap-2'
 				>
-					{isSubmitting ? 'Creating' : 'Create'}
+					{isSubmitting ? 'Saving' : 'Save'}
 					{isSubmitting && <Loader2Icon className='animate-spin' />}
 				</Button>
 			</form>

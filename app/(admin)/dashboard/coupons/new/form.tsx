@@ -179,7 +179,7 @@ export default function NewCouponForm() {
 												field.onChange(
 													e.target.value === ''
 														? undefined
-														: Number(e.target.value)
+														: e.target.valueAsNumber
 												)
 											}
 										/>
@@ -226,7 +226,7 @@ export default function NewCouponForm() {
 						name='expiresAt'
 						render={({ field }) => (
 							<FormItem className='flex flex-col mt-2.5'>
-								<FormLabel>Expiry date (optional)</FormLabel>
+								<FormLabel>Expiration date (optional)</FormLabel>
 								<Popover>
 									<PopoverTrigger asChild>
 										<FormControl>

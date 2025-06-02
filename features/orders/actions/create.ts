@@ -72,7 +72,8 @@ export async function checkout(): Promise<CheckoutReturn> {
 				calculatePriceWithDiscount(
 					curr.product.priceInCents,
 					curr.product.discount
-				),
+				) *
+					curr.quantity,
 			0
 		)
 

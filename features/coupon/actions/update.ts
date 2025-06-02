@@ -36,9 +36,11 @@ export async function updateCoupon(
 			}
 		}
 
-		if (newData.type === 'fixed' && newData.value) {
+		if (newData.type === 'fixed' && newData.value)
 			newData.value = toCents(newData.value)
-		}
+
+		if (newData.minValueInCents)
+			newData.minValueInCents = toCents(newData.minValueInCents)
 
 		const parsedData = editCouponSchema.parse(newData)
 

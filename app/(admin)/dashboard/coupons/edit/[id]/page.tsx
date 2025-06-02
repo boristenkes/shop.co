@@ -39,14 +39,14 @@ export default async function EditCouponPage(props: {
 				>
 					<ArrowLeft /> Back
 				</BackButton>
-				<h1 className='text-3xl font-bold'>Add New Coupon</h1>
+				<h1 className='text-3xl font-bold'>Edit Coupon</h1>
 			</div>
 
 			<Card>
 				<CardHeader>
 					<CardTitle>Coupon Details</CardTitle>
 					<CardDescription>
-						Create new coupon for your customers
+						Edit coupon through fields below. Click save when you&apos;re done
 					</CardDescription>
 				</CardHeader>
 

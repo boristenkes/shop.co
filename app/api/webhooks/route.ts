@@ -1,5 +1,5 @@
 import { db } from '@/db'
-import { carts, orderItems, orders, products } from '@/db/schema'
+import { carts, coupons, orderItems, orders, products } from '@/db/schema'
 import { orderMetadataSchema } from '@/features/orders/zod'
 import { stripe } from '@/lib/stripe'
 import { eq, sql } from 'drizzle-orm'
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 						userId: metadata.data.userId,
 						shippingAddress,
 						totalPriceInCents: Number(checkoutSession.amount_total),
-						couponId: metadata.data.couponId
+						couponId: metadata.data.couponId || null
 					})
 					.returning({ id: orders.id })
 
@@ -64,6 +64,15 @@ export async function POST(req: NextRequest) {
 						size: item.size
 					}))
 				)
+
+				if (metadata.data.couponId) {
+					await tx
+						.update(coupons)
+						.set({
+							usedCount: sql`${coupons.usedCount} + 1`
+						})
+						.where(eq(coupons.id, metadata.data.couponId))
+				}
 
 				// Update product quantities
 				await tx.execute(sql`

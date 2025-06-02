@@ -18,6 +18,7 @@ import {
 	TableRow
 } from '@/components/ui/table'
 import { BackButton } from '@/components/utils/back-button'
+import CouponDiscount from '@/features/coupon/components/coupon-discount'
 import { getOrder } from '@/features/orders/actions/read'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
@@ -39,6 +40,12 @@ export default async function OrderDetailsPage(props: {
 
 	const orderId = (await props.params).id
 	const response = await getOrder(Number(orderId))
+	const totalWithoutCoupon = response.success
+		? response.order.orderItems.reduce(
+				(acc, curr) => acc + curr.productPriceInCents * curr.quantity,
+				0
+		  )
+		: 0
 
 	return (
 		<main className='container py-16'>
@@ -139,7 +146,23 @@ export default async function OrderDetailsPage(props: {
 									>
 										Total
 									</TableCell>
-									<TableCell className='text-right'>
+									<TableCell className='flex items-center gap-2 justify-end'>
+										{response.order.coupon && (
+											<div className='flex items-center gap-2'>
+												{formatPrice(totalWithoutCoupon)}
+												<span>-</span>
+												<Badge variant='outline'>
+													{response.order.coupon.code}
+													<CouponDiscount
+														type={response.order.coupon.type}
+														value={response.order.coupon.value}
+														className='text-red-500 font-semibold ml-2'
+													/>
+												</Badge>
+												<span>=</span>
+											</div>
+										)}
+
 										{formatPrice(response.order.totalPriceInCents)}
 									</TableCell>
 								</TableRow>

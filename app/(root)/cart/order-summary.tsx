@@ -1,8 +1,10 @@
 'use client'
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import CopyButton from '@/components/utils/copy-button'
 import { useCart } from '@/context/cart'
 import { useCookie } from '@/context/cookie'
 import { validateCoupon } from '@/features/coupon/actions/read'
@@ -12,7 +14,7 @@ import { checkout } from '@/features/orders/actions/create'
 import { stripePromise } from '@/lib/stripe-client'
 import { calculatePriceWithDiscount } from '@/lib/utils'
 import { formatPrice } from '@/utils/format'
-import { ArrowRightIcon, Loader2Icon } from 'lucide-react'
+import { ArrowRightIcon, InfoIcon, Loader2Icon, XIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import ApplyCouponForm from './coupon-form'
@@ -126,9 +128,42 @@ export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 						variant='outline'
 					>
 						{coupon.code}
+						<button
+							className='ml-2'
+							type='button'
+							onClick={() => {
+								couponCookie.remove()
+								setCoupon(null)
+							}}
+						>
+							<XIcon className='size-4' />
+						</button>
 					</Badge>
 				</div>
 			)}
+
+			<Alert
+				variant='default'
+				className='bg-blue-500/10 mt-4'
+			>
+				<InfoIcon
+					className='size-4'
+					color='rgb(59 130 246)'
+				/>
+				<AlertTitle className='text-blue-500'>Information</AlertTitle>
+				<AlertDescription>
+					For testing purposes, you can use number below as your credit card
+					number, any 4-digit number as expiration date, and any 3-digit number
+					as CVV code.
+					<code className='flex items-center gap-2'>
+						4242 4242 4242 4242{' '}
+						<CopyButton
+							text='4242 4242 4242 4242'
+							iconClassName='size-4'
+						/>
+					</code>
+				</AlertDescription>
+			</Alert>
 
 			<Button
 				size='lg'

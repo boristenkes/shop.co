@@ -37,9 +37,11 @@ export async function createCoupon(
 			return { success: false, message: 'Coupon with this code already exists' }
 		}
 
-		if (parsedData.type === 'fixed') {
+		if (parsedData.type === 'fixed')
 			parsedData.value = toCents(parsedData.value)
-		}
+
+		if (parsedData.minValueInCents)
+			parsedData.minValueInCents = toCents(parsedData.minValueInCents)
 
 		const stripeCoupon = await stripe.coupons.create({
 			...(parsedData.type === 'fixed'

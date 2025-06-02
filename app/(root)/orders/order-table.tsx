@@ -10,12 +10,18 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
+import CouponDiscount from '@/features/coupon/components/coupon-discount'
 import { GetOwnOrdersOrder } from '@/features/orders/actions/read'
 import { formatDate, formatPrice } from '@/utils/format'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function OrderTable({ order }: { order: GetOwnOrdersOrder }) {
+	const totalWithoutCoupon = order.orderItems.reduce(
+		(acc, curr) => acc + curr.productPriceInCents * curr.quantity,
+		0
+	)
+
 	return (
 		<Table>
 			<TableCaption>
@@ -86,7 +92,23 @@ export default function OrderTable({ order }: { order: GetOwnOrdersOrder }) {
 					>
 						Total
 					</TableCell>
-					<TableCell className='text-right'>
+					<TableCell className='flex items-center gap-2 justify-end'>
+						{order.coupon && (
+							<div className='flex items-center gap-2'>
+								{formatPrice(totalWithoutCoupon)}
+								<span>-</span>
+								<Badge variant='outline'>
+									{order.coupon.code}
+									<CouponDiscount
+										type={order.coupon.type}
+										value={order.coupon.value}
+										className='text-red-500 font-semibold ml-2'
+									/>
+								</Badge>
+								<span>=</span>
+							</div>
+						)}
+
 						{formatPrice(order.totalPriceInCents)}
 					</TableCell>
 				</TableRow>
