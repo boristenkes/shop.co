@@ -56,16 +56,6 @@ const permissions: Permissions = {
 		users: ['read:own'],
 		categories: [],
 		colors: []
-	},
-	anonymous: {
-		products: ['read'],
-		orders: [],
-		carts: [],
-		coupons: [],
-		reviews: [],
-		users: [],
-		categories: [],
-		colors: []
 	}
 } as const
 

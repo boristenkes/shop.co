@@ -43,17 +43,15 @@ export default function RoleSelect({ userId, defaultRole }: RoleSelectProps) {
 				<SelectValue placeholder={defaultRole} />
 			</SelectTrigger>
 			<SelectContent>
-				{roles
-					.filter(role => role !== 'anonymous')
-					.map(role => (
-						<SelectItem
-							key={role}
-							value={role}
-							className='capitalize'
-						>
-							{role}
-						</SelectItem>
-					))}
+				{roles.map(role => (
+					<SelectItem
+						key={role}
+						value={role}
+						className='capitalize'
+					>
+						{role}
+					</SelectItem>
+				))}
 			</SelectContent>
 		</Select>
 	)

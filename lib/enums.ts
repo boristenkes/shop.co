@@ -3,8 +3,7 @@ export const roles = [
 	'admin:demo',
 	'customer',
 	'customer:demo',
-	'moderator',
-	'anonymous'
+	'moderator'
 ] as const
 
 export type Role = (typeof roles)[number]
