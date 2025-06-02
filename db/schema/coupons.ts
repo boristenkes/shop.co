@@ -26,6 +26,9 @@ export const coupons = pgTable(
 		active: boolean().default(true).notNull(),
 		description: text(),
 
+		stripeCouponId: text().notNull(),
+		stripePromoCodeId: text().notNull(),
+
 		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
@@ -34,6 +37,7 @@ export const coupons = pgTable(
 	},
 	t => [
 		uniqueIndex('coupon_code_idx').on(t.code),
+		uniqueIndex('coupon_stripe_promo_code_idx').on(t.stripePromoCodeId),
 		check('coupon_case_check', sql`(code = upper(code))`)
 	]
 )

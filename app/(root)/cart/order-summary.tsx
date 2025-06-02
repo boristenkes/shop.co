@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useCart } from '@/context/cart'
 import { useCookie } from '@/context/cookie'
 import { validateCoupon } from '@/features/coupon/actions/read'
+import CouponDiscount from '@/features/coupon/components/coupon-discount'
 import { ClientCouponSchema } from '@/features/coupon/zod'
 import { checkout } from '@/features/orders/actions/create'
 import { stripePromise } from '@/lib/stripe-client'
@@ -93,7 +94,15 @@ export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 				<div className='flex items-center justify-between'>
 					<dt className='text-gray-500'>Discount</dt>
 					<dd className='font-semibold text-red-500'>
-						{discountText ? `-${discountText}` : '-'}
+						{coupon ? (
+							<CouponDiscount
+								type={coupon.type}
+								value={coupon.value}
+							/>
+						) : (
+							'-'
+						)}
+						{/* {discountText ? `-${discountText}` : '-'} */}
 					</dd>
 				</div>
 				<div className='flex items-center justify-between'>

@@ -1,19 +1,20 @@
 'use server'
 
 import { db } from '@/db'
-import { coupons, NewCoupon } from '@/db/schema/coupons'
+import { coupons } from '@/db/schema/coupons'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { stripe } from '@/lib/stripe'
 import { toCents } from '@/utils/helpers'
 import { revalidatePath } from 'next/cache'
-import { newCouponSchema } from '../zod'
+import { NewCouponSchema, newCouponSchema } from '../zod'
 
 export type CreateCouponReturn =
 	| { success: true }
 	| { success: false; message?: string }
 
 export async function createCoupon(
-	data: NewCoupon,
+	data: NewCouponSchema,
 	{ path }: { path?: string } = {}
 ) {
 	try {
@@ -40,7 +41,32 @@ export async function createCoupon(
 			parsedData.value = toCents(parsedData.value)
 		}
 
-		await db.insert(coupons).values(parsedData)
+		const stripeCoupon = await stripe.coupons.create({
+			...(parsedData.type === 'fixed'
+				? { amount_off: parsedData.value }
+				: { percent_off: parsedData.value }),
+			currency: 'usd'
+		})
+
+		const stripePromoCode = await stripe.promotionCodes.create({
+			code: parsedData.code,
+			coupon: stripeCoupon.id,
+			max_redemptions: parsedData.maxUses ?? undefined,
+			expires_at: parsedData.expiresAt
+				? Math.floor(parsedData.expiresAt.getTime() / 1000)
+				: undefined,
+			active: parsedData.active ?? true,
+			restrictions: {
+				minimum_amount: parsedData.minValueInCents ?? undefined,
+				minimum_amount_currency: parsedData.minValueInCents ? 'usd' : undefined
+			}
+		})
+
+		await db.insert(coupons).values({
+			...parsedData,
+			stripeCouponId: stripeCoupon.id,
+			stripePromoCodeId: stripePromoCode.id
+		})
 
 		if (path) revalidatePath(path)
 

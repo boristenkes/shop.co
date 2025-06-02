@@ -1,5 +1,5 @@
 import { OrderStatus, Size } from '@/db/schema/enums'
-import { requiredString } from '@/utils/zod'
+import { integerSchema, requiredString } from '@/utils/zod'
 import { z } from 'zod'
 
 export const orderItemSchema = z.object({
@@ -27,3 +27,11 @@ export const updateOrderSchema = z
 	.partial() // Everything optional
 
 export type UpdateOrderSchema = z.infer<typeof updateOrderSchema>
+
+export const orderMetadataSchema = z.object({
+	cartId: integerSchema,
+	userId: integerSchema,
+	couponId: integerSchema.optional().nullable()
+})
+
+export type OrderMetadataSchema = z.infer<typeof orderMetadataSchema>

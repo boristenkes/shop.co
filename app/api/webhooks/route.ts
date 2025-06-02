@@ -1,5 +1,6 @@
 import { db } from '@/db'
 import { carts, orderItems, orders, products } from '@/db/schema'
+import { orderMetadataSchema } from '@/features/orders/zod'
 import { stripe } from '@/lib/stripe'
 import { eq, sql } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
@@ -25,17 +26,16 @@ export async function POST(req: NextRequest) {
 	if (event.type === 'checkout.session.completed') {
 		const checkoutSession = event.data.object as Stripe.Checkout.Session
 
-		const cartId = Number(checkoutSession.metadata?.cartId)
-		const userId = Number(checkoutSession.metadata?.userId)
+		const metadata = orderMetadataSchema.safeParse(checkoutSession.metadata)
 
-		if (!cartId || !userId)
-			return new NextResponse('Missing metadata', { status: 400 })
+		if (!metadata.success)
+			return new NextResponse('Invalid metadata', { status: 400 })
 
 		// Update database
 		try {
 			await db.transaction(async tx => {
 				const cartItems = await tx.query.cartItems.findMany({
-					where: item => eq(item.cartId, cartId)
+					where: item => eq(item.cartId, metadata.data.cartId)
 				})
 
 				const rawShippingAddress =
@@ -47,9 +47,10 @@ export async function POST(req: NextRequest) {
 				const [order] = await tx
 					.insert(orders)
 					.values({
-						userId,
+						userId: metadata.data.userId,
 						shippingAddress,
-						totalPriceInCents: Number(checkoutSession.amount_total)
+						totalPriceInCents: Number(checkoutSession.amount_total),
+						couponId: metadata.data.couponId
 					})
 					.returning({ id: orders.id })
 
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
 					WHERE ${products}.id = data.id
 				`)
 
-				await tx.delete(carts).where(eq(carts.id, cartId))
+				await tx.delete(carts).where(eq(carts.id, metadata.data.cartId))
 			})
 		} catch (error) {
 			console.error('[WEBHOOK/TRANSACTION]:', error)

@@ -1,9 +1,14 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import Paragraph from '@/components/utils/paragraph'
+import Cookies from 'js-cookie'
 import { ArrowRightIcon } from 'lucide-react'
 import Link from 'next/link'
 
 export default function CheckoutSuccessPage() {
+	Cookies.remove('coupon')
+
 	return (
 		<main className='container py-16'>
 			<div className='text-center'>

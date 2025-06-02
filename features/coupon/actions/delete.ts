@@ -4,6 +4,7 @@ import { db } from '@/db'
 import { Coupon, coupons } from '@/db/schema/coupons'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { stripe } from '@/lib/stripe'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
@@ -22,7 +23,22 @@ export async function deleteCoupon(
 		if (!currentUser || !hasPermission(currentUser.role, 'coupons', ['delete']))
 			throw new Error('Unauthorized')
 
-		await db.delete(coupons).where(eq(coupons.id, couponId))
+		const [deletedCoupon] = await db
+			.delete(coupons)
+			.where(eq(coupons.id, couponId))
+			.returning({
+				stripeCouponId: coupons.stripeCouponId,
+				stripePromoCodeId: coupons.stripePromoCodeId
+			})
+
+		if (deletedCoupon) {
+			await Promise.all([
+				stripe.coupons.del(deletedCoupon.stripeCouponId),
+				stripe.promotionCodes.update(deletedCoupon.stripePromoCodeId, {
+					active: false
+				})
+			])
+		}
 
 		if (path) revalidatePath(path)
 

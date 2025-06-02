@@ -2,7 +2,9 @@
 
 import { db } from '@/db'
 import { carts } from '@/db/schema'
+import { Coupon } from '@/db/schema/coupons'
 import { validateCoupon } from '@/features/coupon/actions/read'
+import { orderItemSchema } from '@/features/orders/zod'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { stripe } from '@/lib/stripe'
@@ -10,7 +12,6 @@ import { calculatePriceWithDiscount } from '@/lib/utils'
 import { StripeCheckoutSession } from '@stripe/stripe-js'
 import { eq } from 'drizzle-orm'
 import { cookies } from 'next/headers'
-import { orderItemSchema } from '../zod'
 
 export type CheckoutReturn =
 	| { success: true; sessionId: StripeCheckoutSession['id'] }
@@ -76,6 +77,7 @@ export async function checkout(): Promise<CheckoutReturn> {
 		)
 
 		const userCoupon = (await cookies()).get('coupon')
+		let coupon: Pick<Coupon, 'id' | 'stripePromoCodeId'> | undefined
 
 		if (userCoupon) {
 			const couponValidation = await validateCoupon(
@@ -83,7 +85,12 @@ export async function checkout(): Promise<CheckoutReturn> {
 				totalValue
 			)
 
-			// Apply discount to Stripe checkout
+			if (couponValidation.success) {
+				coupon = {
+					id: couponValidation.coupon.id,
+					stripePromoCodeId: couponValidation.coupon.stripePromoCodeId
+				}
+			}
 		}
 
 		const stripeSession = await stripe.checkout.sessions.create({
@@ -103,9 +110,11 @@ export async function checkout(): Promise<CheckoutReturn> {
 				},
 				quantity: item.quantity
 			})),
+			discounts: coupon ? [{ promotion_code: coupon.stripePromoCodeId }] : [],
 			metadata: {
 				cartId: userCart.id,
-				userId: currentUser.id
+				userId: currentUser.id,
+				couponId: coupon?.id ?? null
 			},
 			shipping_address_collection: {
 				allowed_countries: [
