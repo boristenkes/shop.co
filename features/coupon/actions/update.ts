@@ -36,8 +36,10 @@ export async function updateCoupon(
 			}
 		}
 
-		if (newData.type === 'fixed' && newData.value)
-			newData.value = toCents(newData.value)
+		if (newData.type && newData.value) {
+			newData.value =
+				newData.type === 'fixed' ? toCents(newData.value) : newData.value
+		}
 
 		if (newData.minValueInCents)
 			newData.minValueInCents = toCents(newData.minValueInCents)

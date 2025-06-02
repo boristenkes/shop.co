@@ -46,11 +46,12 @@ import { toast } from 'sonner'
 export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
 	const form = useForm<EditCouponSchema>({
 		defaultValues: {
-			...editCouponSchema.parse(coupon),
+			...editCouponSchema.omit({ expiresAt: true }).parse(coupon),
 			minValueInCents: coupon.minValueInCents
 				? coupon.minValueInCents / 100
 				: undefined,
-			value: coupon.type === 'fixed' ? coupon.value / 100 : coupon.value
+			value: coupon.type === 'fixed' ? coupon.value / 100 : coupon.value,
+			expiresAt: coupon.expiresAt
 		},
 		resolver: zodResolver(editCouponSchema)
 	})
@@ -64,6 +65,12 @@ export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
 		)
 
 		if (isEmpty(dirtyValues)) return
+
+		// Make sure type and value alwasy go in pair to correctly calculate new value
+		if (dirtyValues.value || dirtyValues.type) {
+			dirtyValues.value = data.value
+			dirtyValues.type = data.type
+		}
 
 		const response = await updateCoupon(coupon.id, dirtyValues, {
 			path: '/dashboard/coupons'
@@ -82,7 +89,10 @@ export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)}>
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				noValidate
+			>
 				{errors.root && <ErrorMessage message={errors.root.message!} />}
 
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -151,6 +161,7 @@ export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
 											className='rounded-s-none'
 											type='number'
 											value={field.value ?? ''}
+											min={0}
 											onChange={e => {
 												let val = e.target.value
 												if (form.getValues('type') === 'percentage') {

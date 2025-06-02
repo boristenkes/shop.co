@@ -199,18 +199,29 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 			const review = row.original
 			const [open, setOpen] = useState(false)
 			const mutation = useMutation({
-				mutationKey: ['review:approve', review.id],
-				mutationFn: (action: 'approve' | 'delete') =>
-					action === 'approve'
-						? approveReview(review.id)
-						: deleteReview(review.id),
-				onSettled(data, _, action) {
-					if (data?.success) {
-						toast.success(action === 'approve' ? 'Approved' : 'Deleted')
+				mutationKey: ['review:delete', review.id],
+				mutationFn: () => deleteReview(review.id),
+				onSettled(response) {
+					if (response?.success) {
+						toast.success('Review deleted successfully')
 						setOpen(false)
 					}
 				}
 			})
+
+			const handleApproval = () => {
+				const approve = async () => {
+					const response = await approveReview(review.id)
+					if (!response.success) throw new Error('Something went wrong')
+					return true
+				}
+
+				toast.promise(approve(), {
+					loading: 'Approving review...',
+					success: 'Review approved successfully',
+					error: error => error.message ?? 'Something went wrong'
+				})
+			}
 
 			return (
 				<Dialog
@@ -233,9 +244,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 
 							{!review.approved && (
 								<DropdownMenuItem>
-									<button onClick={() => mutation.mutate('approve')}>
-										Approve
-									</button>
+									<button onClick={handleApproval}>Approve</button>
 								</DropdownMenuItem>
 							)}
 							<DropdownMenuItem>
@@ -266,7 +275,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 							</DialogClose>
 
 							<Button
-								onClick={() => mutation.mutate('delete')}
+								onClick={() => mutation.mutate()}
 								disabled={mutation.isPending}
 								variant='destructive'
 							>

@@ -1,4 +1,4 @@
-import { couponTypeEnum } from '@/db/schema'
+import { couponTypes } from '@/lib/enums'
 import { integerSchema, requiredString } from '@/utils/zod'
 import { z } from 'zod'
 
@@ -9,7 +9,7 @@ export const newCouponSchema = z.object({
 		.min(3, 'Too short')
 		.max(20, 'Too long')
 		.transform(value => value.toUpperCase()),
-	type: z.enum(couponTypeEnum.enumValues).default('percentage'),
+	type: z.enum(couponTypes).default('percentage'),
 	value: integerSchema.positive(),
 	maxUses: integerSchema.positive().optional().nullable(),
 	expiresAt: z.coerce
