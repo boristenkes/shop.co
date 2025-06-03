@@ -35,7 +35,7 @@ type UpdateProductReturn =
 export async function updateProduct(
 	productId: Product['id'],
 	newData: EditProductSchema,
-	images?: NewProductImage[]
+	images?: Omit<NewProductImage, 'productId'>[]
 ): Promise<UpdateProductReturn> {
 	try {
 		await requirePermission('products', ['update'])
@@ -69,12 +69,12 @@ export async function updateProduct(
 
 		const updatedData = rest as NewProduct
 
-		if (isEmpty(updatedData)) return { success: true }
-
 		if (priceInDollars) updatedData.priceInCents = toCents(priceInDollars)
 		if (updatedData.name) updatedData.slug = slugify(updatedData.name)
 		if (updatedData.detailsHTML)
 			updatedData.detailsHTML = sanitizeHTML(updatedData.detailsHTML)
+
+		if (isEmpty(updatedData)) return { success: true }
 
 		await db
 			.update(products)
@@ -96,7 +96,7 @@ export async function updateProduct(
 
 async function handleImages(
 	productId: Product['id'],
-	images: NewProductImage[]
+	images: Omit<NewProductImage, 'productId'>[]
 ) {
 	if (images.length === 0) throw new Error('No images provided')
 

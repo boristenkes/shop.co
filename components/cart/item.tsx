@@ -1,24 +1,14 @@
 'use client'
 
-import { SessionCartItem } from '@/context/cart'
-import { calculatePriceWithDiscount } from '@/lib/utils'
+import { UserCartItemSchema } from '@/features/cart/zod'
 import { formatPrice } from '@/utils/format'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useMemo } from 'react'
 import { Skeleton } from '../ui/skeleton'
 import CartItemQuantity from './cart-item-quantity'
 import DeleteCartItemButton from './delete-cart-item-button'
 
-export default function CartItem({ item }: { item: SessionCartItem }) {
-	const totalPrice = useMemo(() => {
-		const priceWithDiscount = calculatePriceWithDiscount(
-			item.product.priceInCents,
-			item.product.discount!
-		)
-
-		return priceWithDiscount * item.quantity
-	}, [item])
+export default function CartItem({ item }: { item: UserCartItemSchema }) {
 	const href = `/products/${item.product.slug}/${item.product.id}?color=${item.color.slug}&size=${item.size}`
 
 	return (
@@ -58,7 +48,9 @@ export default function CartItem({ item }: { item: SessionCartItem }) {
 				</div>
 
 				<div className='flex items-center justify-between gap-4'>
-					<strong>{formatPrice(totalPrice)}</strong>
+					<strong>
+						{formatPrice(item.productPriceInCents * item.quantity)}
+					</strong>
 					<CartItemQuantity
 						itemId={item.id}
 						maxQuantity={Math.min(item.product.stock!, 20)}

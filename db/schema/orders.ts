@@ -19,7 +19,7 @@ export const orders = pgTable(
 	{
 		id: serial().primaryKey(),
 		totalPriceInCents: integer().notNull(),
-		status: orderStatusEnum().default('pending'),
+		status: orderStatusEnum().default('pending').notNull(),
 		shippingAddress: text(),
 
 		userId: integer()
@@ -29,9 +29,10 @@ export const orders = pgTable(
 			onDelete: 'set null'
 		}),
 
-		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
+			.notNull()
 			.$onUpdate(() => new Date())
 	},
 	t => [
@@ -73,9 +74,10 @@ export const orderItems = pgTable(
 			.notNull()
 			.references(() => colors.id, { onDelete: 'restrict' }),
 
-		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
+			.notNull()
 			.$onUpdate(() => new Date())
 	},
 	t => [

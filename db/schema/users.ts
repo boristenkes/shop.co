@@ -23,9 +23,10 @@ export const users = pgTable(
 		role: roleEnum().default('customer').notNull(),
 		image: text(),
 
-		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
+			.notNull()
 			.$onUpdate(() => new Date())
 	},
 	t => [uniqueIndex().on(t.email)]

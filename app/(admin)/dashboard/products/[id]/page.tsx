@@ -402,7 +402,7 @@ function ProductTimestamps({
 								Created
 							</label>
 							<time
-								dateTime={product.createdAt?.toISOString()}
+								dateTime={product.createdAt.toISOString()}
 								className='text-sm'
 							>
 								{formatDate(product.createdAt!)}
@@ -416,7 +416,7 @@ function ProductTimestamps({
 								Last Updated
 							</label>
 							<time
-								dateTime={product.updatedAt?.toISOString()}
+								dateTime={product.updatedAt.toISOString()}
 								className='text-sm'
 							>
 								{formatDate(product.updatedAt!)}

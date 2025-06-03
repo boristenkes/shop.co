@@ -83,7 +83,7 @@ export default async function UserOrders({ userId }: { userId: User['id'] }) {
 						<TableCell>
 							{
 								<time
-									dateTime={order.createdAt?.toISOString()}
+									dateTime={order.createdAt.toISOString()}
 									className='whitespace-nowrap'
 								>
 									{formatDate(order.createdAt!, {

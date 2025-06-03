@@ -32,8 +32,8 @@ export const coupons = pgTable(
 		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
-			.$onUpdate(() => new Date())
 			.notNull()
+			.$onUpdate(() => new Date())
 	},
 	t => [
 		uniqueIndex('coupon_code_idx').on(t.code),

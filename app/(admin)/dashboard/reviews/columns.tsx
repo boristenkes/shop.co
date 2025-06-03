@@ -182,7 +182,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 			const review = row.original
 
 			return (
-				<time dateTime={review.createdAt?.toISOString()}>
+				<time dateTime={review.createdAt.toISOString()}>
 					{formatDate(review.createdAt!, {
 						month: 'long',
 						day: '2-digit',

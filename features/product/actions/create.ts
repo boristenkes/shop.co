@@ -30,7 +30,7 @@ const uploadthingApi = new UTApi()
 
 export async function createProduct(
 	data: z.infer<typeof newProductSchema>,
-	images: NewProductImage[],
+	images: Omit<NewProductImage, 'productId'>[],
 	path = '/dashboard/products'
 ) {
 	try {

@@ -1,5 +1,6 @@
 import { sizes } from '@/lib/enums'
 import { formatFileSize } from '@/utils/format'
+import { integerSchema, requiredString } from '@/utils/zod'
 import { z } from 'zod'
 
 export const productImageSchema = z
@@ -16,20 +17,12 @@ export const productImageSchema = z
 	.max(10, 'Too many images. Max 10')
 
 export const newProductSchema = z.object({
-	name: z
-		.string({ required_error: 'Name is required' })
-		.trim()
-		.min(5, 'Name is too short')
-		.max(50, 'Name is too long'),
-	description: z
-		.string()
-		.trim()
+	name: requiredString.min(5, 'Name is too short').max(50, 'Name is too long'),
+	description: requiredString
 		.min(50, 'Description is too short.')
 		.max(1000, 'Description is too long.')
 		.optional(),
-	detailsHTML: z
-		.string()
-		.trim()
+	detailsHTML: requiredString
 		.min(50, 'Details are too short.')
 		.max(5000, 'Details are too long.')
 		.optional(),
@@ -38,19 +31,15 @@ export const newProductSchema = z.object({
 		.positive('Price must be positive number')
 		.finite(),
 	discount: z.coerce.number().int().nonnegative().lte(100).optional(),
-	stock: z.coerce
-		.number({ required_error: 'Stock is required' })
-		.int()
-		.positive(),
+	stock: integerSchema.positive(),
 	sizes: z.enum(sizes).array().min(1, 'At least one size is required'),
-	colors: z.coerce
-		.number()
+	colors: integerSchema
 		.positive()
 		.array()
 		.min(1, 'At least one color is required'),
 	archived: z.boolean().optional(),
 	featured: z.boolean().optional(),
-	category: z.coerce.number().positive().optional()
+	category: integerSchema.optional()
 })
 
 export type NewProductSchema = z.infer<typeof newProductSchema>
@@ -60,19 +49,19 @@ export const editProductSchema = newProductSchema.partial()
 export type EditProductSchema = z.infer<typeof editProductSchema>
 
 export const productSchema = z.object({
-	id: z.number().int().positive().finite(),
-	name: z.string().min(1),
-	slug: z.string().min(1),
+	id: integerSchema.positive(),
+	name: requiredString,
+	slug: requiredString,
 	description: z.string().optional(),
-	priceInCents: z.number().int().positive().finite(),
-	discount: z.number().min(0).max(100),
-	stock: z.number().min(0).finite(),
+	price: integerSchema.positive(),
+	discount: integerSchema.min(0).max(100),
+	stock: integerSchema.min(0),
 	archived: z.boolean(),
 	featured: z.boolean(),
 	sizes: z.enum(sizes).array(),
-	categoryId: z.number().int().positive().finite(),
-	userId: z.number().int().positive().finite(),
-	createdAt: z.coerce.string().datetime(),
-	updatedAt: z.coerce.string().datetime(),
-	deletedAt: z.coerce.string().datetime().optional()
+	category: integerSchema.positive(),
+	userId: integerSchema.positive(),
+	createdAt: requiredString.datetime(),
+	updatedAt: requiredString.datetime(),
+	deletedAt: requiredString.datetime().optional()
 })

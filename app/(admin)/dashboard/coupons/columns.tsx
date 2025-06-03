@@ -160,7 +160,7 @@ export const columns: ColumnDef<Coupon>[] = [
 			const order = row.original
 
 			return (
-				<time dateTime={order.createdAt?.toISOString()}>
+				<time dateTime={order.createdAt.toISOString()}>
 					{formatDate(order.createdAt!, {
 						month: 'long',
 						day: '2-digit',

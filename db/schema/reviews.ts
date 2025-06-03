@@ -19,7 +19,7 @@ export const reviews = pgTable(
 		id: serial().primaryKey(),
 		comment: text(),
 		rating: smallint().notNull(),
-		approved: boolean().default(false),
+		approved: boolean().default(false).notNull(),
 
 		userId: integer()
 			.notNull()
@@ -28,9 +28,10 @@ export const reviews = pgTable(
 			.notNull()
 			.references(() => products.id, { onDelete: 'cascade' }),
 
-		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
+			.notNull()
 			.$onUpdate(() => new Date())
 	},
 	t => [

@@ -90,7 +90,7 @@ export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 			/>
 		),
 		cell: ({ row }) => (
-			<time dateTime={row.original.createdAt?.toISOString()}>
+			<time dateTime={row.original.createdAt.toISOString()}>
 				{formatDate(row.original.createdAt!)}
 			</time>
 		)

@@ -27,7 +27,7 @@ export default function OrderTable({ order }: { order: GetOwnOrdersOrder }) {
 			<TableCaption>
 				Order date:{' '}
 				<time
-					dateTime={order.createdAt?.toISOString()}
+					dateTime={order.createdAt.toISOString()}
 					className='font-medium'
 				>
 					{formatDate(order.createdAt!)}

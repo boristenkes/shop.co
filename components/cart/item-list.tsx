@@ -1,9 +1,9 @@
-import { SessionCartItem } from '@/context/cart'
+import { UserCartItemSchema } from '@/features/cart/zod'
 import { cn } from '@/lib/utils'
 import CartItem, { CartItemSkeleton } from './item'
 
 type CartItemListProps = React.ComponentProps<'ul'> & {
-	items: SessionCartItem[]
+	items: UserCartItemSchema[]
 }
 
 export default function CartItemList({

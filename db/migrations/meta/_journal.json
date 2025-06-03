@@ -127,6 +127,13 @@
       "when": 1748903614123,
       "tag": "0017_mature_ogun",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1748974966993,
+      "tag": "0018_peaceful_warstar",
+      "breakpoints": true
     }
   ]
 }

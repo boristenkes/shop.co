@@ -220,7 +220,7 @@ function UserProfile({
 								Member Since
 							</label>
 							<time
-								dateTime={user.createdAt?.toISOString()}
+								dateTime={user.createdAt.toISOString()}
 								className='text-sm'
 							>
 								{formatDate(user.createdAt!)}
@@ -287,7 +287,7 @@ function UserReviews({ reviews }: { reviews: GetUserByIdUser['reviews'] }) {
 												</div>
 											</div>
 											<time
-												dateTime={review.createdAt?.toISOString()}
+												dateTime={review.createdAt.toISOString()}
 												className='text-sm text-gray-500'
 											>
 												{formatDate(review.createdAt!)}
@@ -344,7 +344,7 @@ function UserOrders({ orders }: { orders: GetUserByIdUser['orders'] }) {
 										</div>
 										<div className='flex items-center gap-2 mt-1 text-sm text-gray-500'>
 											<Calendar className='h-4 w-4' />
-											<time dateTime={order.createdAt?.toISOString()}>
+											<time dateTime={order.createdAt.toISOString()}>
 												{formatDate(order.createdAt!)}
 											</time>
 										</div>

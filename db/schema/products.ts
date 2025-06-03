@@ -29,19 +29,20 @@ export const products = pgTable(
 		detailsHTML: text(),
 		priceInCents: integer().notNull(),
 		discount: smallint().default(0),
-		stock: integer().default(1),
-		archived: boolean().default(false),
-		featured: boolean().default(false),
-		sizes: sizeEnum().array(),
+		stock: integer().default(1).notNull(),
+		archived: boolean().default(false).notNull(),
+		featured: boolean().default(false).notNull(),
+		sizes: sizeEnum().array().notNull(),
 
 		categoryId: integer().references(() => categories.id, {
 			onDelete: 'set null'
 		}),
 		userId: integer().references(() => users.id, { onDelete: 'set null' }),
 
-		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
+			.notNull()
 			.$onUpdate(() => new Date()),
 		deletedAt: timestamp({ withTimezone: true })
 	},

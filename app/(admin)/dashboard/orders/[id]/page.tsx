@@ -79,7 +79,7 @@ export default async function OrderDetailsPage(props: {
 							<TableCaption>
 								Order date:{' '}
 								<time
-									dateTime={response.order.createdAt?.toISOString()}
+									dateTime={response.order.createdAt.toISOString()}
 									className='font-medium'
 								>
 									{formatDate(response.order.createdAt!)}

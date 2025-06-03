@@ -1,6 +1,5 @@
 'use server'
 
-import { SessionCartItem } from '@/context/cart'
 import { db } from '@/db'
 import { cartItems } from '@/db/schema'
 import { CartItem, carts } from '@/db/schema/carts'
@@ -9,7 +8,11 @@ import { hasPermission } from '@/lib/permissions'
 import { calculatePriceWithDiscount } from '@/lib/utils'
 import { touchCart } from '@/utils/actions'
 import { eq, sql } from 'drizzle-orm'
-import { editCartItemSchema, sessionCartItemSchema } from '../zod'
+import {
+	editCartItemSchema,
+	userCartItemSchema,
+	UserCartItemSchema
+} from '../zod'
 import { NewItemData } from './create'
 
 export async function updateCartItem(
@@ -64,7 +67,7 @@ export async function updateCartItem(
 	}
 }
 
-export async function syncUserCart(sessionCartItems: SessionCartItem[]) {
+export async function syncUserCart(guestCartItems: UserCartItemSchema[]) {
 	try {
 		const session = await auth()
 		const currentUser = session?.user
@@ -75,7 +78,7 @@ export async function syncUserCart(sessionCartItems: SessionCartItem[]) {
 		)
 			throw new Error('Unauthorized')
 
-		const parsed = sessionCartItemSchema.array().parse(sessionCartItems)
+		const parsed = userCartItemSchema.array().parse(guestCartItems)
 
 		await db.transaction(async tx => {
 			const activeCart = await db.query.carts.findFirst({
@@ -96,21 +99,40 @@ export async function syncUserCart(sessionCartItems: SessionCartItem[]) {
 				cartId = activeCart.id
 			}
 
+			const productIds = guestCartItems.map(item => item.product.id)
+
+			const products = await tx.query.products.findMany({
+				where: (product, { inArray }) => inArray(product.id, productIds),
+				columns: { id: true, priceInCents: true, discount: true }
+			})
+
+			const productPrices = products.reduce<ProductPrices>((acc, curr) => {
+				acc[curr.id] = {
+					priceInCents: curr.priceInCents,
+					discount: curr.discount
+				}
+				return acc
+			}, {})
+
+			const itemsToInsert = parsed.map(item => {
+				const { priceInCents, discount } = productPrices[item.product.id]
+
+				return {
+					productId: item.product.id,
+					colorId: item.color.id,
+					quantity: item.quantity,
+					size: item.size,
+					productPriceInCents: calculatePriceWithDiscount(
+						priceInCents,
+						discount
+					),
+					cartId
+				}
+			})
+
 			await tx
 				.insert(cartItems)
-				.values(
-					parsed.map(item => ({
-						productId: item.product.id,
-						colorId: item.color.id,
-						quantity: item.quantity,
-						size: item.size,
-						productPriceInCents: calculatePriceWithDiscount(
-							item.product.priceInCents,
-							item.product.discount ?? 0
-						),
-						cartId
-					}))
-				)
+				.values(itemsToInsert)
 				.onConflictDoUpdate({
 					target: [
 						cartItems.cartId,
@@ -130,3 +152,8 @@ export async function syncUserCart(sessionCartItems: SessionCartItem[]) {
 		return { success: false }
 	}
 }
+
+type ProductPrices = Record<
+	number,
+	{ priceInCents: number; discount: number | null }
+>

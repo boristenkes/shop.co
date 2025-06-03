@@ -15,7 +15,9 @@ export const productImages = pgTable(
 		url: text().notNull(),
 		key: text().notNull().unique(),
 
-		productId: integer().references(() => products.id, { onDelete: 'cascade' })
+		productId: integer()
+			.notNull()
+			.references(() => products.id, { onDelete: 'cascade' })
 	},
 	t => [uniqueIndex('product_image_key_idx').on(t.key)]
 )

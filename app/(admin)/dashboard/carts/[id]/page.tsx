@@ -66,18 +66,18 @@ export default async function CartDetailsPage(props: {
 							<CardDescription className='mt-2'>
 								Opened:{' '}
 								<time
-									dateTime={response.cart.createdAt?.toISOString()}
+									dateTime={response.cart.createdAt.toISOString()}
 									className='font-medium'
 								>
-									{getTimeDistanceFromNow(response.cart.createdAt!)}
+									{getTimeDistanceFromNow(response.cart.createdAt)}
 								</time>
 								<br />
 								Last Update:{' '}
 								<time
-									dateTime={response.cart.updatedAt?.toISOString()}
+									dateTime={response.cart.updatedAt.toISOString()}
 									className='font-medium'
 								>
-									{getTimeDistanceFromNow(response.cart.updatedAt!)}
+									{getTimeDistanceFromNow(response.cart.updatedAt)}
 								</time>
 							</CardDescription>
 						</div>

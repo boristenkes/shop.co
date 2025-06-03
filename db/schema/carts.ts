@@ -22,9 +22,10 @@ export const carts = pgTable(
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 
-		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
+			.notNull()
 			.$onUpdate(() => new Date())
 	},
 	t => [uniqueIndex('cart_user_unique').on(t.userId)]
@@ -59,9 +60,10 @@ export const cartItems = pgTable(
 			.notNull()
 			.references(() => colors.id, { onDelete: 'cascade' }),
 
-		createdAt: timestamp({ withTimezone: true }).defaultNow(),
+		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })
 			.defaultNow()
+			.notNull()
 			.$onUpdate(() => new Date())
 	},
 	t => [unique('cart_item_unique').on(t.cartId, t.productId, t.size, t.colorId)]

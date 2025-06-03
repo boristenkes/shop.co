@@ -1,6 +1,5 @@
 'use server'
 
-import { SessionCartItem } from '@/context/cart'
 import { db } from '@/db'
 import { carts } from '@/db/schema'
 import { Cart, CartItem } from '@/db/schema/carts'
@@ -8,12 +7,13 @@ import { Color } from '@/db/schema/colors'
 import { ProductImage } from '@/db/schema/product-images'
 import { Product } from '@/db/schema/products'
 import { User } from '@/db/schema/users'
+import { UserCartItemSchema } from '@/features/cart/zod'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { eq, sql } from 'drizzle-orm'
 
 export type GetUserCartItemsReturn =
-	| { success: true; items: SessionCartItem[] }
+	| { success: true; items: UserCartItemSchema[] }
 	| { success: false; message: string }
 
 export async function getUserCartItems(
@@ -36,34 +36,23 @@ export async function getUserCartItems(
 					columns: {
 						id: true,
 						quantity: true,
-						size: true
+						size: true,
+						productPriceInCents: true
 					},
 					with: {
 						color: true,
 						product: {
-							columns: {
-								id: true,
-								name: true,
-								slug: true,
-								priceInCents: true,
-								discount: true,
-								stock: true
-							},
-							with: {
-								images: {
-									columns: {
-										url: true
-									},
-									limit: 1
-								}
-							}
+							columns: { id: true, name: true, slug: true, stock: true },
+							with: { images: { columns: { url: true }, limit: 1 } }
 						}
 					}
 				}
 			}
 		})
 
-		const items = cart ? cart.cartItems : ([] as SessionCartItem[])
+		const items = (cart
+			? cart.cartItems
+			: []) as unknown as UserCartItemSchema[]
 
 		items.forEach(item => {
 			// @ts-expect-error
@@ -72,7 +61,7 @@ export async function getUserCartItems(
 			delete item.product.images
 		})
 
-		return { success: true, items: items as SessionCartItem[] }
+		return { success: true, items }
 	} catch (error) {
 		console.error('[GET_USER_CART_ITEMS]:', error)
 		return { success: false, message: 'Something went wrong.' }

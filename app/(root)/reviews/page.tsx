@@ -94,7 +94,7 @@ export default async function UserReviewsPage() {
 
 								<p className='font-medium text-neutral-600'>
 									Posted on{' '}
-									<time dateTime={review.createdAt?.toISOString()}>
+									<time dateTime={review.createdAt.toISOString()}>
 										{formatDate(review.createdAt!, {
 											month: 'long',
 											day: '2-digit',

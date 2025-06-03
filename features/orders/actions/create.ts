@@ -8,7 +8,6 @@ import { orderItemSchema } from '@/features/orders/zod'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { stripe } from '@/lib/stripe'
-import { calculatePriceWithDiscount } from '@/lib/utils'
 import { StripeCheckoutSession } from '@stripe/stripe-js'
 import { eq } from 'drizzle-orm'
 import { cookies } from 'next/headers'
@@ -30,13 +29,11 @@ export async function checkout(): Promise<CheckoutReturn> {
 			columns: { id: true },
 			with: {
 				cartItems: {
-					columns: { size: true, quantity: true },
+					columns: { size: true, quantity: true, productPriceInCents: true },
 					with: {
 						product: {
 							columns: {
-								name: true,
-								priceInCents: true,
-								discount: true
+								name: true
 							},
 							with: {
 								images: {
@@ -67,13 +64,7 @@ export async function checkout(): Promise<CheckoutReturn> {
 
 		const orderItems = orderItemSchema.array().parse(userCartItems)
 		const totalValue = orderItems.reduce(
-			(acc, curr) =>
-				acc +
-				calculatePriceWithDiscount(
-					curr.product.priceInCents,
-					curr.product.discount
-				) *
-					curr.quantity,
+			(acc, curr) => acc + curr.productPriceInCents * curr.quantity,
 			0
 		)
 
@@ -104,10 +95,7 @@ export async function checkout(): Promise<CheckoutReturn> {
 						images: [item.product.image],
 						description: `${item.product.name}; size: ${item.size}; color: ${item.color.name}`
 					},
-					unit_amount: calculatePriceWithDiscount(
-						item.product.priceInCents,
-						item.product.discount
-					)
+					unit_amount: item.productPriceInCents
 				},
 				quantity: item.quantity
 			})),

@@ -1,39 +1,24 @@
 'use client'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Color } from '@/db/schema/colors'
-import { Product } from '@/db/schema/products'
 import { getUserCartItems } from '@/features/cart/actions/read'
 import { syncUserCart } from '@/features/cart/actions/update'
-import { Size } from '@/lib/enums'
+import { UserCartItemSchema } from '@/features/cart/zod'
 import { SetState } from '@/lib/types'
 import { useQuery } from '@tanstack/react-query'
 import { AlertCircleIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-export type SessionCartProduct = Pick<
-	Product,
-	'id' | 'name' | 'slug' | 'priceInCents' | 'discount' | 'stock'
-> & { image: string }
-
-export type SessionCartItem = {
-	id: string | number
-	color: Color
-	size: Size
-	quantity: number
-	product: SessionCartProduct
-}
-
-type CartContextValue = {
-	items: SessionCartItem[]
-	add: (item: Omit<SessionCartItem, 'id'>) => void
+export type CartContextValue = {
+	items: UserCartItemSchema[]
+	add: (item: Omit<UserCartItemSchema, 'id'>) => void
 	edit: (
-		itemId: SessionCartItem['id'],
-		newData: Partial<SessionCartItem>
+		itemId: UserCartItemSchema['id'],
+		newData: Partial<UserCartItemSchema>
 	) => void
-	remove: (itemId: SessionCartItem['id']) => void
-	get: (itemId: SessionCartItem['id']) => SessionCartItem | undefined
+	remove: (itemId: UserCartItemSchema['id']) => void
+	get: (itemId: UserCartItemSchema['id']) => UserCartItemSchema | undefined
 	clear: () => void
 	isOpen: boolean
 	setIsOpen: SetState<boolean>
@@ -55,7 +40,7 @@ export const useCart = () => {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-	const [items, setItems] = useState<SessionCartItem[]>([])
+	const [items, setItems] = useState<UserCartItemSchema[]>([])
 	const [isOpen, setIsOpen] = useState(false)
 	const session = useSession()
 	const isAuthenticated = session.status === 'authenticated'
@@ -78,7 +63,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 			try {
 				const stored = sessionStorage.getItem(SESSION_STORAGE_CART_KEY)
 
-				const parsed = JSON.parse(stored ?? '[]') as SessionCartItem[]
+				const parsed = JSON.parse(stored ?? '[]') as UserCartItemSchema[]
 
 				if (!isAuthenticated) {
 					setItems(parsed)
@@ -103,7 +88,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		asyncFn()
 	}, [session])
 
-	const syncSessionStorage = (newItems: SessionCartItem[]) => {
+	const syncSessionStorage = (newItems: UserCartItemSchema[]) => {
 		setItems(newItems)
 
 		if (!isAuthenticated) {
@@ -111,7 +96,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		}
 	}
 
-	const add = (newItem: Omit<SessionCartItem, 'id'>) => {
+	const add = (newItem: Omit<UserCartItemSchema, 'id'>) => {
 		const isAlreadyInCart = items.some(
 			item =>
 				item.product.id === newItem.product.id &&
@@ -128,8 +113,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 	}
 
 	const edit = (
-		itemId: SessionCartItem['id'],
-		newData: Partial<SessionCartItem>
+		itemId: UserCartItemSchema['id'],
+		newData: Partial<UserCartItemSchema>
 	) => {
 		const updatedItems = items.map(item =>
 			item.id === itemId ? { ...item, ...newData } : item
@@ -138,7 +123,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		syncSessionStorage(updatedItems)
 	}
 
-	const remove = (itemId: SessionCartItem['id']) => {
+	const remove = (itemId: UserCartItemSchema['id']) => {
 		const filteredItems = items.filter(item => item.id !== itemId)
 
 		syncSessionStorage(filteredItems)
@@ -149,7 +134,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		sessionStorage.removeItem(SESSION_STORAGE_CART_KEY)
 	}
 
-	const get = (itemId: SessionCartItem['id']) => {
+	const get = (itemId: UserCartItemSchema['id']) => {
 		return items.find(item => item.id === itemId)
 	}
 

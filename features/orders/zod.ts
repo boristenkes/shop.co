@@ -5,24 +5,23 @@ import { z } from 'zod'
 export const orderItemSchema = z.object({
 	product: z.object({
 		name: requiredString,
-		image: requiredString.url(),
-		priceInCents: z.number().int().finite(),
-		discount: z.number().finite().min(0).max(100).optional()
+		image: requiredString.url()
 	}),
 	color: z.object({
 		name: requiredString
 	}),
 	size: z.enum(sizes),
-	quantity: z.number().int().min(1).max(20)
+	quantity: z.number().int().min(1).max(20),
+	productPriceInCents: integerSchema.positive()
 })
 
 export const updateOrderSchema = z
 	.object({
-		quantity: z.coerce.number().int().positive().finite(),
+		quantity: integerSchema.positive(),
 		status: z.enum(orderStatuses),
-		totalPriceInCents: z.coerce.number().int().finite(),
+		totalPriceInCents: integerSchema,
 		shippingAddress: requiredString,
-		userId: z.coerce.number().int().positive().finite()
+		userId: integerSchema.positive()
 	})
 	.partial() // Everything optional
 

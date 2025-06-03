@@ -22,12 +22,7 @@ import ApplyCouponForm from './coupon-form'
 export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 	const cart = useCart()
 	const subtotalInCents = cart.items.reduce((acc, curr) => {
-		const priceWithDiscount = calculatePriceWithDiscount(
-			curr.product.priceInCents,
-			curr.product.discount!
-		)
-
-		return acc + priceWithDiscount * curr.quantity
+		return acc + curr.productPriceInCents * curr.quantity
 	}, 0)
 	const totalInCents = calculatePriceWithDiscount(subtotalInCents, 0)
 	const couponCookie = useCookie()
@@ -154,7 +149,7 @@ export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 				<AlertDescription>
 					For testing purposes, you can use number below as your credit card
 					number, any 4-digit number as expiration date, and any 3-digit number
-					as CVV code.
+					as CVC code.
 					<code className='flex items-center gap-2'>
 						4242 4242 4242 4242{' '}
 						<CopyButton

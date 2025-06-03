@@ -98,11 +98,13 @@ export default async function ProductPageDetails({
 						id: product.id,
 						slug: product.slug,
 						name: product.name,
-						discount: product.discount,
 						image: product.images[0].url,
-						priceInCents: product.priceInCents,
 						stock: product.stock
 					}}
+					productPriceInCents={calculatePriceWithDiscount(
+						product.priceInCents,
+						product.discount
+					)}
 				/>
 			</div>
 		</div>

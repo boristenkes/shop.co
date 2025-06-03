@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { queryClient } from '@/components/utils/providers'
-import { SessionCartProduct, useCart } from '@/context/cart'
+import { useCart } from '@/context/cart'
 import { Color } from '@/db/schema/colors'
 import { NewItemData, saveToCart } from '@/features/cart/actions/create'
+import { UserCartItemSchema } from '@/features/cart/zod'
 import { Size } from '@/lib/enums'
-import { calculatePriceWithDiscount } from '@/lib/utils'
 import { darkenHex } from '@/utils/helpers'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2Icon, ShoppingCartIcon } from 'lucide-react'
@@ -23,14 +23,16 @@ type ProductPageFormProps = {
 	colors: Color[]
 	sizes: Size[]
 	stock: number
-	product: SessionCartProduct
+	product: UserCartItemSchema['product']
+	productPriceInCents: number
 }
 
 export default function ProductPageForm({
 	colors,
 	sizes,
 	stock,
-	product
+	product,
+	productPriceInCents
 }: ProductPageFormProps) {
 	const params = useSearchParams()
 	const session = useSession()
@@ -87,14 +89,16 @@ export default function ProductPageForm({
 					size,
 					quantity,
 					colorId: color.id,
-					productId: product.id,
-					productPriceInCents: calculatePriceWithDiscount(
-						product.priceInCents,
-						product.discount ?? 0
-					)
+					productId: product.id
 				})
 			} else {
-				cart.add({ product, color, quantity, size }) // Use local cart context
+				cart.add({
+					product,
+					color,
+					quantity,
+					size,
+					productPriceInCents
+				}) // Use local cart context
 				toast.success('Product added to the cart')
 			}
 		} catch (error: any) {

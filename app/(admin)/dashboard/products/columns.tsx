@@ -135,14 +135,14 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 	{
 		accessorKey: 'sizes',
 		header: 'Sizes',
-		cell: ({ row }) => row.original.sizes?.join(', ')
+		cell: ({ row }) => row.original.sizes.join(', ')
 	},
 	{
 		accessorKey: 'colors',
 		header: 'Colors',
 		cell: ({ row }) => (
 			<div className='flex flex-wrap gap-1'>
-				{row.original.productsToColors?.map(({ color }) => (
+				{row.original.productsToColors.map(({ color }) => (
 					<Badge
 						key={color.id}
 						variant='outline'
@@ -196,15 +196,15 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 		cell: ({ row }) => {
 			const category = row.original.category
 
-			return category ? (
+			if (!category) return 'No category'
+
+			return (
 				<Badge
 					variant='default'
 					className='whitespace-nowrap overflow-hidden'
 				>
-					{category?.name}
+					{category.name}
 				</Badge>
-			) : (
-				'No category'
 			)
 		}
 	},
@@ -220,7 +220,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 			const product = row.original
 
 			return (
-				<time dateTime={product.createdAt?.toISOString()}>
+				<time dateTime={product.createdAt.toISOString()}>
 					{formatDate(product.createdAt!, {
 						month: 'long',
 						day: '2-digit',

@@ -1,30 +1,32 @@
+import { colorSchema } from '@/features/color/zod'
+import { productSchema } from '@/features/product/zod'
 import { sizes } from '@/lib/enums'
+import { integerSchema, requiredString } from '@/utils/zod'
 import { z } from 'zod'
-import { colorSchema } from '../color/zod'
-import { productSchema } from '../product/zod'
 
 export const newCartItemSchema = z.object({
-	quantity: z.coerce.number().int().finite().lte(20),
+	quantity: integerSchema.lte(20),
 	size: z.enum(sizes),
-	productId: z.coerce.number().int().finite(),
-	colorId: z.coerce.number().int().positive().finite()
+	productId: integerSchema,
+	colorId: integerSchema
 })
 
 export const editCartItemSchema = newCartItemSchema.partial()
 
-export const sessionCartItemSchema = z.object({
-	id: z.string().uuid().or(z.number().positive().finite()),
-	color: colorSchema,
+export const userCartItemSchema = z.object({
+	id: integerSchema.positive().or(requiredString.uuid()),
+	quantity: integerSchema.positive().lte(20),
 	size: z.enum(sizes),
-	quantity: z.coerce.number().int().finite().lte(20),
+	color: colorSchema,
+	productPriceInCents: integerSchema.positive(),
 	product: productSchema
 		.pick({
 			id: true,
 			name: true,
 			slug: true,
-			priceInCents: true,
-			discount: true,
 			stock: true
 		})
-		.extend({ image: z.string().url() })
+		.extend({ image: requiredString.url() })
 })
+
+export type UserCartItemSchema = z.infer<typeof userCartItemSchema>
