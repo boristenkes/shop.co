@@ -23,10 +23,7 @@ export default async function FeaturedProducts() {
 			</h2>
 
 			{response.success ? (
-				<ProductCardList
-					products={response.products}
-					className='flex-nowrap justify-start max-w-full overflow-x-auto custom-scrollbar'
-				/>
+				<ProductCardList products={response.products} />
 			) : (
 				<ErrorMessage message={response.message} />
 			)}

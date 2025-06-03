@@ -76,7 +76,7 @@ export default function PaginatedProductList({
 		<div>
 			<ProductCardList
 				products={query.data.products}
-				className='mt-8 flex flex-wrap w-full gap-6 justify-start'
+				className='mt-8 flex flex-wrap w-full gap-6 justify-center'
 			/>
 
 			{totalPages > 1 && (

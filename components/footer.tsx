@@ -4,7 +4,7 @@ import NewsletterForm from './newsletter-form'
 
 export default function Footer() {
 	return (
-		<footer className='mt-40 bg-gray-100 pb-12'>
+		<footer className='mt-52 xl:mt-40 bg-gray-100 pb-12'>
 			<div className='mx-4 -translate-y-1/2'>
 				<NewsletterForm />
 			</div>
