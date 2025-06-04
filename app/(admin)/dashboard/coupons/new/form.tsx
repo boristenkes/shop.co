@@ -70,12 +70,12 @@ export default function NewCouponForm() {
 			<form onSubmit={form.handleSubmit(onSubmit)}>
 				{errors.root && <ErrorMessage message={errors.root.message!} />}
 
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+				<div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
 					<FormField
 						control={form.control}
 						name='code'
 						render={({ field }) => (
-							<FormItem className='col-span-2'>
+							<FormItem className='col-span-full'>
 								<FormLabel>Coupon Code</FormLabel>
 								<FormControl>
 									<Input
@@ -110,7 +110,7 @@ export default function NewCouponForm() {
 										}}
 										value={field.value ?? 'percentage'}
 									>
-										<SelectTrigger className='w-14 rounded-e-none'>
+										<SelectTrigger className='w-14 rounded-e-none border-r-0'>
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
@@ -275,7 +275,7 @@ export default function NewCouponForm() {
 						control={form.control}
 						name='description'
 						render={({ field }) => (
-							<FormItem className='col-span-2'>
+							<FormItem className='col-span-full'>
 								<FormLabel>Description</FormLabel>
 								<FormControl>
 									<Textarea

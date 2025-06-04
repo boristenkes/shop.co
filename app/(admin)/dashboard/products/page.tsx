@@ -24,9 +24,9 @@ export default async function ProductsPage() {
 
 	return (
 		<div className='space-y-8 container'>
-			<div className='flex justify-between items-center'>
+			<div className='flex justify-between items-center gap-2 flex-wrap'>
 				<h1 className='text-3xl font-bold'>Products Management</h1>
-				<div className='flex items-center gap-2'>
+				<div className='flex items-center gap-2 ml-auto'>
 					<Button
 						asChild
 						variant='outline'

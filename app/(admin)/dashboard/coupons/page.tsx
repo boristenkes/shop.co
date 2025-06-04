@@ -24,11 +24,14 @@ export default async function PromoCodesPage() {
 
 	return (
 		<div className='container space-y-8'>
-			<div className='flex justify-between items-center'>
+			<div className='flex justify-between items-center gap-2 flex-wrap'>
 				<h1 className='text-3xl font-bold'>Coupons Management</h1>
 
 				{hasPermission(currentUser.role, 'coupons', ['create']) && (
-					<Button asChild>
+					<Button
+						asChild
+						className='ml-auto'
+					>
 						<Link href='/dashboard/coupons/new'>
 							Add Coupon <PlusIcon />
 						</Link>
