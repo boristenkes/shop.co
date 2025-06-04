@@ -7,6 +7,10 @@ import { ColorsTable } from './colors-table'
 import { columns } from './columns'
 import NewColorButton from './components'
 
+export const metadata = {
+	title: 'Colors'
+}
+
 export default async function ColorsPage() {
 	const session = await auth()
 	const currentUser = session?.user

@@ -4,6 +4,17 @@ import kevinKleinLogo from '@/public/assets/images/kevin-clein.png'
 import pradaLogo from '@/public/assets/images/prada.png'
 import versaceLogo from '@/public/assets/images/versace.png'
 import zaraLogo from '@/public/assets/images/zara.png'
+import {
+	Home,
+	Palette,
+	ShoppingBag,
+	ShoppingBasket,
+	ShoppingCart,
+	Star,
+	Tag,
+	Ticket,
+	Users
+} from 'lucide-react'
 
 export const navLinks = [
 	{
@@ -18,6 +29,18 @@ export const navLinks = [
 		href: '/about',
 		title: 'About Us'
 	}
+]
+
+export const adminNavItems = [
+	{ name: 'Dashboard', href: '/dashboard', icon: Home },
+	{ name: 'Users', href: '/dashboard/users', icon: Users },
+	{ name: 'Products', href: '/dashboard/products', icon: ShoppingBag },
+	{ name: 'Orders', href: '/dashboard/orders', icon: ShoppingCart },
+	{ name: 'Carts', href: '/dashboard/carts', icon: ShoppingBasket },
+	{ name: 'Coupons', href: '/dashboard/coupons', icon: Ticket },
+	{ name: 'Reviews', href: '/dashboard/reviews', icon: Star },
+	{ name: 'Categories', href: '/dashboard/categories', icon: Tag },
+	{ name: 'Colors', href: '/dashboard/colors', icon: Palette }
 ]
 
 export const brands = [

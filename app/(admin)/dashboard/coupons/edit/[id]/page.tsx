@@ -14,6 +14,10 @@ import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import EditCouponForm from './form'
 
+export const metadata = {
+	title: 'Edit Coupon'
+}
+
 export default async function EditCouponPage(props: {
 	params: Promise<{ id: string }>
 }) {

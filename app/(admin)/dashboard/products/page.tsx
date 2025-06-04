@@ -9,6 +9,10 @@ import { notFound } from 'next/navigation'
 import { columns } from './columns'
 import { ProductsTable } from './products-table'
 
+export const metadata = {
+	title: 'Products'
+}
+
 export default async function ProductsPage() {
 	const session = await auth()
 	const currentUser = session?.user

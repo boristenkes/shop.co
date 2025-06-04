@@ -18,6 +18,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { EditProductForm } from './form'
 
+export const metadata = {
+	title: 'Edit Product'
+}
+
 export default async function EditProductPage(props: {
 	params: Promise<{ id: string }>
 }) {

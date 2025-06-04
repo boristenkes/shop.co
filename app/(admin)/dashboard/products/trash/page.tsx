@@ -9,6 +9,10 @@ import { columns } from './columns'
 import EmptyTrashButton from './empty-trash-button'
 import { ProductTrashTable } from './table'
 
+export const metadata = {
+	title: 'Deleted Products'
+}
+
 export default async function DeletedProductsPage() {
 	const session = await auth()
 	const currentUser = session?.user

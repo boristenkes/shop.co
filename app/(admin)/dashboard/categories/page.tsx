@@ -7,6 +7,10 @@ import { CategoriesTable } from './categories-table'
 import { columns } from './columns'
 import NewCategoryButton from './components'
 
+export const metadata = {
+	title: 'Categories'
+}
+
 export default async function CategoriesPage() {
 	const session = await auth()
 	const currentUser = session?.user

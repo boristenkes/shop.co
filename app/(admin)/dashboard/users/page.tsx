@@ -6,6 +6,10 @@ import { notFound } from 'next/navigation'
 import { columns } from './columns'
 import { UsersTable } from './users-table'
 
+export const metadata = {
+	title: 'Users'
+}
+
 export default async function UsersPage() {
 	const session = await auth()
 	const currentUser = session?.user

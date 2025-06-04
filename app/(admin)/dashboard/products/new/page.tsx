@@ -14,6 +14,10 @@ import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { NewProductForm } from './form'
 
+export const metadata = {
+	title: 'Create Product'
+}
+
 export default async function NewProductPage() {
 	const session = await auth()
 	const currentUser = session?.user

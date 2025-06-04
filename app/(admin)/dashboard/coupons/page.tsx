@@ -9,6 +9,10 @@ import { notFound } from 'next/navigation'
 import { columns } from './columns'
 import { CouponsTable } from './table'
 
+export const metadata = {
+	title: 'Coupons'
+}
+
 export default async function PromoCodesPage() {
 	const session = await auth()
 	const currentUser = session?.user

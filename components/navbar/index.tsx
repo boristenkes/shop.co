@@ -2,6 +2,7 @@ import Logo from '@/components/icons/logo'
 import {
 	Sheet,
 	SheetContent,
+	SheetDescription,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger
@@ -37,6 +38,9 @@ export default async function Navbar() {
 									<SheetTitle>
 										<Logo className='mx-auto w-24' />
 									</SheetTitle>
+									<SheetDescription className='sr-only'>
+										Navigate through shop.co using links below
+									</SheetDescription>
 								</SheetHeader>
 								<nav className='mt-16'>
 									<ul className='grid gap-6'>

@@ -9,6 +9,10 @@ import { BackButton } from '@/components/utils/back-button'
 import { ArrowLeft } from 'lucide-react'
 import NewCouponForm from './form'
 
+export const metadata = {
+	title: 'Create Coupon'
+}
+
 export default function NewCouponPage() {
 	return (
 		<div

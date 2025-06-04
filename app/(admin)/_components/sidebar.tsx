@@ -1,36 +1,13 @@
 import Logo from '@/components/icons/logo'
 import LogoutButton from '@/components/utils/logout-button'
 import NavLink from '@/components/utils/nav-links'
-import {
-	Home,
-	HomeIcon,
-	LogOutIcon,
-	Palette,
-	ShoppingBag,
-	ShoppingBasket,
-	ShoppingCart,
-	Star,
-	Tag,
-	Ticket,
-	Users
-} from 'lucide-react'
+import { adminNavItems } from '@/constants'
+import { HomeIcon, LogOutIcon } from 'lucide-react'
 import Link from 'next/link'
-
-const navItems = [
-	{ name: 'Dashboard', href: '/dashboard', icon: Home },
-	{ name: 'Users', href: '/dashboard/users', icon: Users },
-	{ name: 'Products', href: '/dashboard/products', icon: ShoppingBag },
-	{ name: 'Orders', href: '/dashboard/orders', icon: ShoppingCart },
-	{ name: 'Carts', href: '/dashboard/carts', icon: ShoppingBasket },
-	{ name: 'Coupons', href: '/dashboard/coupons', icon: Ticket },
-	{ name: 'Reviews', href: '/dashboard/reviews', icon: Star },
-	{ name: 'Categories', href: '/dashboard/categories', icon: Tag },
-	{ name: 'Colors', href: '/dashboard/colors', icon: Palette }
-]
 
 export function Sidebar() {
 	return (
-		<div className='sticky top-0 shrink-0 h-screen flex flex-col w-64 bg-white border-r'>
+		<div className='sticky top-0 shrink-0 h-screen hidden lg:flex flex-col w-64 bg-white border-r'>
 			<Link
 				href='/'
 				className='grid place-items-center py-4 border-b'
@@ -40,7 +17,7 @@ export function Sidebar() {
 
 			<nav className='flex-1 overflow-y-auto'>
 				<ul className='p-4 space-y-2'>
-					{navItems.map(item => (
+					{adminNavItems.map(item => (
 						<li key={item.name}>
 							<NavLink
 								href={item.href}
