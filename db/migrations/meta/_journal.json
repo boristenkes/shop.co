@@ -134,6 +134,13 @@
       "when": 1748974966993,
       "tag": "0018_peaceful_warstar",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1749098584760,
+      "tag": "0019_colossal_silhouette",
+      "breakpoints": true
     }
   ]
 }

@@ -21,9 +21,15 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger
+} from '@/components/ui/hover-card'
+import Avatar from '@/components/utils/avatar'
 import CopyButton from '@/components/utils/copy-button'
-import { Coupon } from '@/db/schema/coupons'
 import { deleteCoupon } from '@/features/coupon/actions/delete'
+import { GetCouponsCoupon } from '@/features/coupon/actions/read'
 import { updateCoupon } from '@/features/coupon/actions/update'
 import { cn } from '@/lib/utils'
 import { formatDate, formatId, formatPrice } from '@/utils/format'
@@ -35,7 +41,7 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-export const columns: ColumnDef<Coupon>[] = [
+export const columns: ColumnDef<GetCouponsCoupon>[] = [
 	{
 		accessorKey: 'id',
 		header: 'ID',
@@ -72,6 +78,53 @@ export const columns: ColumnDef<Coupon>[] = [
 				coupon.type === 'fixed' ? formatPrice(coupon.value) : coupon.value + '%'
 
 			return formattedValue
+		}
+	},
+	{
+		accessorKey: 'user',
+		header: 'Created By',
+		cell: ({ row }) => {
+			const user = row.original.user
+
+			if (!user) return <p className='italic'>Deleted user</p>
+
+			return (
+				<HoverCard
+					openDelay={100}
+					closeDelay={100}
+				>
+					<HoverCardTrigger asChild>
+						<Link href={`/dashboard/users/${user.id}`}>
+							<Avatar
+								src={user.image!}
+								alt={user.name}
+								width={40}
+								height={40}
+								className='size-10'
+							/>
+						</Link>
+					</HoverCardTrigger>
+					<HoverCardContent>
+						<div className='flex gap-2'>
+							<Link href={`/dashboard/users/${user.id}`}>
+								<Avatar
+									src={user.image!}
+									alt={user.name}
+									width={40}
+									height={40}
+									className='size-10'
+								/>
+							</Link>
+							<div>
+								<h4 className='font-semibold'>
+									<Link href={`/dashboard/users/${user.id}`}>{user.name}</Link>
+								</h4>
+								<p className='text-sm text-gray-600'>{user.email}</p>
+							</div>
+						</div>
+					</HoverCardContent>
+				</HoverCard>
+			)
 		}
 	},
 	{
@@ -118,7 +171,7 @@ export const columns: ColumnDef<Coupon>[] = [
 		}
 	},
 	{
-		accessorKey: 'minValueInCents',
+		accessorKey: 'minValue',
 		header: 'Minimum Value',
 		cell: ({ row }) => {
 			const minValueInCents = row.original.minValueInCents
@@ -266,7 +319,9 @@ export const columns: ColumnDef<Coupon>[] = [
 						</DialogDescription>
 
 						{mutation.data && !mutation.data.success && (
-							<ErrorMessage message='Something went wrong' />
+							<ErrorMessage
+								message={mutation.data.message ?? 'Something went wrong'}
+							/>
 						)}
 
 						<DialogFooter>

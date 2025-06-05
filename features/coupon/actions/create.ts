@@ -1,5 +1,6 @@
 'use server'
 
+import { DEMO_RESTRICTIONS } from '@/constants'
 import { db } from '@/db'
 import { coupons } from '@/db/schema/coupons'
 import { auth } from '@/lib/auth'
@@ -8,6 +9,7 @@ import { stripe } from '@/lib/stripe'
 import { toCents } from '@/utils/helpers'
 import { revalidatePath } from 'next/cache'
 import { NewCouponSchema, newCouponSchema } from '../zod'
+import { countDemoCoupons } from './read'
 
 export type CreateCouponReturn =
 	| { success: true }
@@ -23,6 +25,16 @@ export async function createCoupon(
 
 		if (!currentUser || !hasPermission(currentUser.role, 'coupons', ['create']))
 			throw new Error('Unauthorized')
+
+		if (currentUser.role === 'admin:demo') {
+			const response = await countDemoCoupons()
+			if (!response.success || response.count >= DEMO_RESTRICTIONS.MAX_COUPONS)
+				return {
+					success: false,
+					message:
+						'Demo limit reached. Please delete one of the coupons if you would like to create a new one.'
+				}
+		}
 
 		const parsedData = newCouponSchema.parse(data)
 
@@ -66,6 +78,7 @@ export async function createCoupon(
 
 		await db.insert(coupons).values({
 			...parsedData,
+			userId: currentUser.id,
 			stripeCouponId: stripeCoupon.id,
 			stripePromoCodeId: stripePromoCode.id
 		})

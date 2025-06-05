@@ -17,18 +17,9 @@ import {
 } from 'lucide-react'
 
 export const navLinks = [
-	{
-		href: '/',
-		title: 'Home'
-	},
-	{
-		href: '/products',
-		title: 'Products'
-	},
-	{
-		href: '/about',
-		title: 'About Us'
-	}
+	{ href: '/', title: 'Home' },
+	{ href: '/products', title: 'Products' },
+	{ href: '/about', title: 'About Us' }
 ]
 
 export const adminNavItems = [
@@ -44,26 +35,10 @@ export const adminNavItems = [
 ]
 
 export const brands = [
-	{
-		name: 'versace',
-		image: versaceLogo,
-		href: 'https://www.versace.com'
-	},
-	{
-		name: 'zara',
-		image: zaraLogo,
-		href: 'https://www.zara.com'
-	},
-	{
-		name: 'gucci',
-		image: gucciLogo,
-		href: 'https://www.gucci.com'
-	},
-	{
-		name: 'prada',
-		image: pradaLogo,
-		href: 'https://www.prada.com'
-	},
+	{ name: 'versace', image: versaceLogo, href: 'https://www.versace.com' },
+	{ name: 'zara', image: zaraLogo, href: 'https://www.zara.com' },
+	{ name: 'gucci', image: gucciLogo, href: 'https://www.gucci.com' },
+	{ name: 'prada', image: pradaLogo, href: 'https://www.prada.com' },
 	{
 		name: 'kevin-clein',
 		image: kevinKleinLogo,
@@ -72,16 +47,8 @@ export const brands = [
 ]
 
 export const socials = [
-	{
-		name: 'x',
-		link: 'https://x.com',
-		icon: Social.XLogo
-	},
-	{
-		name: 'facebook',
-		link: 'https://facebook.com',
-		icon: Social.FacebookLogo
-	},
+	{ name: 'x', link: 'https://x.com', icon: Social.XLogo },
+	{ name: 'facebook', link: 'https://facebook.com', icon: Social.FacebookLogo },
 	{
 		name: 'instagram',
 		link: 'https://instagram.com',
@@ -98,87 +65,46 @@ export const footerLinkGroups = [
 	{
 		title: 'Company',
 		links: [
-			{
-				href: '#',
-				title: 'About'
-			},
-			{
-				href: '#',
-				title: 'Features'
-			},
-			{
-				href: '#',
-				title: 'Works'
-			},
-			{
-				href: '#',
-				title: 'Career'
-			}
+			{ href: '#', title: 'About' },
+			{ href: '#', title: 'Features' },
+			{ href: '#', title: 'Works' },
+			{ href: '#', title: 'Career' }
 		]
 	},
 	{
 		title: 'Help',
 		links: [
-			{
-				href: '#',
-				title: 'Customer Support'
-			},
-			{
-				href: '#',
-				title: 'Delivery Details'
-			},
-			{
-				href: '#',
-				title: 'Terms & Conditions'
-			},
-			{
-				href: '#',
-				title: 'Privacy Policy'
-			}
+			{ href: '#', title: 'Customer Support' },
+			{ href: '#', title: 'Delivery Details' },
+			{ href: '#', title: 'Terms & Conditions' },
+			{ href: '#', title: 'Privacy Policy' }
 		]
 	},
 	{
 		title: 'FAQ',
 		links: [
-			{
-				href: '#',
-				title: 'Account'
-			},
-			{
-				href: '#',
-				title: 'Manage Deliveries'
-			},
-			{
-				href: '#',
-				title: 'Orders'
-			},
-			{
-				href: '#',
-				title: 'Payment'
-			}
+			{ href: '#', title: 'Account' },
+			{ href: '#', title: 'Manage Deliveries' },
+			{ href: '#', title: 'Orders' },
+			{ href: '#', title: 'Payment' }
 		]
 	},
 	{
 		title: 'Resources',
 		links: [
-			{
-				href: '#',
-				title: 'Free eBooks'
-			},
-			{
-				href: '#',
-				title: 'Development Tutorial'
-			},
-			{
-				href: '#',
-				title: 'How to - Blog'
-			},
-			{
-				href: '#',
-				title: 'YouTube Playlist'
-			}
+			{ href: '#', title: 'Free eBooks' },
+			{ href: '#', title: 'Development Tutorial' },
+			{ href: '#', title: 'How to - Blog' },
+			{ href: '#', title: 'YouTube Playlist' }
 		]
 	}
 ]
 
 export const AVATAR_DEFAULT = '/assets/images/default.jpg'
+
+export const DEMO_RESTRICTIONS = {
+	MAX_CATEGORIES: 10,
+	MAX_PRODUCTS: 5,
+	MAX_COLORS: 10,
+	MAX_COUPONS: 20
+}

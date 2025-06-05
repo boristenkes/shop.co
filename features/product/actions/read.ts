@@ -10,6 +10,7 @@ import { Product } from '@/db/schema/products'
 import { ProductToColor } from '@/db/schema/products-to-colors'
 import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
 import { sanitizeHTML } from '@/lib/sanitize'
 import { requirePermission } from '@/utils/actions'
 import {
@@ -143,7 +144,10 @@ export async function getProductByIdForAdmin(
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (!currentUser || !['admin', 'moderator'].includes(currentUser.role))
+		if (
+			!currentUser ||
+			!['admin', 'moderator', 'admin:demo'].includes(currentUser.role)
+		)
 			throw new Error('Unauthorized')
 
 		const product = await db.query.products.findFirst({
@@ -211,7 +215,15 @@ export async function getProductDescription(
 
 export async function getDeletedProducts(): Promise<GetProductsForAdminReturn> {
 	try {
-		await requirePermission('products', ['delete'])
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (
+			!currentUser ||
+			(!hasPermission(currentUser.role, 'products', ['delete']) &&
+				currentUser.role !== 'admin:demo')
+		)
+			throw new Error('Unauthorized')
 
 		const results = (await db.query.products.findMany({
 			where: (products, { isNotNull }) => isNotNull(products.deletedAt),

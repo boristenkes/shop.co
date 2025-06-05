@@ -8,9 +8,9 @@ import { stripe } from '@/lib/stripe'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
-export type DeleteCouponReturn = {
-	success: boolean
-}
+export type DeleteCouponReturn =
+	| { success: true }
+	| { success: false; message?: string }
 
 export async function deleteCoupon(
 	couponId: Coupon['id'],
@@ -22,6 +22,18 @@ export async function deleteCoupon(
 
 		if (!currentUser || !hasPermission(currentUser.role, 'coupons', ['delete']))
 			throw new Error('Unauthorized')
+
+		if (currentUser.role === 'admin:demo') {
+			const coupon = await db.query.coupons.findFirst({
+				where: eq(coupons.id, couponId),
+				columns: { userId: true }
+			})
+			if (coupon?.userId !== currentUser.id)
+				return {
+					success: false,
+					message: 'You can delete coupons created by Demo admin only'
+				}
+		}
 
 		const [deletedCoupon] = await db
 			.delete(coupons)

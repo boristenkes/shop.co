@@ -77,11 +77,16 @@ export default async function EditProductPage(props: {
 
 				<CardContent>
 					{productResponse.success ? (
-						<EditProductForm
-							product={productResponse.product}
-							getCategoriesResponse={getCategoriesResponse}
-							getColorsResponse={getColorsResponse}
-						/>
+						currentUser.role === 'admin:demo' &&
+						productResponse.product.userId === currentUser.id ? (
+							<EditProductForm
+								product={productResponse.product}
+								getCategoriesResponse={getCategoriesResponse}
+								getColorsResponse={getColorsResponse}
+							/>
+						) : (
+							<ErrorMessage message='You can edit products created by Demo admin only' />
+						)
 					) : (
 						<ErrorMessage message={productResponse.message} />
 					)}

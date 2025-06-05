@@ -18,14 +18,14 @@ const permissions: Permissions = {
 		colors: ['create', 'read', 'update', 'delete']
 	},
 	'admin:demo': {
-		products: ['read', 'create', 'delete:own', 'update:own'],
+		products: ['read', 'create', 'delete', 'update'],
 		orders: ['read', 'update'],
 		carts: ['read', 'delete'],
-		coupons: ['read', 'create', 'update:own', 'delete:own'],
+		coupons: ['read', 'create', 'update', 'delete'],
 		reviews: ['read', 'update'],
 		users: ['read', 'read:own'],
-		categories: ['create', 'read', 'update:own', 'delete:own'],
-		colors: ['create', 'read', 'update:own', 'delete:own']
+		categories: ['create', 'read', 'update', 'delete'],
+		colors: ['create', 'read', 'update', 'delete']
 	},
 	moderator: {
 		products: ['read', 'update'],

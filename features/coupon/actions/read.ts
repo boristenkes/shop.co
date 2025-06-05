@@ -2,26 +2,41 @@
 
 import { db } from '@/db'
 import { Coupon, coupons } from '@/db/schema/coupons'
+import { User } from '@/db/schema/users'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
+import { requirePermission } from '@/utils/actions'
 import { formatPrice } from '@/utils/format'
 import { eq } from 'drizzle-orm'
 import { ClientCouponSchema, clientCouponSchema, couponSchema } from '../zod'
 
+export type GetCouponsCoupon = Coupon & {
+	user: Pick<User, 'id' | 'name' | 'image' | 'email'> | null
+}
+
 export type GetCouponsReturn =
-	| { success: true; coupons: Coupon[] }
+	| {
+			success: true
+			coupons: GetCouponsCoupon[]
+	  }
 	| { success: false }
 
 export async function getCoupons(): Promise<GetCouponsReturn> {
 	try {
-		const session = await auth()
-		const currentUser = session?.user
-
-		if (!currentUser || !hasPermission(currentUser.role, 'coupons', ['read']))
-			throw new Error('Unauthorized')
+		await requirePermission('coupons', ['read'])
 
 		const coupons = await db.query.coupons.findMany({
-			orderBy: (coupon, { desc }) => desc(coupon.id)
+			orderBy: (coupon, { desc }) => desc(coupon.id),
+			with: {
+				user: {
+					columns: {
+						id: true,
+						name: true,
+						image: true,
+						email: true
+					}
+				}
+			}
 		})
 
 		return { success: true, coupons }
@@ -126,4 +141,27 @@ function isCouponValid(
 	}
 
 	return { success: true }
+}
+
+export type CountCouponsReturn =
+	| { success: true; count: number }
+	| { success: false }
+
+export async function countDemoCoupons(): Promise<CountCouponsReturn> {
+	try {
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (currentUser?.role !== 'admin:demo') return { success: true, count: 0 }
+
+		if (!currentUser || !hasPermission(currentUser.role, 'coupons', ['read']))
+			throw new Error('Unauthorized')
+
+		const count = await db.$count(coupons, eq(coupons.userId, currentUser.id))
+
+		return { success: true, count }
+	} catch (error) {
+		console.error('[COUNT_COUPONS]:', error)
+		return { success: false }
+	}
 }

@@ -31,6 +31,14 @@ export async function deleteCategory(
 				? prev
 				: parseInt(formData?.get('categoryId') as string)
 
+		// 65 = ID of last category I inserted
+		if (currentUser.role === 'admin:demo' && categoryId <= 65) {
+			return {
+				success: false,
+				message: 'You can delete categories created by Demo admin only'
+			}
+		}
+
 		await db.delete(categories).where(eq(categories.id, categoryId))
 
 		revalidatePath(path)

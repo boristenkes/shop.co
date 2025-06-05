@@ -68,19 +68,29 @@ export async function deleteCart(
 
 		if (!currentUser) throw new Error('Unauthorized')
 
-		if (!hasPermission(currentUser.role, 'carts', ['delete'])) {
-			const cart = await db.query.carts.findFirst({
-				where: eq(carts.id, cartId),
-				columns: { userId: true }
-			})
+		const cart = await db.query.carts.findFirst({
+			where: eq(carts.id, cartId),
+			columns: {},
+			with: {
+				user: { columns: { id: true, role: true } }
+			}
+		})
 
-			if (!cart) return { success: false, message: 'Cart not found' }
+		if (!cart) return { success: false, message: 'Cart not found' }
 
+		if (hasPermission(currentUser.role, 'carts', ['delete'])) {
 			if (
-				currentUser.id === cart.userId &&
-				!hasPermission(currentUser.role, 'carts', ['delete:own'])
+				currentUser.role === 'admin:demo' &&
+				cart.user.role !== 'customer:demo'
 			)
-				throw new Error('Unauthorized')
+				return {
+					success: false,
+					message: 'You can delete carts created only by Demo customers'
+				}
+		} else if (hasPermission(currentUser.role, 'carts', ['delete:own'])) {
+			if (currentUser.id !== cart.user.id) throw new Error('Unauthroized')
+		} else {
+			throw new Error('Unauthorized')
 		}
 
 		await db.delete(carts).where(eq(carts.id, cartId))

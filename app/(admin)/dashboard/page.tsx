@@ -10,7 +10,10 @@ export default async function Dashboard() {
 	const session = await auth()
 	const currentUser = session?.user
 
-	if (!currentUser || !['moderator', 'admin'].includes(currentUser.role))
+	if (
+		!currentUser ||
+		!['moderator', 'admin', 'admin:demo'].includes(currentUser.role)
+	)
 		notFound()
 
 	const response = await getStatistics()

@@ -5,9 +5,10 @@ import { products, productsToColors } from '@/db/schema'
 import { NewProductImage, productImages } from '@/db/schema/product-images'
 import { NewProduct, Product } from '@/db/schema/products'
 import { EditProductSchema, editProductSchema } from '@/features/product/zod'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
 import { sanitizeHTML } from '@/lib/sanitize'
 import { slugify } from '@/lib/utils'
-import { requirePermission } from '@/utils/actions'
 import { isEmpty, toCents } from '@/utils/helpers'
 import { and, eq, inArray } from 'drizzle-orm'
 import { UTApi } from 'uploadthing/server'
@@ -38,7 +39,26 @@ export async function updateProduct(
 	images?: Omit<NewProductImage, 'productId'>[]
 ): Promise<UpdateProductReturn> {
 	try {
-		await requirePermission('products', ['update'])
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (
+			!currentUser ||
+			!hasPermission(currentUser.role, 'products', ['update'])
+		)
+			throw new Error('Unauthorized')
+
+		if (currentUser.role === 'admin:demo') {
+			const product = await db.query.products.findFirst({
+				where: eq(products.id, productId),
+				columns: { userId: true }
+			})
+			if (product?.userId !== currentUser.id)
+				return {
+					success: false,
+					message: 'You can edit products created by Demo admin only'
+				}
+		}
 
 		const validatedData = editProductSchema.parse(newData)
 

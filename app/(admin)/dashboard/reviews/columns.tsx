@@ -261,7 +261,9 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 						</DialogDescription>
 
 						{mutation.data && !mutation.data.success && (
-							<ErrorMessage message={mutation.data.message!} />
+							<ErrorMessage
+								message={mutation.data.message ?? 'Something went wrong'}
+							/>
 						)}
 
 						<DialogFooter>

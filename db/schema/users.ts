@@ -7,6 +7,7 @@ import {
 	uniqueIndex
 } from 'drizzle-orm/pg-core'
 import { carts } from './carts'
+import { coupons } from './coupons'
 import { roleEnum } from './enums'
 import { orders } from './orders'
 import { products } from './products'
@@ -36,7 +37,8 @@ export const usersRelations = relations(users, ({ many, one }) => ({
 	products: many(products),
 	reviews: many(reviews),
 	orders: many(orders),
-	cart: one(carts)
+	cart: one(carts),
+	coupons: many(coupons)
 }))
 
 export type User = typeof users.$inferSelect

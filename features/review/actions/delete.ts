@@ -9,7 +9,7 @@ import { revalidatePath } from 'next/cache'
 
 export type DeleteReviewReturn =
 	| { success: true }
-	| { success: false; message: string }
+	| { success: false; message?: string }
 
 export async function deleteReview(
 	reviewId: Review['id'],
@@ -21,22 +21,32 @@ export async function deleteReview(
 
 		if (!currentUser) throw new Error('Unauthorized')
 
-		if (!hasPermission(currentUser.role, 'reviews', ['delete'])) {
-			const targetReview = await db.query.reviews.findFirst({
-				where: eq(reviews.id, reviewId),
-				columns: {},
-				with: {
-					user: {
-						columns: { id: true }
-					}
+		const targetReview = await db.query.reviews.findFirst({
+			where: eq(reviews.id, reviewId),
+			columns: {},
+			with: {
+				user: {
+					columns: { id: true, role: true }
 				}
-			})
+			}
+		})
 
+		if (!hasPermission(currentUser.role, 'reviews', ['delete'])) {
 			if (
 				targetReview?.user.id === currentUser.id &&
 				!hasPermission(currentUser.role, 'reviews', ['delete:own'])
 			)
 				throw new Error('Unauthorized')
+		}
+
+		if (
+			currentUser.role === 'admin:demo' &&
+			targetReview?.user.role !== 'customer:demo'
+		) {
+			return {
+				success: false,
+				message: 'You can delete reviews created by Demo customers only'
+			}
 		}
 
 		await db.delete(reviews).where(eq(reviews.id, reviewId))
@@ -46,6 +56,6 @@ export async function deleteReview(
 		return { success: true }
 	} catch (error) {
 		console.error('[DELETE_REVIEW]:', error)
-		return { success: false, message: 'Something went wrong.' }
+		return { success: false }
 	}
 }

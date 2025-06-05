@@ -31,7 +31,10 @@ export async function getStatistics(): Promise<GetStatisticsReturn> {
 		const session = await auth()
 		const currentUser = session?.user
 
-		if (!currentUser || !['admin', 'moderator'].includes(currentUser.role))
+		if (
+			!currentUser ||
+			!['admin', 'moderator', 'admin:demo'].includes(currentUser.role)
+		)
 			throw new Error('Unauthorized')
 
 		const countProducts = db.$count(products, isNull(products.deletedAt))

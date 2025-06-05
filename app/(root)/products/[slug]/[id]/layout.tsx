@@ -95,7 +95,7 @@ export default async function ProductLayout({
 					</BreadcrumbList>
 				</Breadcrumb>
 
-				{['admin', 'moderator'].includes(currentUser?.role!) && (
+				{['admin', 'moderator', 'admin:demo'].includes(currentUser?.role!) && (
 					<div className='flex items-center gap-4'>
 						{hasPermission(currentUser?.role!, 'products', ['update']) && (
 							<Button

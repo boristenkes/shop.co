@@ -11,6 +11,7 @@ import {
 } from 'drizzle-orm/pg-core'
 import { couponTypeEnum } from './enums'
 import { orders } from './orders'
+import { users } from './users'
 
 export const coupons = pgTable(
 	'coupons',
@@ -25,6 +26,10 @@ export const coupons = pgTable(
 		minValueInCents: integer(),
 		active: boolean().default(true).notNull(),
 		description: text(),
+
+		userId: integer().references(() => users.id, {
+			onDelete: 'set null'
+		}),
 
 		stripeCouponId: text().notNull(),
 		stripePromoCodeId: text().notNull(),
@@ -42,8 +47,12 @@ export const coupons = pgTable(
 	]
 )
 
-export const couponsRelations = relations(coupons, ({ many }) => ({
-	orders: many(orders)
+export const couponsRelations = relations(coupons, ({ many, one }) => ({
+	orders: many(orders),
+	user: one(users, {
+		fields: [coupons.userId],
+		references: [users.id]
+	})
 }))
 
 export type Coupon = typeof coupons.$inferSelect

@@ -1,17 +1,8 @@
 'use client'
 
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
-import ErrorMessage from '@/components/error-message'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogTitle,
-	DialogTrigger
-} from '@/components/ui/dialog'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -28,13 +19,10 @@ import Avatar from '@/components/utils/avatar'
 import { softDeleteProduct } from '@/features/product/actions/delete'
 import { ProductsReturn } from '@/features/product/actions/read'
 import { formatDate, formatId, formatPrice } from '@/utils/format'
-import { DialogClose } from '@radix-ui/react-dialog'
-import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
-import { CheckIcon, Loader2Icon, MoreHorizontal, XIcon } from 'lucide-react'
+import { CheckIcon, MoreHorizontal, XIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
 import { toast } from 'sonner'
 
 export const columns: ColumnDef<ProductsReturn>[] = [
@@ -235,91 +223,57 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 		header: 'Actions',
 		cell: ({ row }) => {
 			const product = row.original
-			const [open, setOpen] = useState(false)
-			const mutation = useMutation({
-				mutationKey: ['softdelete:products', product.id],
-				mutationFn: (productId: number) => softDeleteProduct(productId),
-				onSettled(data) {
-					if (data?.success) {
-						toast.success('Moved to trash')
-						setOpen(false)
-					}
+
+			const handleSoftDelete = () => {
+				const deletePromise = async () => {
+					const res = await softDeleteProduct(product.id)
+					if (!res.success)
+						throw new Error(res.message ?? 'Something went wrong')
+					return res
 				}
-			})
+
+				toast.promise(deletePromise(), {
+					loading: 'Moving to trash...',
+					success: 'Product moved to trash',
+					error: error => error.message
+				})
+			}
 
 			return (
-				<Dialog
-					open={open}
-					onOpenChange={setOpen}
-				>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant='ghost'
-								size='icon'
-								className='size-8 rounded-sm'
-							>
-								<span className='sr-only'>Open menu</span>
-								<MoreHorizontal className='size-4' />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align='end'>
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button
+							variant='ghost'
+							size='icon'
+							className='size-8 rounded-sm'
+						>
+							<span className='sr-only'>Open menu</span>
+							<MoreHorizontal className='size-4' />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align='end'>
+						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-							<DropdownMenuItem>
-								<Link href={`/dashboard/products/${product.id}`}>
-									View details
-								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Link href={`/products/${product.slug}/${product.id}`}>
-									View in store
-								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Link href={`/dashboard/products/edit/${product.id}`}>
-									Edit product
-								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<DialogTrigger>Move to trash</DialogTrigger>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-
-					<DialogContent>
-						<DialogTitle>Are you sure?</DialogTitle>
-						<DialogDescription>
-							You are about to permamently remove product{' '}
-							<strong>{product.name}</strong> from database. This cannot be
-							undone. Proceed with caution.
-						</DialogDescription>
-
-						{mutation.data && !mutation.data.success && (
-							<ErrorMessage message={mutation.data.message!} />
-						)}
-
-						<DialogFooter>
-							<DialogClose asChild>
-								<Button
-									variant='secondary'
-									disabled={mutation.isPending}
-								>
-									Cancel
-								</Button>
-							</DialogClose>
-
-							<Button
-								onClick={() => mutation.mutate(product.id)}
-								disabled={mutation.isPending}
-								variant='destructive'
-							>
-								{mutation.isPending && <Loader2Icon className='animate-spin' />}
-								{mutation.isPending ? 'Moving to trash' : 'Move to trash'}
-							</Button>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
+						<DropdownMenuItem>
+							<Link href={`/dashboard/products/${product.id}`}>
+								View details
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Link href={`/products/${product.slug}/${product.id}`}>
+								View in store
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Link href={`/dashboard/products/edit/${product.id}`}>
+								Edit product
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<button onClick={handleSoftDelete}>Move to trash</button>
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			)
 		}
 	}

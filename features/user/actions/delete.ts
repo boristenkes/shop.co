@@ -33,6 +33,13 @@ export async function deleteUser(
 		if (!currentUser) throw new Error('Unauthorized')
 
 		if (!hasPermission(currentUser.role, 'users', ['delete'])) {
+			if (currentUser.role === 'admin:demo') {
+				return {
+					success: false,
+					message: 'Demo admin cannot delete users'
+				}
+			}
+
 			if (currentUser.id !== targetUserId) {
 				throw new Error('Unauthorized')
 			}

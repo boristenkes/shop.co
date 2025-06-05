@@ -3,6 +3,8 @@
 import { db } from '@/db'
 import { products } from '@/db/schema'
 import { productImages } from '@/db/schema/product-images'
+import { auth } from '@/lib/auth'
+import { hasPermission } from '@/lib/permissions'
 import { requirePermission } from '@/utils/actions'
 import { eq, isNotNull } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
@@ -10,7 +12,7 @@ import { UTApi } from 'uploadthing/server'
 
 const uploadthingApi = new UTApi()
 
-type SoftDeleteReturn = { success: true } | { success: false; message: string }
+type SoftDeleteReturn = { success: true } | { success: false; message?: string }
 
 export async function softDeleteProduct(
 	prev: any,
@@ -18,12 +20,32 @@ export async function softDeleteProduct(
 	path = '/dashboard/products'
 ): Promise<SoftDeleteReturn> {
 	try {
-		await requirePermission('products', ['delete'])
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (
+			!currentUser ||
+			!hasPermission(currentUser.role, 'products', ['delete'])
+		)
+			throw new Error('Unauthorized')
 
 		const productId =
 			typeof prev === 'number'
 				? prev
 				: parseInt(formData?.get('productId') as string)
+
+		if (currentUser.role === 'admin:demo') {
+			const product = await db.query.products.findFirst({
+				where: eq(products.id, productId),
+				columns: { userId: true }
+			})
+
+			if (product?.userId !== currentUser.id)
+				return {
+					success: false,
+					message: 'You can delete products created by Demo admin only'
+				}
+		}
 
 		await db
 			.update(products)
@@ -35,10 +57,7 @@ export async function softDeleteProduct(
 		return { success: true }
 	} catch (error) {
 		console.error('[SOFT_DELETE_PRODUCT]:', error)
-		return {
-			success: false,
-			message: 'Failed to move to trash. Please try again later.'
-		}
+		return { success: false }
 	}
 }
 
@@ -80,7 +99,21 @@ export async function purgeSoftDeletedProducts(
 	path = '/dashboard/products/trash'
 ): Promise<PurgeSoftDeletedProductsReturn> {
 	try {
-		await requirePermission('products', ['delete'])
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (
+			!currentUser ||
+			!hasPermission(currentUser.role, 'products', ['delete'])
+		)
+			throw new Error('Unauthorized')
+
+		if (currentUser.role === 'admin:demo')
+			return {
+				success: false,
+				message:
+					'Demo admin cannot empty the trash. However, you can individually delete products created by Demo admin'
+			}
 
 		const softDeletedProducts = await db.query.products.findMany({
 			where: (products, { isNotNull }) => isNotNull(products.deletedAt),
@@ -124,12 +157,31 @@ export async function deleteProduct(
 	path = '/dashboard/products/trash'
 ): Promise<DeleteProductReturn> {
 	try {
-		await requirePermission('products', ['delete'])
+		const session = await auth()
+		const currentUser = session?.user
+
+		if (
+			!currentUser ||
+			!hasPermission(currentUser.role, 'products', ['delete'])
+		)
+			throw new Error('Unauthorized')
 
 		const productId =
 			typeof prev === 'number'
 				? prev
 				: parseInt(formData?.get('productId') as string)
+
+		if (currentUser.role === 'admin:demo') {
+			const product = await db.query.products.findFirst({
+				where: eq(products.id, productId),
+				columns: { userId: true }
+			})
+			if (product?.userId !== currentUser.id)
+				return {
+					success: false,
+					message: 'You can delete products created by Demo admin only'
+				}
+		}
 
 		const productImageKeys = await db.query.productImages
 			.findMany({

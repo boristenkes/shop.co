@@ -25,6 +25,18 @@ export async function updateCoupon(
 		if (!currentUser || !hasPermission(currentUser.role, 'coupons', ['update']))
 			throw new Error('Unauthorized')
 
+		if (currentUser.role === 'admin:demo') {
+			const coupon = await db.query.coupons.findFirst({
+				where: eq(coupons.id, couponId),
+				columns: { userId: true }
+			})
+			if (coupon?.userId !== currentUser.id)
+				return {
+					success: false,
+					message: 'You can edit coupons created by Demo admin only'
+				}
+		}
+
 		if (newData.code) {
 			const existingCoupon = await db.query.coupons.findFirst({
 				where: (coupon, { eq }) => eq(coupon.code, newData.code!),
