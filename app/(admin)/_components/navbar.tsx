@@ -18,7 +18,7 @@ export default function Navbar() {
 					</SubmitButton>
 				</LogoutButton>
 
-				<Link href='/'>
+				<Link href='/dashboard'>
 					<Logo width={96} />
 				</Link>
 			</div>

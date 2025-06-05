@@ -9,7 +9,7 @@ export function Sidebar() {
 	return (
 		<div className='sticky top-0 shrink-0 h-screen hidden lg:flex flex-col w-64 bg-white border-r'>
 			<Link
-				href='/'
+				href='/dashboard'
 				className='grid place-items-center py-4 border-b'
 			>
 				<Logo width={96} />

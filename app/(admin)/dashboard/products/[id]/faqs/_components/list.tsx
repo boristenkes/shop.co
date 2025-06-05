@@ -12,20 +12,21 @@ export default async function FAQList({
 	faqs: ProductFAQ[]
 	productId: Product['id']
 }) {
-	if (!faqs.length)
-		return (
-			<p className='text-center py-16 text-lg'>
-				This product doesn&apos;t have any FAQs
-			</p>
-		)
-
 	return (
 		<ul className='py-8 space-y-4'>
-			{faqs.map(faq => (
-				<li key={faq.id}>
-					<FAQCard faq={faq} />
+			{faqs.length > 0 ? (
+				faqs.map(faq => (
+					<li key={faq.id}>
+						<FAQCard faq={faq} />
+					</li>
+				))
+			) : (
+				<li>
+					<p className='text-center py-16 text-lg'>
+						This product doesn&apos;t have any FAQs
+					</p>
 				</li>
-			))}
+			)}
 			<li>
 				<AddProductFAQButton productId={productId}>
 					<Button
