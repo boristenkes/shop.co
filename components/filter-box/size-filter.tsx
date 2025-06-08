@@ -1,13 +1,13 @@
 'use client'
 
-import { Size } from '@/lib/enums'
+import { Size, sizes } from '@/lib/enums'
 import { cn } from '@/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 export default function SizeFilter() {
 	const searchParams = useSearchParams()
-	const [sizes, setSizes] = useState<Size[]>(
+	const [selectedSizes, setSelectedSizes] = useState<Size[]>(
 		searchParams.getAll('size') as Size[]
 	)
 
@@ -21,7 +21,7 @@ export default function SizeFilter() {
 						key={size}
 						className={cn(
 							'border py-2 px-4 rounded-full text-center cursor-pointer transition-colors font-medium',
-							sizes.includes(size)
+							selectedSizes.includes(size)
 								? 'bg-neutral-900 text-neutral-100'
 								: 'hover:bg-neutral-100'
 						)}
@@ -32,13 +32,13 @@ export default function SizeFilter() {
 							value={size}
 							name='size'
 							onChange={e =>
-								setSizes(prev =>
+								setSelectedSizes(prev =>
 									e.target.checked
 										? [...prev, size]
 										: prev.filter(s => s !== size)
 								)
 							}
-							checked={sizes.includes(size)}
+							checked={selectedSizes.includes(size)}
 							hidden
 						/>
 						{size}
