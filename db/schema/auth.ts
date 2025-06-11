@@ -12,7 +12,7 @@ import { users } from './users'
 export const accounts = pgTable(
 	'accounts',
 	{
-		userId: integer()
+		userId: text()
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		type: text().$type<AdapterAccountType>().notNull(),
@@ -35,7 +35,7 @@ export const accounts = pgTable(
 
 export const sessions = pgTable('sessions', {
 	sessionToken: text().primaryKey(),
-	userId: integer()
+	userId: text()
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
 	expires: timestamp({ mode: 'date' }).notNull()
@@ -59,7 +59,7 @@ export const authenticators = pgTable(
 	'authenticators',
 	{
 		credentialID: text().notNull().unique(),
-		userId: integer()
+		userId: text()
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		providerAccountId: text().notNull(),

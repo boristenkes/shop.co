@@ -24,7 +24,7 @@ import {
 import Avatar from '@/components/utils/avatar'
 import { User } from '@/db/schema/users'
 import { deleteUser } from '@/features/user/actions/delete'
-import { formatDate, formatId } from '@/utils/format'
+import { formatDate } from '@/utils/format'
 import { getRoleBadgeVariant } from '@/utils/helpers'
 import { useMutation } from '@tanstack/react-query'
 import { ColumnDef } from '@tanstack/react-table'
@@ -36,8 +36,7 @@ import { toast } from 'sonner'
 export const columns: ColumnDef<Omit<User, 'hashedPassword'>>[] = [
 	{
 		accessorKey: 'id',
-		header: 'ID',
-		cell: ({ row }) => formatId(row.original.id)
+		header: 'ID'
 	},
 	{
 		accessorKey: 'image',

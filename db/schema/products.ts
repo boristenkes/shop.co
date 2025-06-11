@@ -37,7 +37,7 @@ export const products = pgTable(
 		categoryId: integer().references(() => categories.id, {
 			onDelete: 'set null'
 		}),
-		userId: integer().references(() => users.id, { onDelete: 'set null' }),
+		userId: text().references(() => users.id, { onDelete: 'set null' }),
 
 		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true })

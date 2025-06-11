@@ -4,6 +4,7 @@ import {
 	pgTable,
 	serial,
 	smallint,
+	text,
 	timestamp,
 	unique,
 	uniqueIndex
@@ -18,7 +19,7 @@ export const carts = pgTable(
 	{
 		id: serial().primaryKey(),
 
-		userId: integer()
+		userId: text()
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 

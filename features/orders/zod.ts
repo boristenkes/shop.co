@@ -21,7 +21,7 @@ export const updateOrderSchema = z
 		status: z.enum(orderStatuses),
 		totalPriceInCents: integerSchema,
 		shippingAddress: requiredString,
-		userId: integerSchema.positive()
+		userId: requiredString.ulid()
 	})
 	.partial() // Everything optional
 
@@ -29,7 +29,7 @@ export type UpdateOrderSchema = z.infer<typeof updateOrderSchema>
 
 export const orderMetadataSchema = z.object({
 	cartId: integerSchema,
-	userId: integerSchema,
+	userId: requiredString.ulid(),
 	couponId: integerSchema.optional().nullable()
 })
 

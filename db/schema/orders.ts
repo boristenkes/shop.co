@@ -22,7 +22,7 @@ export const orders = pgTable(
 		status: orderStatusEnum().default('pending').notNull(),
 		shippingAddress: text(),
 
-		userId: integer()
+		userId: text()
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		couponId: integer().references(() => coupons.id, {

@@ -23,9 +23,7 @@ export async function deleteUser(
 		// If user ID is passed as first parameter, use it
 		// If `useActionState` is used, get `userId` from `formData`,
 		const targetUserId =
-			typeof prev === 'number'
-				? prev
-				: parseInt(formData?.get('userId') as string)
+			typeof prev === 'string' ? prev : (formData?.get('userId') as string)
 
 		const session = await auth()
 		const currentUser = session?.user

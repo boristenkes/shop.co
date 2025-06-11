@@ -33,7 +33,7 @@ export async function getUsers({
 			throw new Error('Unauthorized')
 
 		const results = await db.query.users.findMany({
-			orderBy: desc(users.id),
+			orderBy: desc(users.createdAt),
 			columns: {
 				hashedPassword: false
 			}

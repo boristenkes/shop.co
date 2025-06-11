@@ -43,7 +43,7 @@ export default async function UserDetailsPage(props: {
 	if (!currentUser || !hasPermission(currentUser.role, 'users', ['read']))
 		notFound()
 
-	const userId = Number((await props.params).id)
+	const userId = (await props.params).id
 
 	if (!userId) return <ErrorMessage message='Invalid user ID' />
 
@@ -193,7 +193,7 @@ function UserProfile({
 							<label className='text-sm font-medium text-gray-500'>
 								User ID
 							</label>
-							<p className='text-sm'>{formatId(user.id)}</p>
+							<p className='text-sm'>{user.id}</p>
 						</div>
 					</div>
 

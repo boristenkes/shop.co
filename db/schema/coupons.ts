@@ -27,7 +27,7 @@ export const coupons = pgTable(
 		active: boolean().default(true).notNull(),
 		description: text(),
 
-		userId: integer().references(() => users.id, {
+		userId: text().references(() => users.id, {
 			onDelete: 'set null'
 		}),
 

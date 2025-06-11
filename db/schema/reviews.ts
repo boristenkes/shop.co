@@ -21,7 +21,7 @@ export const reviews = pgTable(
 		rating: smallint().notNull(),
 		approved: boolean().default(false).notNull(),
 
-		userId: integer()
+		userId: text()
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		productId: integer()

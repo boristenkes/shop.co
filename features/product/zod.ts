@@ -60,7 +60,7 @@ export const productSchema = z.object({
 	featured: z.boolean(),
 	sizes: z.enum(sizes).array(),
 	category: integerSchema.positive(),
-	userId: integerSchema.positive(),
+	userId: requiredString.ulid(),
 	createdAt: requiredString.datetime(),
 	updatedAt: requiredString.datetime(),
 	deletedAt: requiredString.datetime().optional()

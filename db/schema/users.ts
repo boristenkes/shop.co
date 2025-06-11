@@ -1,11 +1,6 @@
 import { relations } from 'drizzle-orm'
-import {
-	pgTable,
-	serial,
-	text,
-	timestamp,
-	uniqueIndex
-} from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { ulid } from 'ulid'
 import { carts } from './carts'
 import { coupons } from './coupons'
 import { roleEnum } from './enums'
@@ -16,7 +11,7 @@ import { reviews } from './reviews'
 export const users = pgTable(
 	'users',
 	{
-		id: serial().primaryKey(),
+		id: text().primaryKey().$defaultFn(ulid),
 		name: text().notNull(),
 		email: text().unique().notNull(),
 		emailVerified: timestamp({ mode: 'date' }),
