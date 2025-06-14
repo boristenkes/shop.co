@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
 	Card,
@@ -9,9 +8,8 @@ import {
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import Paragraph from '@/components/utils/paragraph'
-import { Order } from '@/db/schema/orders'
 import { GetOwnOrdersOrder } from '@/features/orders/actions/read'
-import { cn } from '@/lib/utils'
+import OrderStatusBadge from '@/features/orders/components/status-badge'
 import { formatId } from '@/utils/format'
 import { ArrowRightIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -54,18 +52,7 @@ export default function OrderList({ orders }: { orders: GetOwnOrdersOrder[] }) {
 								{order.status === 'pending' && (
 									<CancelOrderButton orderId={order.id} />
 								)}
-								<Badge
-									className='capitalize flex items-center gap-1'
-									variant='outline'
-								>
-									<div
-										className={cn(
-											'size-2 rounded-full',
-											getOrderStatusColor(order.status)
-										)}
-									/>
-									{order.status}
-								</Badge>
+								<OrderStatusBadge status={order.status} />
 							</div>
 						</CardHeader>
 						<CardContent>
@@ -76,19 +63,6 @@ export default function OrderList({ orders }: { orders: GetOwnOrdersOrder[] }) {
 			))}
 		</ul>
 	)
-}
-
-export function getOrderStatusColor(status: Order['status']) {
-	switch (status) {
-		case 'canceled':
-			return 'bg-gray-500'
-		case 'pending':
-			return 'bg-yellow-500'
-		case 'shipped':
-			return 'bg-blue-500'
-		case 'delivered':
-			return 'bg-lime-500'
-	}
 }
 
 export function OrderListSkeleton({ itemCount }: { itemCount: number }) {

@@ -1,4 +1,3 @@
-import { getOrderStatusColor } from '@/app/(root)/orders/order-list'
 import ErrorMessage from '@/components/error-message'
 import { Rating } from '@/components/rating'
 import { Badge } from '@/components/ui/badge'
@@ -8,12 +7,12 @@ import Avatar from '@/components/utils/avatar'
 import { BackButton } from '@/components/utils/back-button'
 import CopyButton from '@/components/utils/copy-button'
 import DeleteCartButton from '@/features/cart/components/delete-cart-button'
+import OrderStatusBadge from '@/features/orders/components/status-badge'
 import { getUserById, GetUserByIdUser } from '@/features/user/actions/read'
 import DeleteUserButton from '@/features/user/components/delete-button'
 import { auth } from '@/lib/auth'
 import { Role } from '@/lib/enums'
 import { hasPermission } from '@/lib/permissions'
-import { cn } from '@/lib/utils'
 import { formatDate, formatId, formatPrice } from '@/utils/format'
 import { getRoleBadgeVariant } from '@/utils/helpers'
 import {
@@ -329,18 +328,7 @@ function UserOrders({ orders }: { orders: GetUserByIdUser['orders'] }) {
 													Order {formatId(order.id)}
 												</Link>
 											</h4>
-											<Badge
-												className='capitalize flex items-center gap-1 w-fit'
-												variant='outline'
-											>
-												<div
-													className={cn(
-														'size-2 rounded-full',
-														getOrderStatusColor(order.status)
-													)}
-												/>
-												{order.status}
-											</Badge>
+											<OrderStatusBadge status={order.status} />
 										</div>
 										<div className='flex items-center gap-2 mt-1 text-sm text-gray-500'>
 											<Calendar className='h-4 w-4' />

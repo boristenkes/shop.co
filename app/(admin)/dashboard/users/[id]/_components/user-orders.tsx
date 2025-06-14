@@ -1,6 +1,4 @@
-import { getOrderStatusColor } from '@/app/(root)/orders/order-list'
 import ErrorMessage from '@/components/error-message'
-import { Badge } from '@/components/ui/badge'
 import {
 	Table,
 	TableBody,
@@ -12,7 +10,7 @@ import {
 } from '@/components/ui/table'
 import { User } from '@/db/schema/users'
 import { getUserOrders } from '@/features/orders/actions/read'
-import { cn } from '@/lib/utils'
+import OrderStatusBadge from '@/features/orders/components/status-badge'
 import { formatDate, formatPrice } from '@/utils/format'
 import Link from 'next/link'
 
@@ -67,32 +65,19 @@ export default async function UserOrders({ userId }: { userId: User['id'] }) {
 							)}
 						</TableCell>
 						<TableCell>
-							<Badge
-								className='capitalize flex items-center gap-1 w-fit'
-								variant='outline'
-							>
-								<div
-									className={cn(
-										'size-2 rounded-full',
-										getOrderStatusColor(order.status)
-									)}
-								/>
-								{order.status}
-							</Badge>
+							<OrderStatusBadge status={order.status} />
 						</TableCell>
 						<TableCell>
-							{
-								<time
-									dateTime={order.createdAt.toISOString()}
-									className='whitespace-nowrap'
-								>
-									{formatDate(order.createdAt!, {
-										month: 'long',
-										day: '2-digit',
-										year: 'numeric'
-									})}
-								</time>
-							}
+							<time
+								dateTime={order.createdAt.toISOString()}
+								className='whitespace-nowrap'
+							>
+								{formatDate(order.createdAt!, {
+									month: 'long',
+									day: '2-digit',
+									year: 'numeric'
+								})}
+							</time>
 						</TableCell>
 						<TableCell>
 							<Link

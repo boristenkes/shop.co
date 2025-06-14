@@ -1,8 +1,6 @@
 'use client'
 
-import { getOrderStatusColor } from '@/app/(root)/orders/order-list'
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
 	HoverCard,
@@ -11,7 +9,7 @@ import {
 } from '@/components/ui/hover-card'
 import Avatar from '@/components/utils/avatar'
 import { GetAllOrdersOrder } from '@/features/orders/actions/read'
-import { cn } from '@/lib/utils'
+import OrderStatusBadge from '@/features/orders/components/status-badge'
 import { formatDate, formatId, formatPrice } from '@/utils/format'
 import { type ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
@@ -98,20 +96,7 @@ export const columns: ColumnDef<GetAllOrdersOrder>[] = [
 				title='Status'
 			/>
 		),
-		cell: ({ row }) => (
-			<Badge
-				className='capitalize flex items-center gap-1 w-fit'
-				variant='outline'
-			>
-				<div
-					className={cn(
-						'size-2 rounded-full',
-						getOrderStatusColor(row.original.status)
-					)}
-				/>
-				{row.original.status}
-			</Badge>
-		)
+		cell: ({ row }) => <OrderStatusBadge status={row.original.status} />
 	},
 	{
 		accessorKey: 'totalPriceInCents',

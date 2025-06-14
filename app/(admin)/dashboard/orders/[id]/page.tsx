@@ -17,9 +17,11 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
+import Avatar from '@/components/utils/avatar'
 import { BackButton } from '@/components/utils/back-button'
 import CouponDiscount from '@/features/coupon/components/coupon-discount'
 import { getOrder } from '@/features/orders/actions/read'
+import OrderStatusBadge from '@/features/orders/components/status-badge'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { formatDate, formatId, formatPrice } from '@/utils/format'
@@ -27,7 +29,7 @@ import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import OrderStatusSelect from './_components/status-select'
+import OrderStatusButton from './_components/status-button'
 
 export default async function OrderDetailsPage(props: {
 	params: Promise<{ id: string }>
@@ -63,18 +65,34 @@ export default async function OrderDetailsPage(props: {
 				<Card>
 					<CardHeader className='flex justify-between flex-row items-start'>
 						<div>
-							<CardTitle>Order ID: {formatId(response.order.id)}</CardTitle>
+							<CardTitle className='flex items-center gap-4'>
+								Order ID: {formatId(response.order.id)}{' '}
+								<OrderStatusBadge status={response.order.status} />
+							</CardTitle>
 							<CardDescription className='mt-2'>
 								{response.order.shippingAddress ?? 'No address'}
 							</CardDescription>
 						</div>
 
-						<OrderStatusSelect
-							defaultOrderStatus={response.order.status!}
+						<OrderStatusButton
+							status={response.order.status}
 							orderId={response.order.id}
 						/>
 					</CardHeader>
 					<CardContent>
+						<Link
+							href={`/dashboard/users/${response.order.user.id}`}
+							className='flex items-center gap-2 mb-4'
+						>
+							<Avatar
+								src={response.order.user.image!}
+								alt={response.order.user.name}
+								width={32}
+								height={32}
+							/>
+							<p className='font-medium'>{response.order.user.name}</p>
+						</Link>
+
 						<Table>
 							<TableCaption>
 								Order date:{' '}
