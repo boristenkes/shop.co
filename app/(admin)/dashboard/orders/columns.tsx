@@ -131,6 +131,25 @@ export const columns: ColumnDef<GetAllOrdersOrder>[] = [
 		}
 	},
 	{
+		accessorKey: 'receiptUrl',
+		header: 'Receipt',
+		cell: ({ row }) => {
+			const order = row.original
+
+			if (!order.receiptUrl) return <em>No receipt</em>
+
+			return (
+				<a
+					href={order.receiptUrl}
+					className='font-semibold text-slate-700 hover:text-slate-500 flex items-center gap-2'
+					target='_blank'
+				>
+					View Receipt
+				</a>
+			)
+		}
+	},
+	{
 		accessorKey: 'actions',
 		header: 'Actions',
 		cell: ({ row }) => (

@@ -3,10 +3,14 @@
 import { db } from '@/db'
 import { Order, orders } from '@/db/schema/orders'
 import { auth } from '@/lib/auth'
+import { generateReceipt } from '@/lib/pdf'
 import { hasPermission } from '@/lib/permissions'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { UTApi } from 'uploadthing/server'
 import { updateOrderSchema } from '../zod'
+
+const uploadthingApi = new UTApi()
 
 export type UpdateOrderReturn =
 	| { success: true }
@@ -70,6 +74,48 @@ export async function updateOrder(
 		return { success: true }
 	} catch (error) {
 		console.error('[UPDATE_ERROR]:', error)
+		return { success: false }
+	}
+}
+
+export async function handleReceipt(orderId: Order['id']) {
+	try {
+		const order = await db.query.orders.findFirst({
+			where: eq(orders.id, orderId),
+			columns: {
+				id: true,
+				shippingAddress: true,
+				totalPriceInCents: true,
+				createdAt: true
+			},
+			with: {
+				orderItems: {
+					columns: { productPriceInCents: true, quantity: true, size: true },
+					with: {
+						product: { columns: { name: true } },
+						color: { columns: { name: true } }
+					}
+				}
+			}
+		})
+
+		if (!order) throw new Error(`Order ${orderId} not found`)
+
+		const receiptFile = generateReceipt(order)
+
+		const receipt = await uploadthingApi.uploadFiles(receiptFile)
+
+		if (receipt.error)
+			throw new Error(`Failed to upload receipt file: ${receipt.error}`)
+
+		await db
+			.update(orders)
+			.set({ receiptUrl: receipt.data.url })
+			.where(eq(orders.id, orderId))
+
+		return { success: true }
+	} catch (error) {
+		console.error('[HANDLE_RECEIPT]:', error)
 		return { success: false }
 	}
 }

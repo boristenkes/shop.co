@@ -74,10 +74,22 @@ export default async function OrderDetailsPage(props: {
 							</CardDescription>
 						</div>
 
-						<OrderStatusButton
-							status={response.order.status}
-							orderId={response.order.id}
-						/>
+						<div className='flex items-center gap-4'>
+							{response.order.receiptUrl && (
+								<a
+									href={response.order.receiptUrl}
+									className='font-semibold text-slate-700 hover:text-slate-500 flex items-center gap-2'
+									target='_blank'
+								>
+									View Receipt
+								</a>
+							)}
+
+							<OrderStatusButton
+								status={response.order.status}
+								orderId={response.order.id}
+							/>
+						</div>
 					</CardHeader>
 					<CardContent>
 						<Link

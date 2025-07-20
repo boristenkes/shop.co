@@ -11,7 +11,7 @@ import Paragraph from '@/components/utils/paragraph'
 import { GetOwnOrdersOrder } from '@/features/orders/actions/read'
 import OrderStatusBadge from '@/features/orders/components/status-badge'
 import { formatId } from '@/utils/format'
-import { ArrowRightIcon } from 'lucide-react'
+import { ArrowRightIcon, ReceiptTextIcon } from 'lucide-react'
 import Link from 'next/link'
 import CancelOrderButton from './cancel-button'
 import OrderTable, { OrderTableSkeleton } from './order-table'
@@ -42,7 +42,18 @@ export default function OrderList({ orders }: { orders: GetOwnOrdersOrder[] }) {
 					<Card>
 						<CardHeader className='flex justify-between flex-row items-start'>
 							<div>
-								<CardTitle>Order ID: {formatId(order.id)}</CardTitle>
+								<div className='flex items-center gap-8'>
+									<CardTitle>Order ID: {formatId(order.id)}</CardTitle>
+									{order.receiptUrl && (
+										<a
+											href={order.receiptUrl}
+											className='font-semibold text-slate-700 hover:text-slate-500 flex items-center gap-2'
+											target='_blank'
+										>
+											View Receipt <ReceiptTextIcon className='size-4' />
+										</a>
+									)}
+								</div>
 								<CardDescription className='mt-2'>
 									{order.shippingAddress ?? 'No address'}
 								</CardDescription>

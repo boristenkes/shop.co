@@ -21,6 +21,7 @@ export const orders = pgTable(
 		totalPriceInCents: integer().notNull(),
 		status: orderStatusEnum().default('pending').notNull(),
 		shippingAddress: text(),
+		receiptUrl: text(),
 
 		userId: text()
 			.notNull()

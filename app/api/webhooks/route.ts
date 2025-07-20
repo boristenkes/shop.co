@@ -1,5 +1,7 @@
 import { db } from '@/db'
 import { carts, coupons, orderItems, orders, products } from '@/db/schema'
+import { Order } from '@/db/schema/orders'
+import { handleReceipt } from '@/features/orders/actions/update'
 import { orderMetadataSchema } from '@/features/orders/zod'
 import { stripe } from '@/lib/stripe'
 import { eq, sql } from 'drizzle-orm'
@@ -31,6 +33,8 @@ export async function POST(req: NextRequest) {
 		if (!metadata.success)
 			return new NextResponse('Invalid metadata', { status: 400 })
 
+		let orderId: Order['id']
+
 		// Update database
 		try {
 			await db.transaction(async tx => {
@@ -54,9 +58,11 @@ export async function POST(req: NextRequest) {
 					})
 					.returning({ id: orders.id })
 
+				orderId = order.id
+
 				await tx.insert(orderItems).values(
 					cartItems.map(item => ({
-						orderId: order.id,
+						orderId,
 						colorId: item.colorId,
 						productId: item.productId,
 						productPriceInCents: item.productPriceInCents,
@@ -92,6 +98,8 @@ export async function POST(req: NextRequest) {
 
 				await tx.delete(carts).where(eq(carts.id, metadata.data.cartId))
 			})
+
+			await handleReceipt(orderId!)
 		} catch (error) {
 			console.error('[WEBHOOK/TRANSACTION]:', error)
 			return new NextResponse('Something went wrong', { status: 500 })
