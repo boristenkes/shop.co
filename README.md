@@ -1,6 +1,6 @@
 # shop.co
 
-A full‑stack, production‑ready e‑commerce storefront and admin dashboard built with Next.js 15, TypeScript, Tailwind CSS, Neon Postgres + Drizzle ORM, Auth.js, Stripe and UploadThing.
+A full‑stack e‑commerce storefront and admin dashboard built with Next.js 15, TypeScript, Tailwind CSS, Neon Postgres + Drizzle ORM, Auth.js, Stripe and UploadThing.
 
 **Live demo:** https://bt-shop-co.vercel.app
 
@@ -52,6 +52,7 @@ A full‑stack, production‑ready e‑commerce storefront and admin dashboard b
 
 ### Boris Tenkeš
 
+- Portfolio: [boristenkes.com](https://boristenkes.com)
 - Email: [boris.tenkes.dev@gmail.com](mailto:boris.tenkes.dev@gmail.com)
 - GitHub: [@boristenkes](https://github.com/boristenkes)
 - LinkedIn: [boris-tenkes](https://linkedin.com/in/boris-tenkes)
