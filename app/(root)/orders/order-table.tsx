@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table'
 import CouponDiscount from '@/features/coupon/components/coupon-discount'
 import { GetOwnOrdersOrder } from '@/features/orders/actions/read'
-import { formatDate, formatPrice } from '@/utils/format'
+import { formatPrice, timeFormatter } from '@/utils/format'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -30,7 +30,7 @@ export default function OrderTable({ order }: { order: GetOwnOrdersOrder }) {
 					dateTime={order.createdAt.toISOString()}
 					className='font-medium'
 				>
-					{formatDate(order.createdAt!)}
+					{timeFormatter.format(order.createdAt)}
 				</time>
 			</TableCaption>
 			<TableHeader>

@@ -6,7 +6,7 @@ import DeleteReviewButton from '@/features/review/components/delete-review-butto
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
-import { formatDate } from '@/utils/format'
+import { dateFormatter } from '@/utils/format'
 import { TrashIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -95,11 +95,7 @@ export default async function UserReviewsPage() {
 								<p className='font-medium text-neutral-600'>
 									Posted on{' '}
 									<time dateTime={review.createdAt.toISOString()}>
-										{formatDate(review.createdAt!, {
-											month: 'long',
-											day: '2-digit',
-											year: 'numeric'
-										})}
+										{dateFormatter.format(review.createdAt)}
 									</time>
 								</p>
 							</div>

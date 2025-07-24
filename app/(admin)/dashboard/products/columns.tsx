@@ -18,7 +18,7 @@ import {
 import Avatar from '@/components/utils/avatar'
 import { softDeleteProduct } from '@/features/product/actions/delete'
 import { ProductsReturn } from '@/features/product/actions/read'
-import { formatDate, formatId, formatPrice } from '@/utils/format'
+import { dateFormatter, formatId, formatPrice } from '@/utils/format'
 import { type ColumnDef } from '@tanstack/react-table'
 import { CheckIcon, MoreHorizontal, XIcon } from 'lucide-react'
 import Image from 'next/image'
@@ -209,11 +209,7 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 
 			return (
 				<time dateTime={product.createdAt.toISOString()}>
-					{formatDate(product.createdAt!, {
-						month: 'long',
-						day: '2-digit',
-						year: 'numeric'
-					})}
+					{dateFormatter.format(product.createdAt)}
 				</time>
 			)
 		}

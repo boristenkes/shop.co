@@ -10,7 +10,7 @@ import {
 import Avatar from '@/components/utils/avatar'
 import { GetAllCartsCart } from '@/features/cart/actions/read'
 import DeleteCartButton from '@/features/cart/components/delete-cart-button'
-import { formatId, formatInt, getTimeDistanceFromNow } from '@/utils/format'
+import { formatId, getTimeDistanceFromNow, intFormatter } from '@/utils/format'
 import { type ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
 
@@ -75,7 +75,7 @@ export const columns: ColumnDef<GetAllCartsCart>[] = [
 	{
 		accessorKey: 'itemCount',
 		header: 'Items',
-		cell: ({ row }) => formatInt(row.original.itemCount)
+		cell: ({ row }) => intFormatter.format(row.original.itemCount)
 	},
 	{
 		accessorKey: 'lastUpdatedAt',
@@ -86,7 +86,7 @@ export const columns: ColumnDef<GetAllCartsCart>[] = [
 			/>
 		),
 		cell: ({ row }) => {
-			const date = row.original.updatedAt!
+			const date = row.original.updatedAt
 
 			return (
 				<time dateTime={date.toISOString()}>

@@ -17,7 +17,7 @@ import {
 	restoreProduct
 } from '@/features/product/actions/delete'
 import { ProductsReturn } from '@/features/product/actions/read'
-import { formatDate, formatId, getTimeDistanceFromNow } from '@/utils/format'
+import { formatId, getTimeDistanceFromNow, timeFormatter } from '@/utils/format'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -86,15 +86,14 @@ export const columns: ColumnDef<ProductsReturn>[] = [
 			/>
 		),
 		cell: ({ row }) => {
-			const product = row.original
+			const deletedAt = row.original.deletedAt as Date
 
 			return (
 				<time
-					dateTime={product.deletedAt?.toISOString()}
+					dateTime={deletedAt.toISOString()}
 					suppressHydrationWarning
 				>
-					{formatDate(product.deletedAt!)} (
-					{getTimeDistanceFromNow(product.deletedAt!)})
+					{timeFormatter.format(deletedAt)} ({getTimeDistanceFromNow(deletedAt)})
 				</time>
 			)
 		}

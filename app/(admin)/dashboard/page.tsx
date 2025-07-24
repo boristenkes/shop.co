@@ -2,7 +2,7 @@ import ErrorMessage from '@/components/error-message'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { auth } from '@/lib/auth'
 import { getStatistics } from '@/utils/actions'
-import { formatInt, formatPrice } from '@/utils/format'
+import { intFormatter } from '@/utils/format'
 import { DollarSign, ShoppingBag, Star, Users } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
@@ -35,7 +35,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatInt(results.productCount)}
+							{intFormatter.format(results.productCount)}
 						</div>
 					</CardContent>
 				</Card>
@@ -46,7 +46,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatInt(results.userCount)}
+							{intFormatter.format(results.userCount)}
 						</div>
 					</CardContent>
 				</Card>
@@ -57,7 +57,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatInt(results.reviewCount)}
+							{intFormatter.format(results.reviewCount)}
 						</div>
 					</CardContent>
 				</Card>
@@ -68,7 +68,7 @@ export default async function Dashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className='text-2xl font-bold'>
-							{formatPrice(results.totalRevenue ?? 0)}
+							{intFormatter.format(results.totalRevenue ?? 0)}
 						</div>
 					</CardContent>
 				</Card>

@@ -24,7 +24,7 @@ import { getOrder } from '@/features/orders/actions/read'
 import OrderStatusBadge from '@/features/orders/components/status-badge'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
-import { formatDate, formatId, formatPrice } from '@/utils/format'
+import { formatId, formatPrice, timeFormatter } from '@/utils/format'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -112,7 +112,7 @@ export default async function OrderDetailsPage(props: {
 									dateTime={response.order.createdAt.toISOString()}
 									className='font-medium'
 								>
-									{formatDate(response.order.createdAt!)}
+									{timeFormatter.format(response.order.createdAt)}
 								</time>
 							</TableCaption>
 							<TableHeader>

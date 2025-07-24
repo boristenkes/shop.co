@@ -11,7 +11,7 @@ import {
 import { User } from '@/db/schema/users'
 import { getUserOrders } from '@/features/orders/actions/read'
 import OrderStatusBadge from '@/features/orders/components/status-badge'
-import { formatDate, formatPrice } from '@/utils/format'
+import { dateFormatter, formatPrice } from '@/utils/format'
 import Link from 'next/link'
 
 export default async function UserOrders({ userId }: { userId: User['id'] }) {
@@ -72,11 +72,7 @@ export default async function UserOrders({ userId }: { userId: User['id'] }) {
 								dateTime={order.createdAt.toISOString()}
 								className='whitespace-nowrap'
 							>
-								{formatDate(order.createdAt!, {
-									month: 'long',
-									day: '2-digit',
-									year: 'numeric'
-								})}
+								{dateFormatter.format(order.createdAt)}
 							</time>
 						</TableCell>
 						<TableCell>

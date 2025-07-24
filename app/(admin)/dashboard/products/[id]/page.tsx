@@ -18,7 +18,7 @@ import {
 } from '@/features/product/actions/read'
 import { auth } from '@/lib/auth'
 import { calculatePriceWithDiscount } from '@/lib/utils'
-import { formatDate, formatId, formatPrice } from '@/utils/format'
+import { formatId, formatPrice, timeFormatter } from '@/utils/format'
 import {
 	ArrowLeft,
 	Calendar,
@@ -412,7 +412,7 @@ function ProductTimestamps({
 								dateTime={product.createdAt.toISOString()}
 								className='text-sm'
 							>
-								{formatDate(product.createdAt!)}
+								{timeFormatter.format(product.createdAt)}
 							</time>
 						</div>
 					</div>
@@ -426,7 +426,7 @@ function ProductTimestamps({
 								dateTime={product.updatedAt.toISOString()}
 								className='text-sm'
 							>
-								{formatDate(product.updatedAt!)}
+								{timeFormatter.format(product.updatedAt)}
 							</time>
 						</div>
 					</div>

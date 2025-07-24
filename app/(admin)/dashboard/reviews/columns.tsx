@@ -33,7 +33,7 @@ import Avatar from '@/components/utils/avatar'
 import { deleteReview } from '@/features/review/actions/delete'
 import { GetReviewsReturnReview } from '@/features/review/actions/read'
 import { approveReview } from '@/features/review/actions/update'
-import { formatDate, formatId } from '@/utils/format'
+import { dateFormatter, formatId } from '@/utils/format'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -183,11 +183,7 @@ export const columns: ColumnDef<GetReviewsReturnReview>[] = [
 
 			return (
 				<time dateTime={review.createdAt.toISOString()}>
-					{formatDate(review.createdAt!, {
-						month: 'long',
-						day: '2-digit',
-						year: 'numeric'
-					})}
+					{dateFormatter.format(review.createdAt)}
 				</time>
 			)
 		}

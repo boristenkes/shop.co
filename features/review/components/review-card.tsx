@@ -2,7 +2,7 @@ import { Rating } from '@/components/rating'
 import { Skeleton } from '@/components/ui/skeleton'
 import { GetProductReviewsReview } from '@/features/review/actions/read'
 import { cn } from '@/lib/utils'
-import { formatDate } from '@/utils/format'
+import { dateFormatter } from '@/utils/format'
 
 type ReviewCardProps = React.ComponentProps<'article'> & {
 	review: GetProductReviewsReview
@@ -35,11 +35,7 @@ export default function ReviewCard({
 			<p className='font-medium text-neutral-600'>
 				Posted on{' '}
 				<time dateTime={review.createdAt.toISOString()}>
-					{formatDate(review.createdAt!, {
-						month: 'long',
-						day: '2-digit',
-						year: 'numeric'
-					})}
+					{dateFormatter.format(review.createdAt)}
 				</time>
 			</p>
 		</article>

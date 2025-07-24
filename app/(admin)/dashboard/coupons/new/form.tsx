@@ -28,7 +28,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { createCoupon } from '@/features/coupon/actions/create'
 import { NewCouponSchema, newCouponSchema } from '@/features/coupon/zod'
 import { cn } from '@/lib/utils'
-import { formatDate } from '@/utils/format'
+import { dateFormatter } from '@/utils/format'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SelectValue } from '@radix-ui/react-select'
 import {
@@ -239,11 +239,7 @@ export default function NewCouponForm() {
 												disabled={isSubmitting}
 											>
 												{field.value ? (
-													formatDate(field.value, {
-														day: '2-digit',
-														month: 'long',
-														year: 'numeric'
-													})
+													dateFormatter.format(field.value)
 												) : (
 													<span>Pick a date</span>
 												)}

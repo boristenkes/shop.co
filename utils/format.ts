@@ -8,45 +8,40 @@ export function formatFileSize(sizeInBytes: number) {
 	return `${formattedSize} ${units[i]}`
 }
 
-export function formatInt(int: number) {
-	return new Intl.NumberFormat('en-US', {
-		style: 'decimal'
-	}).format(int)
-}
+export const intFormatter = new Intl.NumberFormat('en-US', {
+	style: 'decimal'
+})
 
-export function formatPrice(
-	priceInCents: number | string,
-	options: Intl.NumberFormatOptions = {}
-) {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: options.currency ?? 'USD',
-		notation: options.notation ?? 'standard',
-		...options
-	}).format(Number(priceInCents) / 100)
+export const priceFormatter = new Intl.NumberFormat('en-US', {
+	style: 'currency',
+	currency: 'USD',
+	notation: 'standard'
+})
+
+export function formatPrice(priceInCents: number | string) {
+	return priceFormatter.format(Number(priceInCents) / 100)
 }
 
 export function formatId(id: string | number) {
 	return '#' + id.toString().padStart(5, '0')
 }
 
+export const timeFormatter = new Intl.DateTimeFormat('en-US', {
+	month: 'long',
+	day: 'numeric',
+	year: 'numeric',
+	hour: '2-digit',
+	minute: '2-digit'
+})
+
+export const dateFormatter = new Intl.DateTimeFormat('en-US', {
+	month: 'long',
+	day: '2-digit',
+	year: 'numeric'
+})
+
 export function limitTextLength(text: string, limit: number) {
 	return text.length > limit ? text.slice(0, limit) : text
-}
-
-export function formatDate(
-	date: Date | string | number,
-	options: Intl.DateTimeFormatOptions = {
-		month: 'long',
-		day: 'numeric',
-		year: 'numeric',
-		hour: '2-digit',
-		minute: '2-digit'
-	}
-) {
-	return new Intl.DateTimeFormat('en-US', {
-		...options
-	}).format(new Date(date))
 }
 
 export function getTimeDistanceFromNow(date: Date): string {

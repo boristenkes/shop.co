@@ -10,7 +10,7 @@ import {
 import Avatar from '@/components/utils/avatar'
 import { GetAllOrdersOrder } from '@/features/orders/actions/read'
 import OrderStatusBadge from '@/features/orders/components/status-badge'
-import { formatDate, formatId, formatPrice } from '@/utils/format'
+import { dateFormatter, formatId, formatPrice } from '@/utils/format'
 import { type ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
 
@@ -121,11 +121,7 @@ export const columns: ColumnDef<GetAllOrdersOrder>[] = [
 
 			return (
 				<time dateTime={order.createdAt.toISOString()}>
-					{formatDate(order.createdAt!, {
-						month: 'long',
-						day: '2-digit',
-						year: 'numeric'
-					})}
+					{dateFormatter.format(order.createdAt)}
 				</time>
 			)
 		}

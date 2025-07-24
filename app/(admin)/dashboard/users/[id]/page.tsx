@@ -13,7 +13,7 @@ import DeleteUserButton from '@/features/user/components/delete-button'
 import { auth } from '@/lib/auth'
 import { Role } from '@/lib/enums'
 import { hasPermission } from '@/lib/permissions'
-import { formatDate, formatId, formatPrice } from '@/utils/format'
+import { formatId, formatPrice, timeFormatter } from '@/utils/format'
 import { getRoleBadgeVariant } from '@/utils/helpers'
 import {
 	ArrowLeft,
@@ -222,7 +222,7 @@ function UserProfile({
 								dateTime={user.createdAt.toISOString()}
 								className='text-sm'
 							>
-								{formatDate(user.createdAt!)}
+								{timeFormatter.format(user.createdAt)}
 							</time>
 						</div>
 					</div>
@@ -289,7 +289,7 @@ function UserReviews({ reviews }: { reviews: GetUserByIdUser['reviews'] }) {
 												dateTime={review.createdAt.toISOString()}
 												className='text-sm text-gray-500'
 											>
-												{formatDate(review.createdAt!)}
+												{timeFormatter.format(review.createdAt)}
 											</time>
 										</div>
 										<p className='text-gray-700 mt-2'>{review.comment}</p>
@@ -333,7 +333,7 @@ function UserOrders({ orders }: { orders: GetUserByIdUser['orders'] }) {
 										<div className='flex items-center gap-2 mt-1 text-sm text-gray-500'>
 											<Calendar className='h-4 w-4' />
 											<time dateTime={order.createdAt.toISOString()}>
-												{formatDate(order.createdAt!)}
+												{timeFormatter.format(order.createdAt)}
 											</time>
 										</div>
 									</div>
@@ -461,12 +461,12 @@ function UserCart({ cart }: { cart: GetUserByIdUser['cart'] }) {
 				<div className='space-y-2'>
 					<div className='flex items-center gap-2 text-sm text-gray-500'>
 						<Calendar className='h-4 w-4' />
-						<span>Created: {new Date(cart.createdAt!).toLocaleString()}</span>
+						<span>Created: {new Date(cart.createdAt).toLocaleString()}</span>
 					</div>
 					<div className='flex items-center gap-2 text-sm text-gray-500'>
 						<Calendar className='h-4 w-4' />
 						<span>
-							Last Updated: {new Date(cart.updatedAt!).toLocaleString()}
+							Last Updated: {new Date(cart.updatedAt).toLocaleString()}
 						</span>
 					</div>
 				</div>

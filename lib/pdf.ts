@@ -1,7 +1,7 @@
 import { Color } from '@/db/schema/colors'
 import { Order, OrderItem } from '@/db/schema/orders'
 import { Product } from '@/db/schema/products'
-import { formatDate, formatId, formatPrice } from '@/utils/format'
+import { formatId, formatPrice, timeFormatter } from '@/utils/format'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
@@ -46,7 +46,7 @@ export function generateReceipt(order: ReceiptOrder) {
 
 	doc.setFontSize(12)
 	doc.setTextColor(80)
-	doc.text(`Order Date: ${formatDate(order.createdAt)}`, 40, 120)
+	doc.text(`Order Date: ${timeFormatter.format(order.createdAt)}`, 40, 120)
 
 	doc.setFontSize(12)
 	doc.setTextColor(30)

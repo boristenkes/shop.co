@@ -32,7 +32,7 @@ import { deleteCoupon } from '@/features/coupon/actions/delete'
 import { GetCouponsCoupon } from '@/features/coupon/actions/read'
 import { updateCoupon } from '@/features/coupon/actions/update'
 import { cn } from '@/lib/utils'
-import { formatDate, formatId, formatPrice } from '@/utils/format'
+import { dateFormatter, formatId, formatPrice } from '@/utils/format'
 import { useMutation } from '@tanstack/react-query'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Loader2Icon, MoreHorizontalIcon } from 'lucide-react'
@@ -161,11 +161,7 @@ export const columns: ColumnDef<GetCouponsCoupon>[] = [
 
 			return (
 				<time dateTime={coupon.expiresAt.toISOString()}>
-					{formatDate(coupon.expiresAt, {
-						month: 'long',
-						day: '2-digit',
-						year: 'numeric'
-					})}
+					{dateFormatter.format(coupon.expiresAt)}
 				</time>
 			)
 		}
@@ -214,11 +210,7 @@ export const columns: ColumnDef<GetCouponsCoupon>[] = [
 
 			return (
 				<time dateTime={order.createdAt.toISOString()}>
-					{formatDate(order.createdAt!, {
-						month: 'long',
-						day: '2-digit',
-						year: 'numeric'
-					})}
+					{dateFormatter.format(order.createdAt)}
 				</time>
 			)
 		}

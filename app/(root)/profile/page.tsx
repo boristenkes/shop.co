@@ -3,7 +3,7 @@ import { BackButton } from '@/components/utils/back-button'
 import Paragraph from '@/components/utils/paragraph'
 import { auth } from '@/lib/auth'
 import { hasPermission } from '@/lib/permissions'
-import { formatDate } from '@/utils/format'
+import { timeFormatter } from '@/utils/format'
 import { ArrowLeft } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import DeleteSelfButton from './delete-button'
@@ -40,10 +40,10 @@ export default async function ProfilePage() {
 					<p>
 						Joined:{' '}
 						<time
-							dateTime={new Date(currentUser.createdAt!).toISOString()}
+							dateTime={new Date(currentUser.createdAt).toISOString()}
 							className='font-medium'
 						>
-							{formatDate(currentUser.createdAt!)}
+							{timeFormatter.format(currentUser.createdAt)}
 						</time>
 					</p>
 				</div>
