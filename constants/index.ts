@@ -1,9 +1,9 @@
 import * as Social from '@/components/icons/socials'
-import gucciLogo from '@/public/assets/images/gucci.png'
-import kevinKleinLogo from '@/public/assets/images/kevin-clein.png'
-import pradaLogo from '@/public/assets/images/prada.png'
-import versaceLogo from '@/public/assets/images/versace.png'
-import zaraLogo from '@/public/assets/images/zara.png'
+import gucciLogo from '@/public/assets/images/gucci.webp'
+import kevinKleinLogo from '@/public/assets/images/kevin-clein.webp'
+import pradaLogo from '@/public/assets/images/prada.webp'
+import versaceLogo from '@/public/assets/images/versace.webp'
+import zaraLogo from '@/public/assets/images/zara.webp'
 import {
 	Home,
 	Palette,
@@ -100,7 +100,7 @@ export const footerLinkGroups = [
 	}
 ]
 
-export const AVATAR_DEFAULT = '/assets/images/default.jpg'
+export const AVATAR_DEFAULT = '/assets/images/default.webp'
 
 export const DEMO_RESTRICTIONS = {
 	MAX_CATEGORIES: 10,

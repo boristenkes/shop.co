@@ -1,6 +1,7 @@
 import Star from '@/components/icons/star'
 import { Button } from '@/components/ui/button'
 import { integralCf } from '@/lib/fonts'
+import hero from '@/public/assets/images/hero.webp'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -51,7 +52,7 @@ export default function Hero() {
 
 				<div className='relative size-full'>
 					<Image
-						src='/assets/images/hero.png'
+						src={hero}
 						width={500}
 						height={600}
 						priority
