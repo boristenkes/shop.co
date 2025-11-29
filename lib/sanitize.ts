@@ -1,10 +1,10 @@
-import createDOMPurify from 'dompurify'
+import createDOMPurify, { Config } from 'dompurify'
 import { JSDOM } from 'jsdom'
 
 const window = new JSDOM('').window
 const DOMPurify = createDOMPurify(window)
 
-export const sanitizeConfig = {
+export const sanitizeConfig: Config = {
 	ALLOWED_TAGS: [
 		'b',
 		'i',

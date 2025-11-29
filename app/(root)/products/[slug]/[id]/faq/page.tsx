@@ -40,7 +40,10 @@ export default async function ProductPageFAQ(props: {
 
 			{response.success ? (
 				response.faqs.length > 0 ? (
-					<Accordion type='single'>
+					<Accordion
+						type='single'
+						defaultValue={response.faqs[0].id.toString()}
+					>
 						{response.faqs.map(faq => (
 							<AccordionItem
 								key={faq.id}

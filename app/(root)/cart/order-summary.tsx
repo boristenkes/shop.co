@@ -31,7 +31,7 @@ export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 	const totalWithDiscount = !coupon
 		? totalInCents
 		: coupon.type === 'fixed'
-		? totalInCents - coupon.value
+		? Math.max(totalInCents - coupon.value, 0)
 		: calculatePriceWithDiscount(totalInCents, coupon.value)
 
 	const handleCheckout = async () => {
@@ -94,7 +94,6 @@ export default function OrderSummary({ isSignedIn }: { isSignedIn: boolean }) {
 						) : (
 							'-'
 						)}
-						{/* {discountText ? `-${discountText}` : '-'} */}
 					</dd>
 				</div>
 				<div className='flex items-center justify-between'>
