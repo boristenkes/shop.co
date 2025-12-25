@@ -1,10 +1,11 @@
 import Providers from '@/components/utils/providers'
+import { env } from '@/lib/env'
 import { satoshi } from '@/lib/fonts'
 import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-	metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
+	metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
 	title: {
 		default: 'shop.co',
 		template: '%s • shop.co'

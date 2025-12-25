@@ -1,4 +1,5 @@
 import { Role } from '@/lib/enums'
+import { env } from '@/lib/env'
 
 export const delay = (ms: number) =>
 	new Promise(resolve => setTimeout(resolve, ms))
@@ -22,7 +23,7 @@ export function getUploadthingKey(imageUrl: string): string {
 export const toCents = (usd: number) => Math.round(usd * 100)
 
 export const absoluteUrl = (path: string) =>
-	new URL(path, process.env.NEXT_PUBLIC_APP_URL).href
+	new URL(path, env.NEXT_PUBLIC_APP_URL).href
 
 export function darkenHex(hex: string, amount: number = 20) {
 	let r = parseInt(hex.slice(1, 3), 16) - amount

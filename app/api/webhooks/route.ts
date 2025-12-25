@@ -3,6 +3,7 @@ import { carts, coupons, orderItems, orders, products } from '@/db/schema'
 import { Order } from '@/db/schema/orders'
 import { handleReceipt } from '@/features/orders/actions/update'
 import { orderMetadataSchema } from '@/features/orders/zod'
+import { env } from '@/lib/env'
 import { stripe } from '@/lib/stripe'
 import { eq, sql } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
 		event = stripe.webhooks.constructEvent(
 			body,
 			signature,
-			process.env.STRIPE_WEBHOOK_SECRET!
+			env.STRIPE_WEBHOOK_SECRET
 		)
 	} catch (error) {
 		console.error('[WEBHOOK/CONSTRUCT_EVENT]:', error)

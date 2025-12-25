@@ -43,7 +43,7 @@ export default async function ProfilePage() {
 							dateTime={new Date(currentUser.createdAt).toISOString()}
 							className='font-medium'
 						>
-							{timeFormatter.format(currentUser.createdAt)}
+							{timeFormatter.format(new Date(currentUser.createdAt))}
 						</time>
 					</p>
 				</div>

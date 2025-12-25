@@ -6,6 +6,7 @@ import { Coupon } from '@/db/schema/coupons'
 import { validateCoupon } from '@/features/coupon/actions/read'
 import { orderItemSchema } from '@/features/orders/zod'
 import { auth } from '@/lib/auth'
+import { env } from '@/lib/env'
 import { hasPermission } from '@/lib/permissions'
 import { stripe } from '@/lib/stripe'
 import { StripeCheckoutSession } from '@stripe/stripe-js'
@@ -121,8 +122,8 @@ export async function checkout(): Promise<CheckoutReturn> {
 				]
 			},
 			mode: 'payment',
-			success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
-			cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`
+			success_url: `${env.NEXT_PUBLIC_APP_URL}/checkout/success`,
+			cancel_url: `${env.NEXT_PUBLIC_APP_URL}/checkout/cancel`
 		})
 
 		return { success: true, sessionId: stripeSession.id }

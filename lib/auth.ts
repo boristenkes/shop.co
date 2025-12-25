@@ -13,6 +13,7 @@ import { encode as defaultEncode } from 'next-auth/jwt'
 import CredentialProvider from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
 import { Role } from './enums'
+import { env } from './env'
 
 declare module 'next-auth' {
 	interface Session {
@@ -60,6 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		strategy: 'database',
 		generateSessionToken: generateToken
 	},
+	secret: env.AUTH_SECRET,
 	callbacks: {
 		session({ session, user }) {
 			// @ts-expect-error TODO
