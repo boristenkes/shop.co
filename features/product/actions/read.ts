@@ -169,7 +169,7 @@ export async function getProductByIdForAdmin(
         )`.as('average_rating'),
 				totalSoldCount: sql<number>`(
 					SELECT COALESCE(SUM(quantity)::int, 0)
-					FROM order_items
+					FROM shopco__order_items
 					WHERE product_id = ${id}
 				)`.as('total_sold_count')
 			}

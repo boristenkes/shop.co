@@ -113,7 +113,7 @@ export async function filterProducts(
 		date: products.createdAt,
 		rating: sql<number>`(
       SELECT COALESCE(AVG(r.rating), 0) ::float
-      FROM reviews r
+      FROM shopco__reviews r
       WHERE r.product_id = ${products.id}
     )`
 	} as const
