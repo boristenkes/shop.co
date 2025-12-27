@@ -56,8 +56,9 @@ export default async function EditCouponPage(props: {
 
 				<CardContent>
 					{response.success ? (
-						currentUser.role === 'admin:demo' &&
-						response.coupon.userId === currentUser.id ? (
+						currentUser.role === 'admin' ||
+						(currentUser.role === 'admin:demo' &&
+							response.coupon.userId === currentUser.id) ? (
 							<EditCouponForm coupon={response.coupon} />
 						) : (
 							<ErrorMessage message='You can edit coupons created by Demo admin only' />
