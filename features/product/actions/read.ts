@@ -2,6 +2,7 @@
 
 import { db } from '@/db'
 import { products } from '@/db/schema'
+import { TABLE_NAME_PREFIX } from '@/db/schema/_root'
 import { Category } from '@/db/schema/categories'
 import { Color } from '@/db/schema/colors'
 import { ProductFAQ } from '@/db/schema/product-faqs'
@@ -113,7 +114,7 @@ export async function getProductById(
 			extras: {
 				averageRating: sql<number>`(
 				  SELECT COALESCE(AVG(r.rating), 0) ::float
-				  FROM reviews r
+				  FROM ${TABLE_NAME_PREFIX}reviews r
 				  WHERE r.product_id = ${id}
 				)`.as('average_rating')
 			}
@@ -164,7 +165,7 @@ export async function getProductByIdForAdmin(
 			extras: {
 				averageRating: sql<number>`(
           SELECT COALESCE(AVG(r.rating), 0) ::float
-          FROM reviews r
+          FROM ${TABLE_NAME_PREFIX}reviews r
           WHERE r.product_id = ${id}
         )`.as('average_rating'),
 				totalSoldCount: sql<number>`(
@@ -295,7 +296,7 @@ export async function getProducts({
 			extras: {
 				averageRating: sql<number>`(
           SELECT COALESCE(AVG(r.rating), 0) ::float
-          FROM reviews r
+          FROM ${TABLE_NAME_PREFIX}reviews r
           WHERE r.product_id = ${products.id}
         )`.as('average_rating')
 			},
@@ -347,7 +348,7 @@ export async function getFeaturedProducts({
 			extras: {
 				averageRating: sql<number>`(
           SELECT COALESCE(AVG(r.rating), 0) ::float
-          FROM reviews r
+          FROM ${TABLE_NAME_PREFIX}reviews r
           WHERE r.product_id = ${products.id}
         )`.as('average_rating')
 			},
@@ -422,7 +423,7 @@ export async function getRelatedProducts(
 			extras: {
 				averageRating: sql<number>`(
           SELECT COALESCE(AVG(r.rating), 0) ::float
-          FROM reviews r
+          FROM ${TABLE_NAME_PREFIX}reviews r
           WHERE r.product_id = ${products.id}
         )`.as('average_rating')
 			},
@@ -474,7 +475,7 @@ export async function searchProducts(
 			extras: {
 				averageRating: sql<number>`(
 				SELECT COALESCE(AVG(r.rating), 0) ::float
-				FROM reviews r
+				FROM ${TABLE_NAME_PREFIX}reviews r
 				WHERE r.product_id = ${products.id}
 			)`.as('average_rating')
 			},
