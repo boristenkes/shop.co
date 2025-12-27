@@ -163,7 +163,7 @@ export async function getAllCarts(): Promise<GetAllCartsReturn> {
 				itemCount: sql<number>`(
 					SELECT COUNT(*) 
 					FROM shopco__cart_items 
-					WHERE cart_items.cart_id = carts.id
+					WHERE shopco__cart_items.cart_id = shopco__carts.id
 				)`.as('item_count')
 			},
 			orderBy: (cart, { desc }) => desc(cart.id)
