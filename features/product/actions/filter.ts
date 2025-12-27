@@ -2,7 +2,6 @@
 
 import { db } from '@/db'
 import { products, productsToColors } from '@/db/schema'
-import { TABLE_NAME_PREFIX } from '@/db/schema/_root'
 import { categories, Category } from '@/db/schema/categories'
 import { Color, colors } from '@/db/schema/colors'
 import { Size } from '@/lib/enums'
@@ -159,7 +158,7 @@ export async function filterProducts(
 		extras: {
 			averageRating: sql<number>`(
         SELECT COALESCE(AVG(r.rating), 0) ::float
-        FROM ${TABLE_NAME_PREFIX}reviews r
+        FROM shopco__reviews r
         WHERE r.product_id = ${products.id}
       )`.as('average_rating'),
 			totalCount: sql<number>`(COUNT(*) OVER() ::integer)`.as('total_count')
