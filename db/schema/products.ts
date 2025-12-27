@@ -3,13 +3,13 @@ import {
 	boolean,
 	index,
 	integer,
-	pgTable,
 	serial,
 	smallint,
 	text,
 	timestamp,
 	uniqueIndex
 } from 'drizzle-orm/pg-core'
+import { createTable } from './_root'
 import { categories } from './categories'
 import { sizeEnum } from './enums'
 import { orderItems } from './orders'
@@ -19,7 +19,7 @@ import { productsToColors } from './products-to-colors'
 import { reviews } from './reviews'
 import { users } from './users'
 
-export const products = pgTable(
+export const products = createTable(
 	'products',
 	{
 		id: serial().primaryKey(),

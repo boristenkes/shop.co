@@ -1,9 +1,10 @@
 import { relations } from 'drizzle-orm'
-import { index, integer, pgTable, primaryKey } from 'drizzle-orm/pg-core'
+import { index, integer, primaryKey } from 'drizzle-orm/pg-core'
+import { createTable } from './_root'
 import { colors } from './colors'
 import { products } from './products'
 
-export const productsToColors = pgTable(
+export const productsToColors = createTable(
 	'products_to_colors',
 	{
 		productId: integer()

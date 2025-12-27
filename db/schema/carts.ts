@@ -1,7 +1,6 @@
 import { relations } from 'drizzle-orm'
 import {
 	integer,
-	pgTable,
 	serial,
 	smallint,
 	text,
@@ -9,12 +8,13 @@ import {
 	unique,
 	uniqueIndex
 } from 'drizzle-orm/pg-core'
+import { createTable } from './_root'
 import { colors } from './colors'
 import { sizeEnum } from './enums'
 import { products } from './products'
 import { users } from './users'
 
-export const carts = pgTable(
+export const carts = createTable(
 	'carts',
 	{
 		id: serial().primaryKey(),
@@ -43,7 +43,7 @@ export const cartsRelations = relations(carts, ({ one, many }) => ({
 export type Cart = typeof carts.$inferSelect
 export type NewCart = typeof carts.$inferInsert
 
-export const cartItems = pgTable(
+export const cartItems = createTable(
 	'cart_items',
 	{
 		id: serial().primaryKey(),

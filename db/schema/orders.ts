@@ -2,19 +2,19 @@ import { relations } from 'drizzle-orm'
 import {
 	index,
 	integer,
-	pgTable,
 	serial,
 	smallint,
 	text,
 	timestamp
 } from 'drizzle-orm/pg-core'
+import { createTable } from './_root'
 import { colors } from './colors'
 import { coupons } from './coupons'
 import { orderStatusEnum, sizeEnum } from './enums'
 import { products } from './products'
 import { users } from './users'
 
-export const orders = pgTable(
+export const orders = createTable(
 	'orders',
 	{
 		id: serial().primaryKey(),
@@ -57,7 +57,7 @@ export const ordersRelations = relations(orders, ({ many, one }) => ({
 export type Order = typeof orders.$inferSelect
 export type NewOrder = typeof orders.$inferInsert
 
-export const orderItems = pgTable(
+export const orderItems = createTable(
 	'order_items',
 	{
 		id: serial().primaryKey(),

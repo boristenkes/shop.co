@@ -11,7 +11,9 @@ export const env = createEnv({
 		UPLOADTHING_TOKEN: z.string(),
 		STRIPE_SECRET_KEY: z.string(),
 		STRIPE_WEBHOOK_SECRET: z.string(),
-		NODE_ENV: z.enum(['development', 'test', 'production'])
+		NODE_ENV: z
+			.enum(['development', 'test', 'production'])
+			.default('development')
 	},
 	client: {
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),

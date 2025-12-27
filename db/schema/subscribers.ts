@@ -1,12 +1,7 @@
-import {
-	pgTable,
-	serial,
-	text,
-	timestamp,
-	uniqueIndex
-} from 'drizzle-orm/pg-core'
+import { serial, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { createTable } from './_root'
 
-export const subscribers = pgTable(
+export const subscribers = createTable(
 	'subscribers',
 	{
 		id: serial().primaryKey(),

@@ -1,14 +1,9 @@
 import { relations } from 'drizzle-orm'
-import {
-	integer,
-	pgTable,
-	serial,
-	text,
-	uniqueIndex
-} from 'drizzle-orm/pg-core'
+import { integer, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { createTable } from './_root'
 import { products } from './products'
 
-export const productImages = pgTable(
+export const productImages = createTable(
 	'product_images',
 	{
 		id: serial().primaryKey(),

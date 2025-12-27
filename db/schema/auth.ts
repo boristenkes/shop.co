@@ -1,15 +1,15 @@
 import {
 	boolean,
 	integer,
-	pgTable,
 	primaryKey,
 	text,
 	timestamp
 } from 'drizzle-orm/pg-core'
 import type { AdapterAccountType } from 'next-auth/adapters'
+import { createTable } from './_root'
 import { users } from './users'
 
-export const accounts = pgTable(
+export const accounts = createTable(
 	'accounts',
 	{
 		userId: text()
@@ -33,7 +33,7 @@ export const accounts = pgTable(
 	]
 )
 
-export const sessions = pgTable('sessions', {
+export const sessions = createTable('sessions', {
 	sessionToken: text().primaryKey(),
 	userId: text()
 		.notNull()
@@ -41,7 +41,7 @@ export const sessions = pgTable('sessions', {
 	expires: timestamp({ mode: 'date' }).notNull()
 })
 
-export const verificationTokens = pgTable(
+export const verificationTokens = createTable(
 	'verification_tokens',
 	{
 		identifier: text().notNull(),
@@ -55,7 +55,7 @@ export const verificationTokens = pgTable(
 	]
 )
 
-export const authenticators = pgTable(
+export const authenticators = createTable(
 	'authenticators',
 	{
 		credentialID: text().notNull().unique(),

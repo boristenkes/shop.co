@@ -1,10 +1,16 @@
 import { couponTypes, orderStatuses, roles, sizes } from '@/lib/enums'
 import { pgEnum } from 'drizzle-orm/pg-core'
+import { TABLE_NAME_PREFIX } from './_root'
 
-export const roleEnum = pgEnum('role', roles)
+const prefixEnumName = (name: string) => TABLE_NAME_PREFIX + name
 
-export const sizeEnum = pgEnum('size', sizes)
+export const roleEnum = pgEnum(prefixEnumName('role'), roles)
 
-export const orderStatusEnum = pgEnum('order_status', orderStatuses)
+export const sizeEnum = pgEnum(prefixEnumName('size'), sizes)
 
-export const couponTypeEnum = pgEnum('coupon_type', couponTypes)
+export const orderStatusEnum = pgEnum(
+	prefixEnumName('order_status'),
+	orderStatuses
+)
+
+export const couponTypeEnum = pgEnum(prefixEnumName('coupon_type'), couponTypes)

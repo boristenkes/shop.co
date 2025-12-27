@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
+import { createTable } from './_root'
 import { carts } from './carts'
 import { coupons } from './coupons'
 import { roleEnum } from './enums'
@@ -8,7 +9,7 @@ import { orders } from './orders'
 import { products } from './products'
 import { reviews } from './reviews'
 
-export const users = pgTable(
+export const users = createTable(
 	'users',
 	{
 		id: text().primaryKey().$defaultFn(ulid),

@@ -3,17 +3,17 @@ import {
 	boolean,
 	check,
 	integer,
-	pgTable,
 	serial,
 	text,
 	timestamp,
 	uniqueIndex
 } from 'drizzle-orm/pg-core'
+import { createTable } from './_root'
 import { couponTypeEnum } from './enums'
 import { orders } from './orders'
 import { users } from './users'
 
-export const coupons = pgTable(
+export const coupons = createTable(
 	'coupons',
 	{
 		id: serial().primaryKey(),

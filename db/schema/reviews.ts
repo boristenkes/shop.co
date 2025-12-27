@@ -3,17 +3,17 @@ import {
 	boolean,
 	check,
 	integer,
-	pgTable,
 	serial,
 	smallint,
 	text,
 	timestamp,
 	uniqueIndex
 } from 'drizzle-orm/pg-core'
+import { createTable } from './_root'
 import { products } from './products'
 import { users } from './users'
 
-export const reviews = pgTable(
+export const reviews = createTable(
 	'reviews',
 	{
 		id: serial().primaryKey(),
