@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export const config = {
-	matcher: ['/((?!_next|favicon.ico|robots.txt).*)'] // run on almost everything
+	matcher: ['/((?!_next|favicon.ico|robots.txt).*)']
 }
 
 export function middleware(req: NextRequest) {
 	const ua = req.headers.get('user-agent') || ''
+	const accept = req.headers.get('accept') || ''
 
-	if (!ua || /bot|crawler|spider|scan|curl|wget|python|httpclient/i.test(ua)) {
+	const isBot =
+		!ua ||
+		!accept.includes('text/html') ||
+		/bot|crawler|spider|scan|curl|wget|python|httpclient|gptbot|headless/i.test(
+			ua
+		)
+
+	if (isBot) {
 		return new NextResponse('Forbidden', { status: 403 })
 	}
 
