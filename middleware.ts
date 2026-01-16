@@ -5,19 +5,14 @@ export const config = {
 	matcher: ['/((?!_next|favicon.ico|robots.txt).*)']
 }
 
+const botRegex =
+	/bot|crawler|spider|scan|curl|wget|python|httpclient|gptbot|headless/i
+
 export function middleware(req: NextRequest) {
-	const ua = req.headers.get('user-agent') || ''
-	const accept = req.headers.get('accept') || ''
+	const userAgent = req.headers.get('user-agent') || ''
 	const ip = (req as any).ip || req.headers.get('x-forwarded-for') || 'unknown'
 
-	const isBot =
-		!ua ||
-		!accept.includes('text/html') ||
-		/bot|crawler|spider|scan|curl|wget|python|httpclient|gptbot|headless/i.test(
-			ua
-		)
-
-	if (isBot) {
+	if (!userAgent || botRegex.test(userAgent)) {
 		return new NextResponse('Forbidden', { status: 403 })
 	}
 
