@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from './lib/rate-limit'
 
 export const config = {
 	matcher: ['/((?!_next|favicon.ico|robots.txt).*)']
@@ -7,6 +8,7 @@ export const config = {
 export function middleware(req: NextRequest) {
 	const ua = req.headers.get('user-agent') || ''
 	const accept = req.headers.get('accept') || ''
+	const ip = (req as any).ip || req.headers.get('x-forwarded-for') || 'unknown'
 
 	const isBot =
 		!ua ||
@@ -17,6 +19,12 @@ export function middleware(req: NextRequest) {
 
 	if (isBot) {
 		return new NextResponse('Forbidden', { status: 403 })
+	}
+
+	const rl = rateLimit(ip)
+
+	if (rl === 'too-many') {
+		return new NextResponse('Too many requests', { status: 429 })
 	}
 
 	const protectedRoutes = [
