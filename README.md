@@ -2,14 +2,39 @@
 
 A full‑stack e‑commerce storefront and admin dashboard built with Next.js 15, TypeScript, Tailwind CSS, Neon Postgres + Drizzle ORM, Auth.js, Stripe and UploadThing.
 
-**Live demo:** https://bt-shop-co.vercel.app
+- [Live Demo](https://bt-shop-co.vercel.app)
+- [Source code](https://github.com/boristenkes/shop.co)
 
 ## Table of Contents
 
-1. [Features](#features)
-2. [Tech Stack](#tech-stack)
-3. [Author](#author)
-4. [License](#license)
+- [shop.co](#shopco)
+  - [Table of Contents](#table-of-contents)
+  - [Previews](#previews)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Author](#author)
+    - [Boris Tenkeš](#boris-tenkeš)
+  - [License](#license)
+
+## Previews
+
+Home
+![Home page](https://898glvi4ys.ufs.sh/f/xoTuq3r8CcVaYkOZ3XTBZlCuSgWO97F86AGMTPIb53mVQDx1)
+
+Products
+![Products page](https://898glvi4ys.ufs.sh/f/xoTuq3r8CcVa69k2knX05UQopv4m31iCOndxNhZ9DXKAjcIf)
+
+Product Details
+![Product Details page](https://898glvi4ys.ufs.sh/f/xoTuq3r8CcVaTKO61uZz2rEGRskFUqJjYIQCLedtmwvSapuh)
+
+Cart
+![Cart page](https://898glvi4ys.ufs.sh/f/xoTuq3r8CcVamMl8VIjDIoOnYbsLzxhFdaJ06uGyA72EH5TM)
+
+Products (admin)
+![Products (admin) page](https://898glvi4ys.ufs.sh/f/xoTuq3r8CcVafPbsNE6CVuZB7UqojnkA5z9XLmdJvc6O3N2H)
+
+Orders (admin)
+![Orders (admin) page](https://898glvi4ys.ufs.sh/f/xoTuq3r8CcVaDOjccJh1xXkTjNrCbUw6IK5ZfPLYaqnp3JR8)
 
 ## Features
 
